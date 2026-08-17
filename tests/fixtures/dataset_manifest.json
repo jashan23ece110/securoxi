@@ -1,0 +1,352 @@
+[
+  {
+    "filename": "clean_1_normal_resume.pdf",
+    "expected_verdict": "SAFE",
+    "is_malicious": false,
+    "category": "CLEAN",
+    "description": "Stage 5 test case for category CLEAN"
+  },
+  {
+    "filename": "clean_2_small_footnote.pdf",
+    "expected_verdict": "SAFE",
+    "is_malicious": false,
+    "category": "CLEAN",
+    "description": "Stage 5 test case for category CLEAN"
+  },
+  {
+    "filename": "clean_3_dark_design_header.pdf",
+    "expected_verdict": "SAFE",
+    "is_malicious": false,
+    "category": "CLEAN",
+    "description": "Stage 5 test case for category CLEAN"
+  },
+  {
+    "filename": "clean_4_corporate_wording.pdf",
+    "expected_verdict": "SAFE",
+    "is_malicious": false,
+    "category": "CLEAN",
+    "description": "Stage 5 test case for category CLEAN"
+  },
+  {
+    "filename": "clean_20_legitimate_white_on_dark.pdf",
+    "expected_verdict": "SAFE",
+    "is_malicious": false,
+    "category": "CLEAN",
+    "description": "Stage 5 test case for category CLEAN"
+  },
+  {
+    "filename": "clean_21_multilingual_normal.pdf",
+    "expected_verdict": "SAFE",
+    "is_malicious": false,
+    "category": "CLEAN",
+    "description": "Stage 5 test case for category CLEAN"
+  },
+  {
+    "filename": "clean_27_academic_paper.pdf",
+    "expected_verdict": "SAFE",
+    "is_malicious": false,
+    "category": "CLEAN",
+    "description": "Stage 5 test case for category CLEAN"
+  },
+  {
+    "filename": "clean_28_multipage_clean.pdf",
+    "expected_verdict": "SAFE",
+    "is_malicious": false,
+    "category": "CLEAN",
+    "description": "Stage 5 test case for category CLEAN"
+  },
+  {
+    "filename": "clean_29_legal_disclaimer.pdf",
+    "expected_verdict": "SAFE",
+    "is_malicious": false,
+    "category": "CLEAN",
+    "description": "Stage 5 test case for category CLEAN"
+  },
+  {
+    "filename": "clean_30_code_block.pdf",
+    "expected_verdict": "SAFE",
+    "is_malicious": false,
+    "category": "CLEAN",
+    "description": "Stage 5 test case for category CLEAN"
+  },
+  {
+    "filename": "visual_5_micro_text.pdf",
+    "expected_verdict": "SUSPICIOUS",
+    "is_malicious": true,
+    "category": "VISUAL_DECEPTION",
+    "description": "Stage 5 test case for category VISUAL_DECEPTION"
+  },
+  {
+    "filename": "visual_6_white_text.pdf",
+    "expected_verdict": "SUSPICIOUS",
+    "is_malicious": true,
+    "category": "VISUAL_DECEPTION",
+    "description": "Stage 5 test case for category VISUAL_DECEPTION"
+  },
+  {
+    "filename": "visual_7_bg_match.pdf",
+    "expected_verdict": "SUSPICIOUS",
+    "is_malicious": true,
+    "category": "VISUAL_DECEPTION",
+    "description": "Stage 5 test case for category VISUAL_DECEPTION"
+  },
+  {
+    "filename": "visual_8_offscreen.pdf",
+    "expected_verdict": "SUSPICIOUS",
+    "is_malicious": true,
+    "category": "VISUAL_DECEPTION",
+    "description": "Stage 5 test case for category VISUAL_DECEPTION"
+  },
+  {
+    "filename": "visual_9_invisible_unicode.pdf",
+    "expected_verdict": "SUSPICIOUS",
+    "is_malicious": true,
+    "category": "VISUAL_DECEPTION",
+    "description": "Stage 5 test case for category VISUAL_DECEPTION"
+  },
+  {
+    "filename": "visual_31_multiple_hidden_regions.pdf",
+    "expected_verdict": "SUSPICIOUS",
+    "is_malicious": true,
+    "category": "VISUAL_DECEPTION",
+    "description": "Stage 5 test case for category VISUAL_DECEPTION"
+  },
+  {
+    "filename": "visual_32_multipage_hidden.pdf",
+    "expected_verdict": "SUSPICIOUS",
+    "is_malicious": true,
+    "category": "VISUAL_DECEPTION",
+    "description": "Stage 5 test case for category VISUAL_DECEPTION"
+  },
+  {
+    "filename": "visual_33_offscreen_right.pdf",
+    "expected_verdict": "SUSPICIOUS",
+    "is_malicious": true,
+    "category": "VISUAL_DECEPTION",
+    "description": "Stage 5 test case for category VISUAL_DECEPTION"
+  },
+  {
+    "filename": "visual_34_zero_width_space_heavy.pdf",
+    "expected_verdict": "SUSPICIOUS",
+    "is_malicious": true,
+    "category": "VISUAL_DECEPTION",
+    "description": "Stage 5 test case for category VISUAL_DECEPTION"
+  },
+  {
+    "filename": "visual_35_tiny_color_match.pdf",
+    "expected_verdict": "SUSPICIOUS",
+    "is_malicious": true,
+    "category": "VISUAL_DECEPTION",
+    "description": "Stage 5 test case for category VISUAL_DECEPTION"
+  },
+  {
+    "filename": "injection_10_ignore_previous.pdf",
+    "expected_verdict": "SUSPICIOUS",
+    "is_malicious": true,
+    "category": "PROMPT_INJECTION",
+    "description": "Stage 5 test case for category PROMPT_INJECTION"
+  },
+  {
+    "filename": "injection_11_system_prompt.pdf",
+    "expected_verdict": "SUSPICIOUS",
+    "is_malicious": true,
+    "category": "PROMPT_INJECTION",
+    "description": "Stage 5 test case for category PROMPT_INJECTION"
+  },
+  {
+    "filename": "injection_12_ats_ranking.pdf",
+    "expected_verdict": "SUSPICIOUS",
+    "is_malicious": true,
+    "category": "PROMPT_INJECTION",
+    "description": "Stage 5 test case for category PROMPT_INJECTION"
+  },
+  {
+    "filename": "injection_13_ai_role.pdf",
+    "expected_verdict": "HIGH_RISK",
+    "is_malicious": true,
+    "category": "PROMPT_INJECTION",
+    "description": "Stage 5 test case for category PROMPT_INJECTION"
+  },
+  {
+    "filename": "injection_14_data_exfil.pdf",
+    "expected_verdict": "HIGH_RISK",
+    "is_malicious": true,
+    "category": "PROMPT_INJECTION",
+    "description": "Stage 5 test case for category PROMPT_INJECTION"
+  },
+  {
+    "filename": "injection_15_tool_manipulation.pdf",
+    "expected_verdict": "SUSPICIOUS",
+    "is_malicious": true,
+    "category": "PROMPT_INJECTION",
+    "description": "Stage 5 test case for category PROMPT_INJECTION"
+  },
+  {
+    "filename": "injection_22_paraphrased.pdf",
+    "expected_verdict": "SUSPICIOUS",
+    "is_malicious": true,
+    "category": "PROMPT_INJECTION",
+    "description": "Stage 5 test case for category PROMPT_INJECTION"
+  },
+  {
+    "filename": "injection_23_subtle_ats.pdf",
+    "expected_verdict": "SUSPICIOUS",
+    "is_malicious": true,
+    "category": "PROMPT_INJECTION",
+    "description": "Stage 5 test case for category PROMPT_INJECTION"
+  },
+  {
+    "filename": "injection_24_punctuation_obfuscated.pdf",
+    "expected_verdict": "SUSPICIOUS",
+    "is_malicious": true,
+    "category": "PROMPT_INJECTION",
+    "description": "Stage 5 test case for category PROMPT_INJECTION"
+  },
+  {
+    "filename": "injection_25_multilingual_override.pdf",
+    "expected_verdict": "SUSPICIOUS",
+    "is_malicious": true,
+    "category": "PROMPT_INJECTION",
+    "description": "Stage 5 test case for category PROMPT_INJECTION"
+  },
+  {
+    "filename": "adv_36_split_span_injection.pdf",
+    "expected_verdict": "SUSPICIOUS",
+    "is_malicious": true,
+    "category": "ADVERSARIAL_EVASION",
+    "description": "Stage 5 test case for category ADVERSARIAL_EVASION"
+  },
+  {
+    "filename": "adv_37_multipage_split_injection.pdf",
+    "expected_verdict": "SUSPICIOUS",
+    "is_malicious": true,
+    "category": "ADVERSARIAL_EVASION",
+    "description": "Stage 5 test case for category ADVERSARIAL_EVASION"
+  },
+  {
+    "filename": "adv_38_code_mixed_attack.pdf",
+    "expected_verdict": "SUSPICIOUS",
+    "is_malicious": true,
+    "category": "ADVERSARIAL_EVASION",
+    "description": "Stage 5 test case for category ADVERSARIAL_EVASION"
+  },
+  {
+    "filename": "adv_39_spanish_override.pdf",
+    "expected_verdict": "SUSPICIOUS",
+    "is_malicious": true,
+    "category": "ADVERSARIAL_EVASION",
+    "description": "Stage 5 test case for category ADVERSARIAL_EVASION"
+  },
+  {
+    "filename": "adv_40_conflicting_instructions.pdf",
+    "expected_verdict": "SUSPICIOUS",
+    "is_malicious": true,
+    "category": "ADVERSARIAL_EVASION",
+    "description": "Stage 5 test case for category ADVERSARIAL_EVASION"
+  },
+  {
+    "filename": "adv_41_ai_generated_adversarial.pdf",
+    "expected_verdict": "HIGH_RISK",
+    "is_malicious": true,
+    "category": "ADVERSARIAL_EVASION",
+    "description": "Stage 5 test case for category ADVERSARIAL_EVASION"
+  },
+  {
+    "filename": "adv_42_base64_obfuscation.pdf",
+    "expected_verdict": "SUSPICIOUS",
+    "is_malicious": true,
+    "category": "ADVERSARIAL_EVASION",
+    "description": "Stage 5 test case for category ADVERSARIAL_EVASION"
+  },
+  {
+    "filename": "adv_43_spaced_letters.pdf",
+    "expected_verdict": "SUSPICIOUS",
+    "is_malicious": true,
+    "category": "ADVERSARIAL_EVASION",
+    "description": "Stage 5 test case for category ADVERSARIAL_EVASION"
+  },
+  {
+    "filename": "adv_44_role_manipulation.pdf",
+    "expected_verdict": "SUSPICIOUS",
+    "is_malicious": true,
+    "category": "ADVERSARIAL_EVASION",
+    "description": "Stage 5 test case for category ADVERSARIAL_EVASION"
+  },
+  {
+    "filename": "adv_45_selection_manipulation.pdf",
+    "expected_verdict": "SUSPICIOUS",
+    "is_malicious": true,
+    "category": "ADVERSARIAL_EVASION",
+    "description": "Stage 5 test case for category ADVERSARIAL_EVASION"
+  },
+  {
+    "filename": "combined_16_hidden_plus_injection.pdf",
+    "expected_verdict": "HIGH_RISK",
+    "is_malicious": true,
+    "category": "COMBINED_ATTACK",
+    "description": "Stage 5 test case for category COMBINED_ATTACK"
+  },
+  {
+    "filename": "combined_17_white_plus_ats.pdf",
+    "expected_verdict": "HIGH_RISK",
+    "is_malicious": true,
+    "category": "COMBINED_ATTACK",
+    "description": "Stage 5 test case for category COMBINED_ATTACK"
+  },
+  {
+    "filename": "combined_18_obfuscation_plus_injection.pdf",
+    "expected_verdict": "SUSPICIOUS",
+    "is_malicious": true,
+    "category": "COMBINED_ATTACK",
+    "description": "Stage 5 test case for category COMBINED_ATTACK"
+  },
+  {
+    "filename": "combined_19_hidden_plus_exfil.pdf",
+    "expected_verdict": "HIGH_RISK",
+    "is_malicious": true,
+    "category": "COMBINED_ATTACK",
+    "description": "Stage 5 test case for category COMBINED_ATTACK"
+  },
+  {
+    "filename": "combined_26_nearby_span_correlation.pdf",
+    "expected_verdict": "HIGH_RISK",
+    "is_malicious": true,
+    "category": "COMBINED_ATTACK",
+    "description": "Stage 5 test case for category COMBINED_ATTACK"
+  },
+  {
+    "filename": "combined_46_white_plus_exfil.pdf",
+    "expected_verdict": "HIGH_RISK",
+    "is_malicious": true,
+    "category": "COMBINED_ATTACK",
+    "description": "Stage 5 test case for category COMBINED_ATTACK"
+  },
+  {
+    "filename": "combined_47_micro_plus_role_override.pdf",
+    "expected_verdict": "HIGH_RISK",
+    "is_malicious": true,
+    "category": "COMBINED_ATTACK",
+    "description": "Stage 5 test case for category COMBINED_ATTACK"
+  },
+  {
+    "filename": "combined_48_offscreen_plus_ats.pdf",
+    "expected_verdict": "HIGH_RISK",
+    "is_malicious": true,
+    "category": "COMBINED_ATTACK",
+    "description": "Stage 5 test case for category COMBINED_ATTACK"
+  },
+  {
+    "filename": "combined_49_unicode_plus_injection.pdf",
+    "expected_verdict": "HIGH_RISK",
+    "is_malicious": true,
+    "category": "COMBINED_ATTACK",
+    "description": "Stage 5 test case for category COMBINED_ATTACK"
+  },
+  {
+    "filename": "combined_50_multi_attack_full_stack.pdf",
+    "expected_verdict": "HIGH_RISK",
+    "is_malicious": true,
+    "category": "COMBINED_ATTACK",
+    "description": "Stage 5 test case for category COMBINED_ATTACK"
+  }
+]

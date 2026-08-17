@@ -1,0 +1,12 @@
+SENIOR PYTHON SECURITY ENGINEER
+OVERVIEW
+We are seeking an experienced Senior Python Security Engineer to build AI document security systems.
+
+RESPONSIBILITIES
+- Design and implement layout-aware PDF parsers.
+- Build prompt injection and visual deception detection engines.
+- Write REST APIs and integration test suites.
+
+REQUIREMENTS
+- 5+ years experience in Python, PyMuPDF, and FastAPI.
+- Deep knowledge of cybersecurity, LLM security, and prompt injection defense.

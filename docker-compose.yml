@@ -1,0 +1,98 @@
+version: '3.8'
+
+services:
+  securoxi-proxy:
+    image: nginx:alpine
+    container_name: securoxi-ingress-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/ssl:/etc/nginx/ssl:ro
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+    depends_on:
+      - securoxi-api
+    networks:
+      - securoxi-bridge
+    restart: unless-stopped
+
+  securoxi-postgres:
+    image: postgres:16-alpine
+    container_name: securoxi-postgres-db
+    environment:
+      - POSTGRES_DB=securoxi
+      - POSTGRES_USER=securoxi_user
+      - POSTGRES_PASSWORD=securoxi_password
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2048M
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U securoxi_user -d securoxi"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - securoxi-bridge
+    restart: unless-stopped
+
+  securoxi-redis:
+    image: redis:7-alpine
+    container_name: securoxi-redis-broker
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1024M
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - securoxi-bridge
+    restart: unless-stopped
+
+  securoxi-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: securoxi-enterprise-app
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2048M
+    environment:
+      - SECUROXI_API_KEY=securoxi-enterprise-key
+      - DATABASE_URL=postgresql://securoxi_user:securoxi_password@securoxi-postgres:5432/securoxi
+      - REDIS_URL=redis://securoxi-redis:6379/0
+      - EVENT_BUS_PROVIDER=redis
+      - SECUROXI_DB_PATH=/app/securoxi.db
+      - ALLOWED_ORIGINS=https://app.securoxi.com,https://localhost
+    depends_on:
+      securoxi-postgres:
+        condition: service_healthy
+      securoxi-redis:
+        condition: service_healthy
+    volumes:
+      - securoxi-data:/app
+    networks:
+      - securoxi-bridge
+    restart: unless-stopped
+
+networks:
+  securoxi-bridge:
+    driver: bridge
+
+volumes:
+  securoxi-data:
+  postgres-data:
