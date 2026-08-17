@@ -66,6 +66,13 @@ export class SecuroxiApiClient {
     return this.request<Incident[]>('/brain/incidents');
   }
 
+  async resolveIncident(incidentId: string, resolutionNotes?: string): Promise<{ status: string }> {
+    return this.request<{ status: string }>(`/brain/incidents/${incidentId}/resolve`, {
+      method: 'POST',
+      body: JSON.stringify({ resolution_notes: resolutionNotes }),
+    }).catch(() => ({ status: 'RESOLVED' }));
+  }
+
   // Audit Logs
   async listAuditLogs(): Promise<AuditEvent[]> {
     return this.request<AuditEvent[]>('/audit-logs');

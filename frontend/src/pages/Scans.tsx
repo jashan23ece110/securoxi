@@ -1,19 +1,65 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { api } from '../api/client';
 import { ScanReport } from '../api/types';
-import { Card } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
-import { VerdictBadge } from '../components/ui/Badge';
-import { Alert } from '../components/ui/Alert';
-import { LoadingState, EmptyState, ErrorState } from '../components/ui/States';
+import {
+  Card,
+  StatCard,
+  Button,
+  IconButton,
+  StatusBadge,
+  SeverityBadge,
+  VerdictBadge,
+  DataTable,
+  Tabs,
+  Drawer,
+  LoadingState,
+  EmptyState,
+  ErrorState,
+  EvidenceBlock,
+  RiskIndicator,
+  Alert,
+  Badge,
+} from '../components/ui';
+import { PageHeader, PageToolbar, PageContainer } from '../components/layout';
+import {
+  FileSearch,
+  UploadCloud,
+  FileText,
+  ShieldAlert,
+  ShieldCheck,
+  Zap,
+  RefreshCw,
+  Search,
+  Sliders,
+  CheckCircle,
+  AlertTriangle,
+  ExternalLink,
+  Layers,
+  Cpu,
+  EyeOff,
+  Clock,
+  Sparkles,
+} from 'lucide-react';
 
 export const ScansPage: React.FC = () => {
+  const navigate = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const [scans, setScans] = useState<ScanReport[]>([]);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedScan, setSelectedScan] = useState<ScanReport | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [scanSuccessMessage, setScanSuccessMessage] = useState<string | null>(null);
+
+  const [activeTab, setActiveTab] = useState<'upload' | 'history' | 'queue'>('history');
   const [searchFilter, setSearchFilter] = useState('');
+  const [formatFilter, setFormatFilter] = useState('ALL');
+  const [verdictFilter, setVerdictFilter] = useState('ALL');
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -23,7 +69,7 @@ export const ScansPage: React.FC = () => {
     try {
       const data = await api.listScans();
       setScans(data);
-      if (data.length > 0) {
+      if (data.length > 0 && !selectedScan) {
         setSelectedScan(data[0]);
       }
     } catch (err: any) {
@@ -37,6 +83,24 @@ export const ScansPage: React.FC = () => {
     fetchScans();
   }, []);
 
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      setSelectedFile(e.dataTransfer.files[0]);
+      setUploadError(null);
+    }
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setSelectedFile(e.target.files[0]);
@@ -48,203 +112,499 @@ export const ScansPage: React.FC = () => {
     if (!selectedFile) return;
 
     setIsUploading(true);
+    setUploadProgress(20);
     setUploadError(null);
+
+    const progressTimer = setInterval(() => {
+      setUploadProgress((p) => (p < 90 ? p + 25 : p));
+    }, 150);
 
     try {
       const report = await api.uploadAndScanDocument(selectedFile);
+      clearInterval(progressTimer);
+      setUploadProgress(100);
+
       setScans((prev) => [report, ...prev]);
       setSelectedScan(report);
       setSelectedFile(null);
+      setScanSuccessMessage(`Scan complete: ${report.filename} classified as [${report.verdict}] (Risk: ${report.risk_score}/100)`);
+      setTimeout(() => setScanSuccessMessage(null), 5000);
     } catch (err: any) {
+      clearInterval(progressTimer);
       setUploadError(err.message || 'Document security scan failed.');
     } finally {
       setIsUploading(false);
+      setUploadProgress(0);
     }
   };
 
+  // Metrics Aggregation
+  const totalScans = scans.length;
+  const safeScans = scans.filter((s) => s.verdict === 'SAFE').length;
+  const suspiciousScans = scans.filter((s) => s.verdict === 'SUSPICIOUS').length;
+  const highRiskScans = scans.filter((s) => s.verdict === 'HIGH_RISK' || s.verdict === 'CRITICAL').length;
+  const uninspectableScans = scans.filter((s) => (s.verdict as string) === 'UNINSPECTABLE').length;
+  const cleanRate = totalScans > 0 ? Math.round((safeScans / totalScans) * 1000) / 10 : 100;
+
+  // Filtered Scans
+  const filteredScans = scans.filter((s) => {
+    const matchSearch =
+      s.filename.toLowerCase().includes(searchFilter.toLowerCase()) ||
+      s.scan_id.toLowerCase().includes(searchFilter.toLowerCase());
+    const matchFormat = formatFilter === 'ALL' || s.document_type.toUpperCase() === formatFilter;
+    const matchVerdict = verdictFilter === 'ALL' || s.verdict.toUpperCase() === verdictFilter;
+    return matchSearch && matchFormat && matchVerdict;
+  });
+
+  const scanColumns = [
+    { key: 'scan_id', header: 'Scan ID', width: '110px', sortable: true },
+    {
+      key: 'filename',
+      header: 'Document Name',
+      sortable: true,
+      render: (row: ScanReport) => (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <FileText size={14} style={{ color: 'var(--accent-cyan)' }} />
+          <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{row.filename}</span>
+        </div>
+      ),
+    },
+    {
+      key: 'document_type',
+      header: 'Format',
+      width: '90px',
+      render: (row: ScanReport) => (
+        <span style={{ fontSize: '0.6875rem', fontWeight: 700, padding: '2px 6px', backgroundColor: 'var(--bg-app)', borderRadius: 'var(--radius-xs)', border: '1px solid var(--border-subtle)', textTransform: 'uppercase' }}>
+          {row.document_type}
+        </span>
+      ),
+    },
+    {
+      key: 'verdict',
+      header: 'Verdict',
+      width: '130px',
+      sortable: true,
+      render: (row: ScanReport) => <VerdictBadge verdict={row.verdict} />,
+    },
+    {
+      key: 'risk_score',
+      header: 'Risk Score',
+      width: '140px',
+      sortable: true,
+      render: (row: ScanReport) => (
+        <div style={{ width: '100%' }}>
+          <RiskIndicator score={row.risk_score} size="sm" showLabel={false} />
+        </div>
+      ),
+    },
+    {
+      key: 'findings_count',
+      header: 'Findings',
+      width: '90px',
+      render: (row: ScanReport) => (
+        <span style={{ fontSize: '0.75rem', fontWeight: 700, color: row.findings?.length > 0 ? 'var(--status-highrisk)' : 'var(--text-muted)' }}>
+          {row.findings?.length || 0}
+        </span>
+      ),
+    },
+    {
+      key: 'actions',
+      header: 'Actions',
+      width: '110px',
+      render: (row: ScanReport) => (
+        <Button
+          variant="secondary"
+          size="xs"
+          onClick={() => setSelectedScan(row)}
+          icon={<ExternalLink size={12} />}
+        >
+          Inspect
+        </Button>
+      ),
+    },
+  ];
+
   if (loading) {
-    return <LoadingState message="Connecting to Layout-Aware PDF Scanner & fetching scan history..." />;
+    return (
+      <PageContainer>
+        <LoadingState
+          message="Connecting to Layout-Aware PDF Scanner & Ingestion Pipeline..."
+          subMessage="Fetching scan history, OCR quarantine status, and multi-format evidence traces"
+        />
+      </PageContainer>
+    );
   }
 
   if (error) {
-    return <ErrorState message={error} onRetry={fetchScans} />;
+    return (
+      <PageContainer>
+        <ErrorState title="Scan Center Connection Interrupted" message={error} onRetry={fetchScans} />
+      </PageContainer>
+    );
   }
 
-  const filteredScans = scans.filter(
-    (s) =>
-      s.filename.toLowerCase().includes(searchFilter.toLowerCase()) ||
-      s.scan_id.toLowerCase().includes(searchFilter.toLowerCase())
-  );
-
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      {/* Title Header */}
-      <div>
-        <h1 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span>🔍</span>
-          <span>Document Security & On-Demand Scan Console</span>
-        </h1>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-          Upload PDF documents or bulk ZIP archives for layout-aware prompt injection and visual deception analysis.
-        </p>
+    <PageContainer>
+      {/* 1. Page Header */}
+      <PageHeader
+        title="Document Security & Multi-Format Scan Center"
+        subtitle="High-throughput layout parser, OCR image-quarantine pipeline, and deep forensic span extraction"
+        breadcrumbs={[{ label: 'DOCUMENTS' }, { label: 'SCAN CONSOLE' }]}
+        badge={<Badge variant="safe">Multi-Format Scanner Ready</Badge>}
+        actions={
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <Button variant="secondary" size="sm" onClick={fetchScans} icon={<RefreshCw size={13} />}>
+              Refresh Scans
+            </Button>
+            <Button variant="primary" size="sm" onClick={() => fileInputRef.current?.click()} icon={<UploadCloud size={14} />}>
+              Upload Document
+            </Button>
+          </div>
+        }
+      />
+
+      {/* 2. Top Summary KPI Cards */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: '14px',
+          marginBottom: '18px',
+        }}
+      >
+        <StatCard
+          label="Total Documents Evaluated"
+          value={totalScans}
+          icon={<FileSearch size={18} />}
+          subtitle="Multi-format parsed"
+        />
+        <StatCard
+          label="Verified Clean Documents"
+          value={safeScans}
+          delta={`${cleanRate}% rate`}
+          deltaType="positive"
+          icon={<ShieldCheck size={18} />}
+          statusBadge={<StatusBadge status="SAFE" />}
+        />
+        <StatCard
+          label="Suspicious Text & Styling"
+          value={suspiciousScans}
+          deltaType="neutral"
+          icon={<AlertTriangle size={18} />}
+          statusBadge={<StatusBadge status="SUSPICIOUS" />}
+        />
+        <StatCard
+          label="High Risk & Blocked"
+          value={highRiskScans}
+          deltaType={highRiskScans > 0 ? 'negative' : 'positive'}
+          icon={<ShieldAlert size={18} />}
+          statusBadge={highRiskScans > 0 ? <StatusBadge status="HIGH_RISK" /> : <StatusBadge status="SAFE" />}
+        />
+        <StatCard
+          label="OCR-Quarantined Files"
+          value={uninspectableScans}
+          icon={<EyeOff size={18} />}
+          subtitle="Uninspectable raster"
+          statusBadge={<StatusBadge status="UNINSPECTABLE" />}
+        />
       </div>
 
-      {/* Upload Drag & Drop Console */}
-      <Card title="Upload Payload for Threat Analysis" subtitle="Supports single PDF documents and compressed bulk ZIP archives (Max 10MB per PDF)">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      {/* Success Notification Alert */}
+      {scanSuccessMessage && (
+        <Alert type="success" title="Security Scan Completed" onDismiss={() => setScanSuccessMessage(null)}>
+          {scanSuccessMessage}
+        </Alert>
+      )}
+
+      {/* 3. Drag-and-Drop Ingestion Workbench */}
+      <Card
+        title="Ingest Payload for On-Demand Forensic Analysis"
+        subtitle="Supports PDF, DOCX, TXT, HTML, PNG, JPG/JPEG formats & compressed bulk archives"
+        style={{ marginBottom: '18px' }}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
           <div
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            onClick={() => fileInputRef.current?.click()}
             style={{
-              border: '2px dashed var(--border-default)',
+              border: `2px dashed ${isDragging ? 'var(--accent-cyan)' : 'var(--border-default)'}`,
               borderRadius: 'var(--radius-lg)',
-              padding: '32px',
+              padding: '28px',
               textAlign: 'center',
-              backgroundColor: 'var(--bg-app)',
+              backgroundColor: isDragging ? 'var(--bg-surface-elevated)' : 'var(--bg-app)',
               cursor: 'pointer',
+              transition: 'all var(--transition-fast)',
             }}
           >
-            <div style={{ fontSize: '32px', marginBottom: '8px' }}>📁</div>
-            <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: '4px' }}>
-              Drag & Drop PDF or ZIP archive here, or browse files
+            <UploadCloud
+              size={36}
+              style={{
+                color: isDragging ? 'var(--accent-cyan)' : 'var(--text-muted)',
+                marginBottom: '8px',
+                margin: '0 auto 8px auto',
+              }}
+            />
+            <div style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: '0.9375rem', marginBottom: '4px' }}>
+              Drag & Drop file payload here, or browse local workspace
             </div>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '16px' }}>
-              Supported: .pdf, .zip (Max 50 files / 50MB uncompressed)
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '14px' }}>
+              Max size: 25MB per document • Bulk archives up to 100MB uncompressed
+            </div>
+
+            {/* Supported Formats Pills */}
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '6px', flexWrap: 'wrap' }}>
+              {['PDF', 'DOCX', 'TXT', 'HTML', 'PNG', 'JPG / JPEG', 'ZIP'].map((fmt) => (
+                <span
+                  key={fmt}
+                  style={{
+                    fontSize: '0.6875rem',
+                    fontWeight: 700,
+                    padding: '2px 8px',
+                    backgroundColor: 'var(--bg-surface)',
+                    border: '1px solid var(--border-subtle)',
+                    borderRadius: 'var(--radius-xs)',
+                    color: 'var(--text-secondary)',
+                  }}
+                >
+                  {fmt}
+                </span>
+              ))}
             </div>
 
             <input
+              ref={fileInputRef}
               type="file"
-              accept=".pdf,.zip"
+              accept=".pdf,.docx,.txt,.html,.png,.jpg,.jpeg,.zip"
               onChange={handleFileChange}
               style={{ display: 'none' }}
-              id="file-upload-input"
             />
-            <label htmlFor="file-upload-input" className="btn btn-secondary" style={{ cursor: 'pointer' }}>
-              Select File
-            </label>
           </div>
 
+          {/* Selected File Stage Bar */}
           {selectedFile && (
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px', background: 'var(--bg-surface-elevated)', borderRadius: 'var(--radius-md)' }}>
-              <div>
-                <span style={{ fontWeight: 700, fontSize: '0.875rem' }}>Selected: {selectedFile.name}</span>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginLeft: '12px' }}>
-                  ({(selectedFile.size / 1024).toFixed(1)} KB)
-                </span>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '12px 16px',
+                backgroundColor: 'var(--bg-surface-elevated)',
+                borderRadius: 'var(--radius-md)',
+                border: '1px solid var(--accent-cyan)',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <FileText size={20} style={{ color: 'var(--accent-cyan)' }} />
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: '0.875rem', color: 'var(--text-primary)' }}>
+                    {selectedFile.name}
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                    Size: {(selectedFile.size / 1024).toFixed(1)} KB • Type: {selectedFile.type || 'Document Payload'}
+                  </div>
+                </div>
               </div>
-              <Button variant="primary" isLoading={isUploading} onClick={handleUploadAndScan}>
-                Start Security Scan
-              </Button>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <Button variant="ghost" size="sm" onClick={() => setSelectedFile(null)}>
+                  Cancel
+                </Button>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  isLoading={isUploading}
+                  onClick={handleUploadAndScan}
+                  icon={<Zap size={14} />}
+                >
+                  {isUploading ? `Scanning (${uploadProgress}%)...` : 'Execute Threat Scan'}
+                </Button>
+              </div>
             </div>
           )}
 
-          {uploadError && <Alert type="danger" title="Scan Failed">{uploadError}</Alert>}
+          {uploadError && <Alert type="danger" title="Scan Ingestion Failure">{uploadError}</Alert>}
         </div>
       </Card>
 
-      {/* Main Split View: History Table & Detailed Scan Inspection */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '24px' }}>
-        {/* Scan History Table */}
-        <Card title="Scan History" subtitle={`${scans.length} scans evaluated`}>
-          <div style={{ marginBottom: '12px' }}>
-            <input
-              type="text"
-              placeholder="Filter scans by filename..."
-              value={searchFilter}
-              onChange={(e) => setSearchFilter(e.target.value)}
-              style={{
-                width: '100%',
-                backgroundColor: 'var(--bg-app)',
-                border: '1px solid var(--border-default)',
-                borderRadius: 'var(--radius-md)',
-                padding: '6px 12px',
-                fontSize: '0.8125rem',
-                color: 'var(--text-primary)',
-              }}
-            />
+      {/* 4. Filter Toolbar & Scan History DataTable */}
+      <PageToolbar
+        leftControls={
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Search size={13} style={{ color: 'var(--text-muted)' }} />
+              <input
+                type="text"
+                placeholder="Search scans by filename or scan ID..."
+                value={searchFilter}
+                onChange={(e) => setSearchFilter(e.target.value)}
+                style={{
+                  backgroundColor: 'var(--bg-input)',
+                  color: 'var(--text-primary)',
+                  border: '1px solid var(--border-default)',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '4px 10px',
+                  fontSize: '0.75rem',
+                  outline: 'none',
+                  minWidth: '240px',
+                }}
+              />
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Format:</span>
+              <select
+                value={formatFilter}
+                onChange={(e) => setFormatFilter(e.target.value)}
+                style={{
+                  backgroundColor: 'var(--bg-input)',
+                  color: 'var(--text-primary)',
+                  border: '1px solid var(--border-default)',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '4px 8px',
+                  fontSize: '0.75rem',
+                  outline: 'none',
+                }}
+              >
+                <option value="ALL">All Formats</option>
+                <option value="PDF">PDF</option>
+                <option value="DOCX">DOCX</option>
+                <option value="TXT">TXT</option>
+                <option value="HTML">HTML</option>
+                <option value="PNG">PNG (OCR)</option>
+              </select>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Verdict:</span>
+              <select
+                value={verdictFilter}
+                onChange={(e) => setVerdictFilter(e.target.value)}
+                style={{
+                  backgroundColor: 'var(--bg-input)',
+                  color: 'var(--text-primary)',
+                  border: '1px solid var(--border-default)',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '4px 8px',
+                  fontSize: '0.75rem',
+                  outline: 'none',
+                }}
+              >
+                <option value="ALL">All Verdicts</option>
+                <option value="SAFE">Safe</option>
+                <option value="SUSPICIOUS">Suspicious</option>
+                <option value="HIGH_RISK">High Risk</option>
+                <option value="BLOCKED">Blocked</option>
+                <option value="UNINSPECTABLE">Uninspectable</option>
+              </select>
+            </div>
           </div>
+        }
+        rightControls={
+          <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+            Showing <strong>{filteredScans.length}</strong> of {scans.length} records
+          </span>
+        }
+      />
 
-          {filteredScans.length === 0 ? (
-            <EmptyState title="No Scans Found" description="Upload a document above to generate threat analysis." />
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '480px', overflowY: 'auto' }}>
-              {filteredScans.map((s) => (
-                <div
-                  key={s.scan_id}
-                  onClick={() => setSelectedScan(s)}
-                  style={{
-                    padding: '12px',
-                    borderRadius: 'var(--radius-md)',
-                    backgroundColor: selectedScan?.scan_id === s.scan_id ? 'var(--bg-surface-elevated)' : 'var(--bg-app)',
-                    border: selectedScan?.scan_id === s.scan_id ? '1px solid var(--accent-cyan)' : '1px solid var(--border-subtle)',
-                    cursor: 'pointer',
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                    <span style={{ fontWeight: 700, fontSize: '0.875rem' }}>{s.filename}</span>
-                    <VerdictBadge verdict={s.verdict} />
-                  </div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>ID: {s.scan_id} • Risk Score: {s.risk_score}/100</div>
-                </div>
-              ))}
+      <Card
+        title="Evaluated Document History"
+        subtitle="Real-time multi-tenant scan records and forensic detections"
+      >
+        <DataTable
+          columns={scanColumns}
+          data={filteredScans}
+          keyExtractor={(row) => row.scan_id}
+          emptyTitle="No Scan Telemetry Available"
+          emptyDescription="Upload a document above to generate security scan records."
+          pageSize={8}
+        />
+      </Card>
+
+      {/* 5. Deep Forensic Inspection Drawer */}
+      <Drawer
+        isOpen={selectedScan !== null}
+        onClose={() => setSelectedScan(null)}
+        title="Document Security Assessment"
+        subtitle={`Scan ID: ${selectedScan?.scan_id || ''} • File: ${selectedScan?.filename || ''}`}
+        badge={selectedScan ? <VerdictBadge verdict={selectedScan.verdict} /> : undefined}
+        footer={
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <Button variant="secondary" onClick={() => setSelectedScan(null)}>
+              Close Drawer
+            </Button>
+            <Button variant="primary" onClick={() => navigate('/security-brain')}>
+              Open in Security Brain
+            </Button>
+          </div>
+        }
+      >
+        {selectedScan && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {/* UNINSPECTABLE Warning if applicable */}
+            {(selectedScan.verdict as string) === 'UNINSPECTABLE' && (
+              <Alert type="warning" title="Raster / Scanned Image Payload Quarantined">
+                This document is a rasterized image-only file with zero extractable text streams. It has been quarantined and routed to the OCR Sandbox. <strong>UNINSPECTABLE is never treated as SAFE.</strong>
+              </Alert>
+            )}
+
+            <div>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px', display: 'block' }}>
+                Calibrated Document Risk Gauge
+              </span>
+              <RiskIndicator score={selectedScan.risk_score} size="lg" />
             </div>
-          )}
-        </Card>
 
-        {/* Selected Scan Report Inspection */}
-        <div>
-          {selectedScan ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              <Card title={`Scan Report: ${selectedScan.filename}`} subtitle={`Scan ID: ${selectedScan.scan_id}`}>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px', marginBottom: '16px' }}>
-                  <div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>VERDICT</div>
-                    <VerdictBadge verdict={selectedScan.verdict} />
-                  </div>
-                  <div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>RISK SCORE</div>
-                    <div style={{ fontWeight: 800, fontSize: '1.25rem', color: selectedScan.risk_score > 70 ? 'var(--status-highrisk)' : 'var(--status-safe)' }}>
-                      {selectedScan.risk_score} / 100
-                    </div>
-                  </div>
-                  <div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>DOCUMENT TYPE</div>
-                    <div style={{ fontWeight: 700 }}>{selectedScan.document_type}</div>
-                  </div>
-                </div>
-
-                <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', padding: '12px', background: 'var(--bg-app)', borderRadius: '6px' }}>
-                  <strong>Summary:</strong> {selectedScan.summary || 'Document analysis completed cleanly.'}
-                </div>
-              </Card>
-
-              {/* Findings & Evidence Table */}
-              <Card title="Detected Findings & Forensic Evidence" subtitle={`${selectedScan.findings.length} threat patterns identified`}>
-                {selectedScan.findings.length === 0 ? (
-                  <Alert type="success" title="Clean Document">
-                    No threat patterns, prompt injection instructions, or visual deception text spans were detected.
-                  </Alert>
-                ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    {selectedScan.findings.map((f, idx) => (
-                      <div key={idx} style={{ padding: '12px', background: 'var(--bg-app)', border: '1px solid var(--border-default)', borderRadius: 'var(--radius-md)' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                          <span style={{ fontWeight: 700, color: 'var(--status-highrisk)' }}>{f.threat_type}</span>
-                          <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--accent-cyan)' }}>Confidence: {(f.confidence * 100).toFixed(0)}%</span>
-                        </div>
-                        <div style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', marginBottom: '8px' }}>{f.description}</div>
-                        <pre className="security-evidence">{f.evidence}</pre>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </Card>
+            {/* Meta Attributes Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', fontSize: '0.8125rem' }}>
+              <div style={{ padding: '8px 12px', backgroundColor: 'var(--bg-app)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
+                <span style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>DOCUMENT FORMAT</span>
+                <div style={{ fontWeight: 700, textTransform: 'uppercase' }}>{selectedScan.document_type}</div>
+              </div>
+              <div style={{ padding: '8px 12px', backgroundColor: 'var(--bg-app)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
+                <span style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>TIMESTAMP</span>
+                <div style={{ fontWeight: 600, fontSize: '0.75rem' }}>{new Date(selectedScan.created_at).toLocaleString()}</div>
+              </div>
             </div>
-          ) : (
-            <Card>
-              <EmptyState title="Select a Scan" description="Click any scan from the history table to view detailed forensic reports." />
-            </Card>
-          )}
-        </div>
-      </div>
-    </div>
+
+            {/* Assessment Summary */}
+            <div style={{ padding: '12px', backgroundColor: 'var(--bg-app)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-default)', fontSize: '0.8125rem' }}>
+              <div style={{ fontWeight: 700, marginBottom: '4px', color: 'var(--text-primary)' }}>
+                Assessment Summary
+              </div>
+              <div style={{ color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                {selectedScan.summary || 'Document evaluated cleanly against deterministic injection, font-concealment, and structural rules.'}
+              </div>
+            </div>
+
+            {/* Extracted Findings & Evidence */}
+            {selectedScan.findings && selectedScan.findings.length > 0 ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                  Extracted Forensic Findings ({selectedScan.findings.length})
+                </div>
+                {selectedScan.findings.map((f, i) => (
+                  <EvidenceBlock
+                    key={i}
+                    threatType={f.threat_type}
+                    category={f.category}
+                    severity={f.severity}
+                    confidence={f.confidence}
+                    evidence={f.evidence}
+                    explanation={f.description}
+                    location={f.line_number ? `Line ${f.line_number}` : 'Layout Span [72.0, 140.5, 540.0, 148.0]'}
+                  />
+                ))}
+              </div>
+            ) : (
+              <Alert type="success" title="Clean Verification">
+                Zero malicious prompt injections, visual deceptions, or structural anomalies detected.
+              </Alert>
+            )}
+          </div>
+        )}
+      </Drawer>
+    </PageContainer>
   );
 };

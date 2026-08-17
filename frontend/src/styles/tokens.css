@@ -1,85 +1,147 @@
-/* SECUROXI Enterprise Design System Tokens — Dark-First Technical Experience */
+/* ==========================================================================
+   SECUROXI AI Enterprise Design System Tokens
+   Dark-First Technical Security Experience
+   Inspired by: uiverse.io, fffuel.co, iconbuddy.com, webgradients.com
+   ========================================================================== */
 
 :root {
-  /* Color Palette - Security Dark Theme */
-  --bg-app: #090D16;
-  --bg-surface: #0F172A;
-  --bg-surface-elevated: #1E293B;
-  --bg-surface-hover: #334155;
+  /* Surface & Background Hierarchy */
+  --bg-app: #070B12;                /* Deepest canvas background */
+  --bg-surface: #0C121E;            /* Standard component & card surface */
+  --bg-surface-elevated: #121A2B;   /* Elevated panels, dropdowns, active rows */
+  --bg-surface-hover: #18233A;      /* Hover states on interactive surfaces */
+  --bg-surface-active: #1F2D4A;     /* Pressed / active selection states */
+  --bg-input: #090E17;              /* Textbox, search & form inputs */
+  --bg-overlay: rgba(3, 7, 18, 0.82); /* Modal and drawer backdrop overlay */
 
-  /* Border Tokens */
-  --border-subtle: #1E293B;
-  --border-default: #334155;
-  --border-strong: #475569;
-  --border-accent: #38BDF8;
+  /* Border & Divider Tokens */
+  --border-subtle: #141E32;         /* Lowest contrast borders for internal dividers */
+  --border-default: #1E2D4A;        /* Standard card and container borders */
+  --border-strong: #2E426B;         /* High visibility borders, active tab underlines */
+  --border-focus: #06B6D4;          /* Accessible focus ring color */
+  --border-glow-cyan: rgba(6, 182, 212, 0.4);
+  --border-glow-red: rgba(239, 68, 68, 0.4);
 
-  /* Text Color Hierarchy */
-  --text-primary: #F8FAFC;
-  --text-secondary: #94A3B8;
-  --text-muted: #64748B;
-  --text-code: #38BDF8;
+  /* Typography Colors */
+  --text-primary: #F8FAFC;          /* Primary headers, values, active text */
+  --text-secondary: #94A3B8;        /* Supporting text, descriptions, table headers */
+  --text-muted: #64748B;            /* Micro-copy, timestamps, disabled indicators */
+  --text-disabled: #475569;         /* Disabled buttons and inactive controls */
+  --text-code: #38BDF8;             /* Syntax highlighted code and token strings */
+  --text-inverse: #030712;          /* Text on solid light / accent backgrounds */
 
-  /* Accent & Status Colors */
-  --accent-cyan: #06B6D4;
-  --accent-indigo: #6366F1;
+  /* Brand & Core Accents */
+  --accent-cyan: #06B6D4;           /* Primary technical accent */
+  --accent-cyan-hover: #0891B2;
+  --accent-cyan-bg: rgba(6, 182, 212, 0.12);
   --accent-blue: #38BDF8;
+  --accent-indigo: #6366F1;
+  --accent-indigo-hover: #4F46E5;
+  --accent-indigo-bg: rgba(99, 102, 241, 0.14);
 
-  /* Security Status Tokens */
+  /* Restrained Technical Accent Gradients (WebGradients Inspiration) */
+  --grad-cyan-glow: linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%);
+  --grad-surface-subtle: linear-gradient(180deg, #0E1524 0%, #0A0F1A 100%);
+  --grad-threat-critical: linear-gradient(135deg, #DC2626 0%, #991B1B 100%);
+  --grad-safe-emerald: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  --grad-brain-pulse: linear-gradient(135deg, #6366F1 0%, #06B6D4 100%);
+
+  /* Standardized Security Status Tokens */
   --status-safe: #10B981;
   --status-safe-bg: rgba(16, 185, 129, 0.12);
+  --status-safe-border: rgba(16, 185, 129, 0.35);
+
   --status-suspicious: #F59E0B;
   --status-suspicious-bg: rgba(245, 158, 11, 0.12);
+  --status-suspicious-border: rgba(245, 158, 11, 0.35);
+
   --status-highrisk: #EF4444;
   --status-highrisk-bg: rgba(239, 68, 68, 0.12);
+  --status-highrisk-border: rgba(239, 68, 68, 0.35);
+
   --status-critical: #DC2626;
   --status-critical-bg: rgba(220, 38, 38, 0.2);
-  --status-blocked: #9333EA;
-  --status-blocked-bg: rgba(147, 51, 234, 0.15);
-  --status-info: #3B82F6;
-  --status-info-bg: rgba(59, 130, 246, 0.12);
+  --status-critical-border: rgba(220, 38, 38, 0.5);
 
-  /* Typography System */
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --status-blocked: #A855F7;
+  --status-blocked-bg: rgba(168, 85, 247, 0.14);
+  --status-blocked-border: rgba(168, 85, 247, 0.4);
+
+  --status-review: #EC4899;
+  --status-review-bg: rgba(236, 72, 153, 0.14);
+  --status-review-border: rgba(236, 72, 153, 0.4);
+
+  --status-allowed: #10B981;
+  --status-allowed-bg: rgba(16, 185, 129, 0.12);
+  --status-allowed-border: rgba(16, 185, 129, 0.35);
+
+  --status-processing: #3B82F6;
+  --status-processing-bg: rgba(59, 130, 246, 0.14);
+  --status-processing-border: rgba(59, 130, 246, 0.4);
+
+  --status-failed: #F87171;
+  --status-failed-bg: rgba(248, 113, 113, 0.14);
+  --status-failed-border: rgba(248, 113, 113, 0.4);
+
+  --status-uninspectable: #D97706;
+  --status-uninspectable-bg: rgba(217, 119, 6, 0.16);
+  --status-uninspectable-border: rgba(217, 119, 6, 0.45);
+
+  --status-info: #38BDF8;
+  --status-info-bg: rgba(56, 189, 248, 0.12);
+  --status-info-border: rgba(56, 189, 248, 0.35);
+
+  /* Typography Scale */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Roboto Mono', Menlo, monospace;
+
+  --text-xs: 0.6875rem; /* 11px */
+  --text-sm: 0.75rem;   /* 12px */
+  --text-base: 0.8125rem; /* 13px */
+  --text-md: 0.875rem;  /* 14px */
+  --text-lg: 1rem;      /* 16px */
+  --text-xl: 1.125rem;  /* 18px */
+  --text-2xl: 1.375rem; /* 22px */
+  --text-3xl: 1.75rem;  /* 28px */
 
   /* Spacing Scale */
-  --space-1: 0.25rem; /* 4px */
-  --space-2: 0.5rem;  /* 8px */
-  --space-3: 0.75rem; /* 12px */
-  --space-4: 1rem;    /* 16px */
-  --space-6: 1.5rem;  /* 24px */
-  --space-8: 2rem;    /* 32px */
-  --space-12: 3rem;   /* 48px */
+  --space-0-5: 0.125rem; /* 2px */
+  --space-1: 0.25rem;    /* 4px */
+  --space-1-5: 0.375rem; /* 6px */
+  --space-2: 0.5rem;     /* 8px */
+  --space-2-5: 0.625rem; /* 10px */
+  --space-3: 0.75rem;    /* 12px */
+  --space-4: 1rem;       /* 16px */
+  --space-5: 1.25rem;    /* 20px */
+  --space-6: 1.5rem;     /* 24px */
+  --space-8: 2rem;       /* 32px */
+  --space-10: 2.5rem;    /* 40px */
+  --space-12: 3rem;      /* 48px */
 
-  /* Radius Scale */
+  /* Restrained Radius Scale */
+  --radius-xs: 2px;
   --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
   --radius-full: 9999px;
 
-  /* Elevation Shadows */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
-  --shadow-glow-cyan: 0 0 20px rgba(6, 182, 212, 0.15);
-  --shadow-glow-red: 0 0 20px rgba(239, 68, 68, 0.15);
-}
+  /* Elevation Shadows (Restrained Dark Theme Depth) */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.45), 0 2px 4px -2px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.55), 0 4px 6px -4px rgba(0, 0, 0, 0.45);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.65), 0 8px 10px -6px rgba(0, 0, 0, 0.55);
 
-/* Global Reset & Base Styles */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+  /* Animation & Transition */
+  --transition-fast: 120ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 180ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 280ms cubic-bezier(0.4, 0, 0.2, 1);
 
-body {
-  font-family: var(--font-sans);
-  background-color: var(--bg-app);
-  color: var(--text-primary);
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-}
-
-code, pre {
-  font-family: var(--font-mono);
+  /* Z-Index Hierarchy */
+  --z-base: 1;
+  --z-sticky: 100;
+  --z-dropdown: 200;
+  --z-drawer: 300;
+  --z-modal: 400;
+  --z-tooltip: 500;
 }

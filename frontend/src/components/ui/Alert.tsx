@@ -1,34 +1,114 @@
 import React from 'react';
+import { AlertTriangle, CheckCircle, Info, XCircle, X } from 'lucide-react';
 
-interface AlertProps {
-  type?: 'info' | 'success' | 'warning' | 'danger';
+export type AlertType = 'info' | 'success' | 'warning' | 'danger' | 'critical';
+
+export interface AlertProps {
+  type?: AlertType;
   title?: string;
   children: React.ReactNode;
+  icon?: React.ReactNode;
+  onDismiss?: () => void;
+  className?: string;
+  style?: React.CSSProperties;
 }
 
-export const Alert: React.FC<AlertProps> = ({ type = 'info', title, children }) => {
-  const styles: Record<string, { bg: string; border: string; text: string }> = {
-    info: { bg: 'rgba(59, 130, 246, 0.1)', border: '#3B82F6', text: '#93C5FD' },
-    success: { bg: 'rgba(16, 185, 129, 0.1)', border: '#10B981', text: '#6EE7B7' },
-    warning: { bg: 'rgba(245, 158, 11, 0.1)', border: '#F59E0B', text: '#FDE68A' },
-    danger: { bg: 'rgba(239, 68, 68, 0.1)', border: '#EF4444', text: '#FCA5A5' },
+export const Alert: React.FC<AlertProps> = ({
+  type = 'info',
+  title,
+  children,
+  icon,
+  onDismiss,
+  className = '',
+  style,
+}) => {
+  const configMap: Record<
+    AlertType,
+    { bg: string; border: string; text: string; defaultIcon: React.ReactNode }
+  > = {
+    info: {
+      bg: 'var(--status-info-bg)',
+      border: 'var(--status-info)',
+      text: '#BAE6FD',
+      defaultIcon: <Info size={16} color="var(--status-info)" />,
+    },
+    success: {
+      bg: 'var(--status-safe-bg)',
+      border: 'var(--status-safe)',
+      text: '#A7F3D0',
+      defaultIcon: <CheckCircle size={16} color="var(--status-safe)" />,
+    },
+    warning: {
+      bg: 'var(--status-suspicious-bg)',
+      border: 'var(--status-suspicious)',
+      text: '#FDE68A',
+      defaultIcon: <AlertTriangle size={16} color="var(--status-suspicious)" />,
+    },
+    danger: {
+      bg: 'var(--status-highrisk-bg)',
+      border: 'var(--status-highrisk)',
+      text: '#FECACA',
+      defaultIcon: <XCircle size={16} color="var(--status-highrisk)" />,
+    },
+    critical: {
+      bg: 'var(--status-critical-bg)',
+      border: 'var(--status-critical)',
+      text: '#FCA5A5',
+      defaultIcon: <XCircle size={16} color="var(--status-critical)" />,
+    },
   };
 
-  const s = styles[type];
+  const config = configMap[type] || configMap.info;
 
   return (
     <div
+      role="alert"
+      className={className}
       style={{
-        backgroundColor: s.bg,
-        borderLeft: `4px solid ${s.border}`,
+        backgroundColor: config.bg,
+        border: `1px solid ${config.border}`,
+        borderLeft: `4px solid ${config.border}`,
         borderRadius: 'var(--radius-md)',
-        padding: 'var(--space-4)',
-        marginBottom: 'var(--space-4)',
-        color: s.text,
+        padding: '12px 16px',
+        display: 'flex',
+        alignItems: 'flex-start',
+        gap: '12px',
+        position: 'relative',
+        ...style,
       }}
     >
-      {title && <div style={{ fontWeight: 700, marginBottom: '4px' }}>{title}</div>}
-      <div style={{ fontSize: '0.875rem' }}>{children}</div>
+      <div style={{ flexShrink: 0, marginTop: '2px' }}>
+        {icon || config.defaultIcon}
+      </div>
+
+      <div style={{ flex: 1, color: config.text }}>
+        {title && (
+          <div style={{ fontWeight: 700, fontSize: '0.875rem', marginBottom: '2px' }}>
+            {title}
+          </div>
+        )}
+        <div style={{ fontSize: '0.8125rem', lineHeight: 1.5, color: config.text }}>
+          {children}
+        </div>
+      </div>
+
+      {onDismiss && (
+        <button
+          onClick={onDismiss}
+          aria-label="Dismiss alert"
+          style={{
+            background: 'none',
+            border: 'none',
+            color: config.text,
+            cursor: 'pointer',
+            opacity: 0.7,
+            padding: '2px',
+            display: 'flex',
+          }}
+        >
+          <X size={14} />
+        </button>
+      )}
     </div>
   );
 };

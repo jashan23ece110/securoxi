@@ -1,20 +1,18 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppShell } from './components/layout/AppShell';
+import { OverviewPage } from './pages/Overview';
+import { SecurityBrainPage } from './pages/SecurityBrain';
+import { IncidentsPage } from './pages/Incidents';
+import { ScansPage } from './pages/Scans';
+import { ScreeningPage } from './pages/Screening';
+import { MonitoringPage } from './pages/Monitoring';
+import { PoliciesPage } from './pages/Policies';
+import { AuditPage } from './pages/Audit';
+import { SettingsPage } from './pages/Settings';
+import { DocumentsPage } from './pages/Documents';
+import { ATSPage } from './pages/ATS';
 import { DesignSystemShowcase } from './pages/DesignSystemShowcase';
-import {
-  OverviewPage,
-  SecurityBrainPage,
-  IncidentsPage,
-  DocumentsPage,
-  ScansPage,
-  ScreeningPage,
-  AtsPage,
-  MonitoringPage,
-  PoliciesPage,
-  AuditPage,
-  SettingsPage,
-} from './pages/Placeholders';
 
 export const App: React.FC = () => {
   return (
@@ -25,10 +23,10 @@ export const App: React.FC = () => {
           <Route path="/overview" element={<OverviewPage />} />
           <Route path="/security-brain" element={<SecurityBrainPage />} />
           <Route path="/incidents" element={<IncidentsPage />} />
-          <Route path="/documents" element={<DocumentsPage />} />
           <Route path="/scans" element={<ScansPage />} />
+          <Route path="/documents" element={<DocumentsPage />} />
           <Route path="/screening" element={<ScreeningPage />} />
-          <Route path="/ats" element={<AtsPage />} />
+          <Route path="/ats" element={<ATSPage />} />
           <Route path="/monitoring" element={<MonitoringPage />} />
           <Route path="/policies" element={<PoliciesPage />} />
           <Route path="/audit" element={<AuditPage />} />
