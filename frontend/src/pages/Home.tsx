@@ -347,10 +347,7 @@ export const HomePage: React.FC = () => {
 
           {/* Card B: Scan Folder */}
           <div
-            onClick={() => {
-              setFileQueue([]);
-              folderInputRef.current?.click();
-            }}
+            onClick={() => navigate('/scan-folder')}
             style={{
               padding: '24px 20px',
               backgroundColor: 'var(--bg-surface)',

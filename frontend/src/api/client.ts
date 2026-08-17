@@ -130,6 +130,47 @@ export class SecuroxiApiClient {
     return this.request<Record<string, any>>('/health');
   }
 
+  async bulkScanFiles(files: File[]): Promise<{
+    total_files: number;
+    safe: number;
+    suspicious: number;
+    high_risk: number;
+    uninspectable?: number;
+    results: ScanReport[];
+  }> {
+    const formData = new FormData();
+    files.forEach((file) => formData.append('files', file));
+
+    const res = await fetch(`${API_BASE}/scan/bulk`, {
+      method: 'POST',
+      headers: {
+        'X-API-Key': this.apiKey,
+        'X-Tenant-ID': this.tenantId,
+      },
+      body: formData,
+    });
+
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({ detail: `Bulk upload failed: ${res.statusText}` }));
+      throw new Error(errData.detail || `Bulk upload failed: ${res.statusText}`);
+    }
+
+    return res.json();
+  }
+
+  // Batch Jobs
+  async getBatchStatus(batchId: string): Promise<any> {
+    return this.request<any>(`/batches/${batchId}`);
+  }
+
+  async retryBatch(batchId: string): Promise<any> {
+    return this.request<any>(`/batches/${batchId}/retry`, { method: 'POST' });
+  }
+
+  async cancelBatch(batchId: string): Promise<any> {
+    return this.request<any>(`/batches/${batchId}/cancel`, { method: 'POST' });
+  }
+
   // Grounded RAG & Question Answering
   async askSecuroxi(query: string, topK: number = 4): Promise<RAGAnswer> {
     return this.request<RAGAnswer>('/ask', {

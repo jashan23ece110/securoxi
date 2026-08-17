@@ -227,7 +227,7 @@ async def scan_file(file: UploadFile = File(...), client: ClientIdentity = Depen
 
 
 @app.post("/api/v1/scan/bulk")
-async def bulk_scan_files(files: List[UploadFile] = File(...), client: str = Depends(verify_api_key)):
+async def bulk_scan_files(files: List[UploadFile] = File(...), client: ClientIdentity = Depends(verify_api_key)):
     """
     Scan multiple uploaded document files concurrently.
     """
@@ -235,7 +235,7 @@ async def bulk_scan_files(files: List[UploadFile] = File(...), client: str = Dep
     batch_results = []
 
     try:
-        db.log_audit_event("BULK_BATCH_SUBMITTED", client, f"Submitted batch of {len(files)} files for scanning")
+        db.log_audit_event("BULK_BATCH_SUBMITTED", client.client_name, f"Submitted batch of {len(files)} files for scanning", tenant_id=client.tenant_id)
         for file in files:
             if not file.filename:
                 continue
@@ -245,7 +245,7 @@ async def bulk_scan_files(files: List[UploadFile] = File(...), client: str = Dep
 
             report = scanner.scan(file_path)
             report_dict = report.to_dict()
-            db.save_scan(report_dict)
+            db.save_scan(report_dict, tenant_id=client.tenant_id)
             batch_results.append(report_dict)
 
         stats = {
@@ -253,6 +253,7 @@ async def bulk_scan_files(files: List[UploadFile] = File(...), client: str = Dep
             "safe": sum(1 for r in batch_results if r["verdict"] == "SAFE"),
             "suspicious": sum(1 for r in batch_results if r["verdict"] == "SUSPICIOUS"),
             "high_risk": sum(1 for r in batch_results if r["verdict"] == "HIGH_RISK"),
+            "uninspectable": sum(1 for r in batch_results if r.get("verdict") == "UNINSPECTABLE"),
             "results": batch_results
         }
         return stats

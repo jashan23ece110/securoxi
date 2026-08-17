@@ -7,6 +7,7 @@ import {
   ShieldAlert,
   Activity,
   FileSearch,
+  FolderArchive,
   FileText,
   UserCheck,
   Zap,
@@ -53,7 +54,8 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     groupName: 'DOCUMENTS',
     items: [
-      { label: 'Scan Console', path: '/scans', icon: <FileSearch size={17} /> },
+      { label: 'Scan Files', path: '/scans', icon: <FileSearch size={17} /> },
+      { label: 'Scan Folder', path: '/scan-folder', icon: <FolderArchive size={17} /> },
       { label: 'Documents', path: '/documents', icon: <FileText size={17} /> },
     ],
   },
