@@ -438,4 +438,7 @@ class SecuroxiDatabase:
         rows, _ = self._execute_query(query, params)
         return rows
 
-        return {"scans_purged": max(0, scans_purged), "logs_purged": max(0, logs_purged)}
+
+# Global singleton instance for database operations
+db = SecuroxiDatabase()
+
