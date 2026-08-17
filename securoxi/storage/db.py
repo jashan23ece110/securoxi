@@ -408,4 +408,34 @@ class SecuroxiDatabase:
             r["security_clearance"] = bool(r.get("security_clearance", 1))
         return rows
 
+    def save_incident(self, inc: Dict[str, Any], tenant_id: str = "TENANT-DEFAULT") -> str:
+        import uuid
+        incident_id = inc.get("incident_id") or f"INC-{uuid.uuid4().hex[:8]}"
+        query = """
+            INSERT OR REPLACE INTO incidents
+            (incident_id, tenant_id, severity, status, attack_type, affected_asset)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """
+        params = (
+            incident_id,
+            tenant_id,
+            inc.get("severity", "HIGH"),
+            inc.get("status", "INVESTIGATING"),
+            inc.get("attack_type", "ADVERSARIAL_INJECTION"),
+            inc.get("affected_asset", "UNKNOWN_DOCUMENT")
+        )
+        self._execute_query(query, params)
+        return incident_id
+
+    def list_incidents(self, limit: int = 50, tenant_id: Optional[str] = None) -> List[Dict[str, Any]]:
+        if tenant_id:
+            query = "SELECT incident_id, tenant_id, severity, status, attack_type, affected_asset, created_at FROM incidents WHERE (tenant_id = ? OR tenant_id = 'TENANT-DEFAULT') ORDER BY created_at DESC LIMIT ?"
+            params = (tenant_id, limit)
+        else:
+            query = "SELECT incident_id, tenant_id, severity, status, attack_type, affected_asset, created_at FROM incidents ORDER BY created_at DESC LIMIT ?"
+            params = (limit,)
+
+        rows, _ = self._execute_query(query, params)
+        return rows
+
         return {"scans_purged": max(0, scans_purged), "logs_purged": max(0, logs_purged)}

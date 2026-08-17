@@ -822,6 +822,18 @@ def list_screenings_endpoint(
     return db.list_screening_results(limit=limit, tenant_id=client.tenant_id)
 
 
+@app.get("/api/v1/incidents")
+def list_incidents_endpoint(
+    limit: int = Query(50, ge=1, le=500),
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    List security incidents and causality records for Security Brain analysis.
+    """
+    return db.list_incidents(limit=limit, tenant_id=client.tenant_id)
+
+
+
 
 @app.post("/api/v1/screening/pipeline/rank")
 async def security_aware_rank_endpoint(
