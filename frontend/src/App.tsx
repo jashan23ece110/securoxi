@@ -14,6 +14,7 @@ import { SettingsPage } from './pages/Settings';
 import { DocumentsPage } from './pages/Documents';
 import { BulkScanPage } from './pages/BulkScan';
 import { ATSPage } from './pages/ATS';
+import { InvestigationPage } from './pages/Investigation';
 import { DesignSystemShowcase } from './pages/DesignSystemShowcase';
 
 export const App: React.FC = () => {
@@ -28,6 +29,8 @@ export const App: React.FC = () => {
           <Route path="/incidents" element={<IncidentsPage />} />
           <Route path="/scans" element={<ScansPage />} />
           <Route path="/scan-folder" element={<BulkScanPage />} />
+          <Route path="/investigate" element={<InvestigationPage />} />
+          <Route path="/investigate/:scanId" element={<InvestigationPage />} />
           <Route path="/documents" element={<DocumentsPage />} />
           <Route path="/screening" element={<ScreeningPage />} />
           <Route path="/ats" element={<ATSPage />} />

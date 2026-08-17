@@ -273,7 +273,10 @@ class SecuroxiDatabase:
 
         rows, _ = self._execute_query(query, params)
         if rows:
-            return json.loads(rows[0]["report_json"])
+            data = json.loads(rows[0]["report_json"])
+            if isinstance(data, dict):
+                data.setdefault("scan_id", scan_id)
+            return data
         return None
 
     def list_scans(self, limit: int = 50, verdict: Optional[str] = None, search: Optional[str] = None, tenant_id: Optional[str] = None) -> List[Dict[str, Any]]:

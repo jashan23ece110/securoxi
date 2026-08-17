@@ -35,6 +35,7 @@ import {
   ExternalLink,
   Cpu,
   Lock,
+  Brain,
   ArrowLeft,
   ArrowRight,
 } from 'lucide-react';
@@ -728,11 +729,18 @@ export const ForensicDocumentViewer: React.FC<ForensicDocumentViewerProps> = ({
                 </h3>
               </div>
 
-              {/* Exact Extracted Evidence */}
-              <div>
+              {/* 1. FORENSIC EVIDENCE (Empirical system observation) */}
+              <div
+                style={{
+                  padding: '12px',
+                  backgroundColor: '#040711',
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid rgba(56, 189, 248, 0.25)',
+                }}
+              >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                  <span style={{ fontSize: '0.6875rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-                    Exact Extracted Evidence
+                  <span style={{ fontSize: '0.6875rem', fontWeight: 800, color: 'var(--accent-cyan)', letterSpacing: '0.05em' }}>
+                    1. FORENSIC EVIDENCE (OBSERVED)
                   </span>
                   <Button
                     variant="secondary"
@@ -747,52 +755,31 @@ export const ForensicDocumentViewer: React.FC<ForensicDocumentViewerProps> = ({
                   className="security-evidence"
                   style={{
                     margin: 0,
-                    padding: '10px 12px',
+                    padding: '8px 10px',
                     fontSize: '0.75rem',
-                    maxHeight: '140px',
+                    maxHeight: '120px',
                     overflowY: 'auto',
-                    backgroundColor: '#040711',
+                    backgroundColor: 'rgba(0, 0, 0, 0.6)',
                     border: '1px solid var(--border-default)',
                     borderRadius: 'var(--radius-sm)',
-                    color: 'var(--accent-cyan)',
+                    color: '#38bdf8',
+                    fontFamily: 'monospace',
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'break-word',
                   }}
                 >
                   {selectedFinding.evidence}
                 </pre>
-              </div>
-
-              {/* Coordinates & Location */}
-              <div
-                style={{
-                  padding: '12px',
-                  backgroundColor: 'var(--bg-app)',
-                  borderRadius: 'var(--radius-md)',
-                  border: '1px solid var(--border-subtle)',
-                  fontSize: '0.8125rem',
-                }}
-              >
-                <div style={{ fontWeight: 700, marginBottom: '6px', color: 'var(--text-primary)' }}>
-                  Location Coordinates
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', fontSize: '0.75rem' }}>
-                  <div>
-                    <span style={{ color: 'var(--text-muted)' }}>Page: </span>
-                    <strong>{selectedFinding.page}</strong>
-                  </div>
-                  <div>
-                    <span style={{ color: 'var(--text-muted)' }}>Source: </span>
-                    <strong>{selectedFinding.source}</strong>
-                  </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px', fontSize: '0.6875rem', marginTop: '8px', color: 'var(--text-muted)' }}>
+                  <div>Page: <strong style={{ color: 'var(--text-primary)' }}>{selectedFinding.page}</strong></div>
+                  <div>Source: <strong style={{ color: 'var(--text-primary)' }}>{selectedFinding.source}</strong></div>
                   <div style={{ gridColumn: 'span 2' }}>
-                    <span style={{ color: 'var(--text-muted)' }}>Bounding Box: </span>
-                    <code style={{ fontSize: '0.6875rem', color: 'var(--accent-cyan)' }}>
-                      [{selectedFinding.bbox.x0}, {selectedFinding.bbox.y0}, {selectedFinding.bbox.x1}, {selectedFinding.bbox.y1}]
-                    </code>
+                    BBox: <code style={{ color: 'var(--accent-cyan)' }}>[{selectedFinding.bbox.x0}, {selectedFinding.bbox.y0}, {selectedFinding.bbox.x1}, {selectedFinding.bbox.y1}]</code>
                   </div>
                 </div>
               </div>
 
-              {/* Explanation */}
+              {/* 2. AI ADVISORY (Contextual intelligence interpretation) */}
               <div
                 style={{
                   padding: '12px',
@@ -802,24 +789,66 @@ export const ForensicDocumentViewer: React.FC<ForensicDocumentViewerProps> = ({
                   fontSize: '0.8125rem',
                 }}
               >
-                <div style={{ fontWeight: 700, marginBottom: '4px', color: 'var(--text-primary)' }}>
-                  Forensic Explanation
+                <div style={{ fontSize: '0.6875rem', fontWeight: 800, color: 'var(--text-secondary)', marginBottom: '4px', letterSpacing: '0.05em' }}>
+                  2. AI ADVISORY (INTERPRETATION)
                 </div>
-                <div style={{ color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                  {selectedFinding.description}
+                <div style={{ color: 'var(--text-secondary)', lineHeight: 1.4, fontSize: '0.75rem' }}>
+                  {selectedFinding.description || 'Adversarial instruction detected attempting to manipulate automated workflow evaluation.'}
                 </div>
               </div>
 
-              {/* Focus Button */}
-              <Button
-                variant="primary"
-                onClick={() => {
-                  setCurrentPage(selectedFinding.page);
+              {/* 3. POLICY AUTHORITY & OUTCOME */}
+              <div
+                style={{
+                  padding: '12px',
+                  backgroundColor: selectedFinding.severity === 'CRITICAL' || selectedFinding.severity === 'HIGH'
+                    ? 'rgba(244, 63, 94, 0.08)'
+                    : 'var(--bg-app)',
+                  borderRadius: 'var(--radius-md)',
+                  border: `1px solid ${
+                    selectedFinding.severity === 'CRITICAL' || selectedFinding.severity === 'HIGH'
+                      ? 'rgba(244, 63, 94, 0.3)'
+                      : 'var(--border-subtle)'
+                  }`,
+                  fontSize: '0.8125rem',
                 }}
-                icon={<Crosshair size={14} />}
               >
-                Focus Finding on Canvas
-              </Button>
+                <div style={{ fontSize: '0.6875rem', fontWeight: 800, color: 'var(--status-highrisk)', marginBottom: '4px', letterSpacing: '0.05em' }}>
+                  3. POLICY AUTHORITY & ENFORCEMENT
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.75rem' }}>
+                  <div>
+                    <span style={{ color: 'var(--text-muted)' }}>Policy: </span>
+                    <strong style={{ color: 'var(--text-primary)' }}>RULE-100-HIGH-RISK-BLOCK</strong>
+                  </div>
+                  <Badge variant={selectedFinding.severity === 'CRITICAL' || selectedFinding.severity === 'HIGH' ? 'highrisk' : 'review'}>
+                    {selectedFinding.severity === 'CRITICAL' || selectedFinding.severity === 'HIGH' ? 'BLOCK + QUARANTINE' : 'REVIEW REQUIRED'}
+                  </Badge>
+                </div>
+              </div>
+
+              {/* Actions Toolbar */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '4px' }}>
+                <Button
+                  variant="primary"
+                  onClick={() => {
+                    setCurrentPage(selectedFinding.page);
+                  }}
+                  icon={<Crosshair size={14} />}
+                >
+                  Focus Finding on Canvas
+                </Button>
+
+                {onOpenSecurityBrain && (
+                  <Button
+                    variant="secondary"
+                    onClick={onOpenSecurityBrain}
+                    icon={<Brain size={14} />}
+                  >
+                    Investigate in Security Brain
+                  </Button>
+                )}
+              </div>
             </div>
           ) : (
             <div style={{ padding: '32px 16px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.8125rem' }}>
