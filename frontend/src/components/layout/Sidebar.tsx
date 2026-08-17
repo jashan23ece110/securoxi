@@ -9,6 +9,7 @@ import {
   FileSearch,
   FolderArchive,
   FileText,
+  Sparkles,
   UserCheck,
   Zap,
   ShieldCheck,
@@ -54,6 +55,7 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     groupName: 'DOCUMENTS',
     items: [
+      { label: 'Ask SECUROXI', path: '/ask', icon: <Sparkles size={17} />, badge: 'AI', badgeVariant: 'ai' },
       { label: 'Scan Files', path: '/scans', icon: <FileSearch size={17} /> },
       { label: 'Scan Folder', path: '/scan-folder', icon: <FolderArchive size={17} /> },
       { label: 'Documents', path: '/documents', icon: <FileText size={17} /> },
