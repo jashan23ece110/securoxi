@@ -21,6 +21,7 @@ import {
   Alert,
   Badge,
 } from '../components/ui';
+import { ForensicDocumentViewer } from '../components/forensics';
 import { PageHeader, PageToolbar, PageContainer } from '../components/layout';
 import {
   FileSearch,
@@ -37,9 +38,11 @@ import {
   ExternalLink,
   Layers,
   Cpu,
+  Eye,
   EyeOff,
   Clock,
   Sparkles,
+  Crosshair,
 } from 'lucide-react';
 
 export const ScansPage: React.FC = () => {
@@ -54,6 +57,11 @@ export const ScansPage: React.FC = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [scanSuccessMessage, setScanSuccessMessage] = useState<string | null>(null);
+
+  // Forensic Document Viewer states
+  const [isViewerOpen, setIsViewerOpen] = useState(false);
+  const [viewerFindingId, setViewerFindingId] = useState<string | null>(null);
+  const [pdfBuffer, setPdfBuffer] = useState<ArrayBuffer | null>(null);
 
   const [activeTab, setActiveTab] = useState<'upload' | 'history' | 'queue'>('history');
   const [searchFilter, setSearchFilter] = useState('');
@@ -96,15 +104,27 @@ export const ScansPage: React.FC = () => {
     e.preventDefault();
     setIsDragging(false);
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      setSelectedFile(e.dataTransfer.files[0]);
+      const file = e.dataTransfer.files[0];
+      setSelectedFile(file);
       setUploadError(null);
+      if (file.name.toLowerCase().endsWith('.pdf')) {
+        file.arrayBuffer().then((buf) => setPdfBuffer(buf)).catch(() => setPdfBuffer(null));
+      } else {
+        setPdfBuffer(null);
+      }
     }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      setSelectedFile(e.target.files[0]);
+      const file = e.target.files[0];
+      setSelectedFile(file);
       setUploadError(null);
+      if (file.name.toLowerCase().endsWith('.pdf')) {
+        file.arrayBuffer().then((buf) => setPdfBuffer(buf)).catch(() => setPdfBuffer(null));
+      } else {
+        setPdfBuffer(null);
+      }
     }
   };
 
@@ -530,11 +550,21 @@ export const ScansPage: React.FC = () => {
         subtitle={`Scan ID: ${selectedScan?.scan_id || ''} • File: ${selectedScan?.filename || ''}`}
         badge={selectedScan ? <VerdictBadge verdict={selectedScan.verdict} /> : undefined}
         footer={
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
             <Button variant="secondary" onClick={() => setSelectedScan(null)}>
               Close Drawer
             </Button>
-            <Button variant="primary" onClick={() => navigate('/security-brain')}>
+            <Button
+              variant="primary"
+              onClick={() => {
+                setViewerFindingId(null);
+                setIsViewerOpen(true);
+              }}
+              icon={<Eye size={14} />}
+            >
+              Inspect on Document
+            </Button>
+            <Button variant="outline" onClick={() => navigate('/security-brain')}>
               Open in Security Brain
             </Button>
           </div>
@@ -581,20 +611,47 @@ export const ScansPage: React.FC = () => {
             {/* Extracted Findings & Evidence */}
             {selectedScan.findings && selectedScan.findings.length > 0 ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-                  Extracted Forensic Findings ({selectedScan.findings.length})
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                    Extracted Forensic Findings ({selectedScan.findings.length})
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="xs"
+                    onClick={() => {
+                      setViewerFindingId(null);
+                      setIsViewerOpen(true);
+                    }}
+                    icon={<Crosshair size={12} />}
+                  >
+                    View All on Document
+                  </Button>
                 </div>
                 {selectedScan.findings.map((f, i) => (
-                  <EvidenceBlock
-                    key={i}
-                    threatType={f.threat_type}
-                    category={f.category}
-                    severity={f.severity}
-                    confidence={f.confidence}
-                    evidence={f.evidence}
-                    explanation={f.description}
-                    location={f.line_number ? `Line ${f.line_number}` : 'Layout Span [72.0, 140.5, 540.0, 148.0]'}
-                  />
+                  <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <EvidenceBlock
+                      threatType={f.threat_type}
+                      category={f.category}
+                      severity={f.severity}
+                      confidence={f.confidence}
+                      evidence={f.evidence}
+                      explanation={f.description}
+                      location={f.line_number ? `Line ${f.line_number}` : 'Layout Span [72.0, 140.5, 540.0, 148.0]'}
+                    />
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '-4px' }}>
+                      <Button
+                        variant="secondary"
+                        size="xs"
+                        onClick={() => {
+                          setViewerFindingId((f as any).finding_id || `FINDING-${i + 1}`);
+                          setIsViewerOpen(true);
+                        }}
+                        icon={<Eye size={12} />}
+                      >
+                        Highlight on Document Page
+                      </Button>
+                    </div>
+                  </div>
                 ))}
               </div>
             ) : (
@@ -605,6 +662,25 @@ export const ScansPage: React.FC = () => {
           </div>
         )}
       </Drawer>
+
+      {/* 6. Forensic Document Viewer Overlay */}
+      {selectedScan && (
+        <ForensicDocumentViewer
+          isOpen={isViewerOpen}
+          onClose={() => setIsViewerOpen(false)}
+          filename={selectedScan.filename}
+          documentType={selectedScan.document_type}
+          verdict={selectedScan.verdict}
+          riskScore={selectedScan.risk_score}
+          findings={selectedScan.findings || []}
+          pdfData={pdfBuffer}
+          selectedFindingId={viewerFindingId}
+          onOpenSecurityBrain={() => {
+            setIsViewerOpen(false);
+            navigate('/security-brain');
+          }}
+        />
+      )}
     </PageContainer>
   );
 };

@@ -7,6 +7,13 @@ export default defineConfig({
   build: {
     outDir: '../securoxi/web/static/dist',
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          pdfjs: ['pdfjs-dist'],
+        },
+      },
+    },
   },
   server: {
     port: 3000,

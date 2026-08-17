@@ -18,3 +18,4 @@ export * from './CommandPalette';
 export * from './Input';
 export * from './Toggle';
 export * from './BackgroundPattern';
+export * from '../forensics';

@@ -25,7 +25,9 @@ import {
   Layers,
   Database,
   Lock,
+  Eye,
 } from 'lucide-react';
+import { ForensicDocumentViewer } from '../components/forensics';
 
 export const DocumentsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -34,6 +36,7 @@ export const DocumentsPage: React.FC = () => {
   const [searchFilter, setSearchFilter] = useState('');
   const [formatFilter, setFormatFilter] = useState('ALL');
 
+  const [isViewerOpen, setIsViewerOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -271,11 +274,18 @@ export const DocumentsPage: React.FC = () => {
         subtitle={`File: ${selectedDoc?.filename || ''} • ID: ${selectedDoc?.scan_id || ''}`}
         badge={selectedDoc ? <StatusBadge status={selectedDoc.verdict} /> : undefined}
         footer={
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
             <Button variant="secondary" onClick={() => setSelectedDoc(null)}>
               Close Drawer
             </Button>
-            <Button variant="primary" onClick={() => navigate('/scans')}>
+            <Button
+              variant="primary"
+              onClick={() => setIsViewerOpen(true)}
+              icon={<Eye size={14} />}
+            >
+              Launch Forensic Viewer
+            </Button>
+            <Button variant="outline" onClick={() => navigate('/scans')}>
               Open in Scan Console
             </Button>
           </div>
@@ -303,6 +313,23 @@ export const DocumentsPage: React.FC = () => {
           </div>
         )}
       </Drawer>
+
+      {/* 6. Forensic Document Viewer Overlay */}
+      {selectedDoc && (
+        <ForensicDocumentViewer
+          isOpen={isViewerOpen}
+          onClose={() => setIsViewerOpen(false)}
+          filename={selectedDoc.filename}
+          documentType={selectedDoc.document_type}
+          verdict={selectedDoc.verdict}
+          riskScore={selectedDoc.risk_score}
+          findings={selectedDoc.findings || []}
+          onOpenSecurityBrain={() => {
+            setIsViewerOpen(false);
+            navigate('/security-brain');
+          }}
+        />
+      )}
     </PageContainer>
   );
 };
