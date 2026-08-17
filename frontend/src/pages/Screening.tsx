@@ -521,15 +521,52 @@ export const ScreeningPage: React.FC = () => {
           ) : undefined
         }
         footer={
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <Button variant="secondary" onClick={() => setSelectedCandidate(null)}>
-              Close Drawer
-            </Button>
-            {selectedCandidate?.security_clearance && (
-              <Button variant="primary" icon={<CheckCircle2 size={13} />}>
-                Advance to Technical Screen
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'space-between', width: '100%' }}>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => {
+                  if (selectedCandidate) {
+                    navigate(`/ask?q=What%20evidence%20supports%20this%20candidate%27s%20experience%20and%20skills%3F&doc_id=${selectedCandidate.candidate_id}&scope=candidates`);
+                  }
+                }}
+                icon={<Sparkles size={13} />}
+              >
+                Ask SECUROXI
               </Button>
-            )}
+
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => navigate('/investigate')}
+                icon={<FileText size={13} />}
+              >
+                View Document Evidence
+              </Button>
+
+              {!selectedCandidate?.security_clearance && (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => navigate('/security-brain')}
+                  icon={<Brain size={13} />}
+                >
+                  Security Brain
+                </Button>
+              )}
+            </div>
+
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <Button variant="ghost" size="sm" onClick={() => setSelectedCandidate(null)}>
+                Close
+              </Button>
+              {selectedCandidate?.security_clearance && (
+                <Button variant="primary" size="sm" icon={<CheckCircle2 size={13} />}>
+                  Advance to Interview
+                </Button>
+              )}
+            </div>
           </div>
         }
       >

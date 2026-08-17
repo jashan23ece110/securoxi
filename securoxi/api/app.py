@@ -804,10 +804,23 @@ async def security_aware_screen_endpoint(
 
         return res
 
-    except ValueError as val_err:
-        raise HTTPException(status_code=400, detail=str(val_err))
+    except Exception as e:
+        logger.error(f"Security pipeline ranking execution error: {e}")
+        raise HTTPException(status_code=500, detail=f"Ranking pipeline execution failed: {str(e)}")
     finally:
         shutil.rmtree(temp_dir, ignore_errors=True)
+
+
+@app.get("/api/v1/screenings")
+def list_screenings_endpoint(
+    limit: int = Query(50, ge=1, le=500),
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    List candidate screening evaluations with security clearance and fit score breakdown.
+    """
+    return db.list_screening_results(limit=limit, tenant_id=client.tenant_id)
+
 
 
 @app.post("/api/v1/screening/pipeline/rank")

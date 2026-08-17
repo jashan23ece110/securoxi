@@ -368,4 +368,44 @@ class SecuroxiDatabase:
             query_logs = "DELETE FROM audit_logs WHERE timestamp <= ?"
             _, logs_purged = self._execute_query(query_logs, (cutoff_date,))
 
+        return {
+            "scans_purged": scans_purged,
+            "logs_purged": logs_purged
+        }
+
+    def save_screening_result(self, res: Dict[str, Any], tenant_id: str = "TENANT-DEFAULT"):
+        import uuid
+        screening_id = res.get("screening_id") or f"SCR-{uuid.uuid4().hex[:8]}"
+        query = """
+            INSERT OR REPLACE INTO screening_results
+            (screening_id, tenant_id, candidate_id, job_id, fit_score, skill_match_pct, qualification_verdict, explanation, security_clearance)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """
+        params = (
+            screening_id,
+            tenant_id,
+            res.get("candidate_id", "CAND-UNKNOWN"),
+            res.get("job_id", "JOB-DEFAULT"),
+            res.get("fit_score", 0.0),
+            res.get("skill_match_pct", 0.0),
+            res.get("qualification_verdict", "PENDING"),
+            res.get("explanation", ""),
+            1 if res.get("security_clearance", True) else 0
+        )
+        self._execute_query(query, params)
+        return screening_id
+
+    def list_screening_results(self, limit: int = 50, tenant_id: Optional[str] = None) -> List[Dict[str, Any]]:
+        if tenant_id:
+            query = "SELECT * FROM screening_results WHERE (tenant_id = ? OR tenant_id = 'TENANT-DEFAULT') ORDER BY created_at DESC LIMIT ?"
+            params = (tenant_id, limit)
+        else:
+            query = "SELECT * FROM screening_results ORDER BY created_at DESC LIMIT ?"
+            params = (limit,)
+
+        rows, _ = self._execute_query(query, params)
+        for r in rows:
+            r["security_clearance"] = bool(r.get("security_clearance", 1))
+        return rows
+
         return {"scans_purged": max(0, scans_purged), "logs_purged": max(0, logs_purged)}
