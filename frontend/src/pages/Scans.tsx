@@ -22,6 +22,7 @@ import {
   Badge,
 } from '../components/ui';
 import { ForensicDocumentViewer } from '../components/forensics';
+import { SmartResultTable } from '../components/results';
 import { PageHeader, PageToolbar, PageContainer } from '../components/layout';
 import {
   FileSearch,
@@ -483,99 +484,40 @@ export const ScansPage: React.FC = () => {
         </div>
       </Card>
 
-      {/* 4. Filter Toolbar & Scan History DataTable */}
-      <PageToolbar
-        leftControls={
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Search size={13} style={{ color: 'var(--text-muted)' }} />
-              <input
-                type="text"
-                placeholder="Search scans by filename or scan ID..."
-                value={searchFilter}
-                onChange={(e) => setSearchFilter(e.target.value)}
-                style={{
-                  backgroundColor: 'var(--bg-input)',
-                  color: 'var(--text-primary)',
-                  border: '1px solid var(--border-default)',
-                  borderRadius: 'var(--radius-md)',
-                  padding: '4px 10px',
-                  fontSize: '0.75rem',
-                  outline: 'none',
-                  minWidth: '240px',
-                }}
-              />
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Format:</span>
-              <select
-                value={formatFilter}
-                onChange={(e) => setFormatFilter(e.target.value)}
-                style={{
-                  backgroundColor: 'var(--bg-input)',
-                  color: 'var(--text-primary)',
-                  border: '1px solid var(--border-default)',
-                  borderRadius: 'var(--radius-md)',
-                  padding: '4px 8px',
-                  fontSize: '0.75rem',
-                  outline: 'none',
-                }}
-              >
-                <option value="ALL">All Formats</option>
-                <option value="PDF">PDF</option>
-                <option value="DOCX">DOCX</option>
-                <option value="TXT">TXT</option>
-                <option value="HTML">HTML</option>
-                <option value="PNG">PNG (OCR)</option>
-              </select>
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Verdict:</span>
-              <select
-                value={verdictFilter}
-                onChange={(e) => setVerdictFilter(e.target.value)}
-                style={{
-                  backgroundColor: 'var(--bg-input)',
-                  color: 'var(--text-primary)',
-                  border: '1px solid var(--border-default)',
-                  borderRadius: 'var(--radius-md)',
-                  padding: '4px 8px',
-                  fontSize: '0.75rem',
-                  outline: 'none',
-                }}
-              >
-                <option value="ALL">All Verdicts</option>
-                <option value="SAFE">Safe</option>
-                <option value="SUSPICIOUS">Suspicious</option>
-                <option value="HIGH_RISK">High Risk</option>
-                <option value="BLOCKED">Blocked</option>
-                <option value="UNINSPECTABLE">Uninspectable</option>
-              </select>
-            </div>
-          </div>
-        }
-        rightControls={
-          <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-            Showing <strong>{filteredScans.length}</strong> of {scans.length} records
-          </span>
-        }
+      {/* 4. Smart Security Results & Distribution Table */}
+      <SmartResultTable
+        scans={scans}
+        title="Document Security Inventory & Results"
+        subtitle="Prioritized threat analysis, plain-language summaries, and forensic verification"
+        onInspectScan={(scan) => setSelectedScan(scan)}
+        onOpenSecurityBrain={() => navigate('/security-brain')}
+        onExportCsv={async () => {
+          try {
+            const blob = await api.exportScans('csv');
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `securoxi_scans_${new Date().toISOString().slice(0, 10)}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+          } catch (err) {
+            console.error('Export CSV failed', err);
+          }
+        }}
+        onExportJson={async () => {
+          try {
+            const blob = await api.exportScans('json');
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `securoxi_scans_${new Date().toISOString().slice(0, 10)}.json`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+          } catch (err) {
+            console.error('Export JSON failed', err);
+          }
+        }}
       />
-
-      <Card
-        title="Evaluated Document History"
-        subtitle="Real-time multi-tenant scan records and forensic detections"
-      >
-        <DataTable
-          columns={scanColumns}
-          data={filteredScans}
-          keyExtractor={(row) => row.scan_id}
-          emptyTitle="No Scan Telemetry Available"
-          emptyDescription="Upload a document above to generate security scan records."
-          pageSize={8}
-        />
-      </Card>
 
       {/* 5. Deep Forensic Inspection Drawer */}
       <Drawer

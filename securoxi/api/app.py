@@ -11,7 +11,7 @@ import shutil
 from typing import List, Optional, Dict, Any
 from fastapi import FastAPI, UploadFile, File, Header, HTTPException, Depends, Query, Security, Body
 from fastapi.security import APIKeyHeader, HTTPBearer, HTTPAuthorizationCredentials
-from fastapi.responses import JSONResponse, FileResponse
+from fastapi.responses import JSONResponse, FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 
 from securoxi.scanner import SecuroxiScanner
@@ -181,6 +181,41 @@ def list_scans(
 ):
     """List historical scan reports with optional verdict filtering and search."""
     return db.list_scans(limit=limit, verdict=verdict, search=search, tenant_id=client.tenant_id)
+
+
+@app.get("/api/v1/scans/export")
+def export_scans_report(
+    format: str = Query("csv", pattern="^(csv|json)$"),
+    verdict: Optional[str] = Query(None),
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """Export scan results as CSV or JSON with tenant isolation."""
+    scans = db.list_scans(limit=500, verdict=verdict, tenant_id=client.tenant_id)
+    if format == "json":
+        return JSONResponse(content=scans)
+
+    import io
+    import csv
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["Scan ID", "Filename", "Format", "Verdict", "Risk Score", "Findings Count", "Created At"])
+    for s in scans:
+        writer.writerow([
+            s.get("scan_id", ""),
+            s.get("filename", ""),
+            s.get("document_type", ""),
+            s.get("verdict", ""),
+            s.get("risk_score", 0),
+            len(s.get("findings", []) or []),
+            s.get("created_at", "")
+        ])
+
+    return Response(
+        content=output.getvalue(),
+        media_type="text/csv",
+        headers={"Content-Disposition": f'attachment; filename="securoxi_scans_{client.tenant_id}.csv"'}
+    )
 
 
 @app.get("/api/v1/scan/{scan_id}")

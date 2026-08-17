@@ -77,6 +77,24 @@ export class SecuroxiApiClient {
     return this.request<ScanReport>(`/scan/${scanId}`);
   }
 
+  async exportScans(format: 'csv' | 'json' = 'csv', verdict?: string): Promise<Blob> {
+    const params = new URLSearchParams({ format });
+    if (verdict && verdict !== 'ALL') params.append('verdict', verdict);
+
+    const res = await fetch(`${API_BASE}/scans/export?${params.toString()}`, {
+      headers: {
+        'X-API-Key': this.apiKey,
+        'X-Tenant-ID': this.tenantId,
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error(`Export failed: ${res.statusText}`);
+    }
+
+    return res.blob();
+  }
+
   async uploadAndScanDocument(file: File): Promise<ScanReport> {
     const formData = new FormData();
     formData.append('file', file);
