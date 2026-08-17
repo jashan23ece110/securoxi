@@ -8,15 +8,50 @@ const API_BASE = '/api/v1';
 
 export class SecuroxiApiClient {
   private apiKey: string;
+  private tenantId: string;
 
-  constructor(apiKey: string = 'securoxi_dev_secret_key_123') {
-    this.apiKey = apiKey;
+  constructor(
+    apiKey?: string,
+    tenantId?: string
+  ) {
+    this.apiKey =
+      apiKey ||
+      (typeof window !== 'undefined' && localStorage.getItem('securoxi_api_key')) ||
+      (import.meta as any).env?.VITE_SECUROXI_API_KEY ||
+      'securoxi-enterprise-key';
+    this.tenantId =
+      tenantId ||
+      (typeof window !== 'undefined' && localStorage.getItem('securoxi_tenant_id')) ||
+      'TENANT-DEFAULT';
+  }
+
+  setApiKey(key: string) {
+    this.apiKey = key;
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('securoxi_api_key', key);
+    }
+  }
+
+  setTenantId(tenantId: string) {
+    this.tenantId = tenantId;
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('securoxi_tenant_id', tenantId);
+    }
+  }
+
+  getApiKey(): string {
+    return this.apiKey;
+  }
+
+  getTenantId(): string {
+    return this.tenantId;
   }
 
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const headers = {
       'Content-Type': 'application/json',
       'X-API-Key': this.apiKey,
+      'X-Tenant-ID': this.tenantId,
       ...options.headers,
     };
 
@@ -50,12 +85,14 @@ export class SecuroxiApiClient {
       method: 'POST',
       headers: {
         'X-API-Key': this.apiKey,
+        'X-Tenant-ID': this.tenantId,
       },
       body: formData,
     });
 
     if (!res.ok) {
-      throw new Error(`Upload failed: ${res.statusText}`);
+      const errData = await res.json().catch(() => ({ detail: `Upload failed: ${res.statusText}` }));
+      throw new Error(errData.detail || `Upload failed: ${res.statusText}`);
     }
 
     return res.json();
