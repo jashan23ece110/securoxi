@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppShell } from './components/layout/AppShell';
+import { HomePage } from './pages/Home';
 import { OverviewPage } from './pages/Overview';
 import { SecurityBrainPage } from './pages/SecurityBrain';
 import { IncidentsPage } from './pages/Incidents';
@@ -19,7 +20,8 @@ export const App: React.FC = () => {
     <BrowserRouter>
       <AppShell>
         <Routes>
-          <Route path="/" element={<Navigate to="/overview" replace />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/home" element={<HomePage />} />
           <Route path="/overview" element={<OverviewPage />} />
           <Route path="/security-brain" element={<SecurityBrainPage />} />
           <Route path="/incidents" element={<IncidentsPage />} />
@@ -32,7 +34,7 @@ export const App: React.FC = () => {
           <Route path="/audit" element={<AuditPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/design-system" element={<DesignSystemShowcase />} />
-          <Route path="*" element={<Navigate to="/overview" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AppShell>
     </BrowserRouter>

@@ -50,7 +50,7 @@ export const ScansPage: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [scans, setScans] = useState<ScanReport[]>([]);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [selectedScan, setSelectedScan] = useState<ScanReport | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -104,50 +104,54 @@ export const ScansPage: React.FC = () => {
     e.preventDefault();
     setIsDragging(false);
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      const file = e.dataTransfer.files[0];
-      setSelectedFile(file);
+      const files = Array.from(e.dataTransfer.files);
+      setSelectedFiles((prev) => [...prev, ...files]);
       setUploadError(null);
-      if (file.name.toLowerCase().endsWith('.pdf')) {
-        file.arrayBuffer().then((buf) => setPdfBuffer(buf)).catch(() => setPdfBuffer(null));
-      } else {
-        setPdfBuffer(null);
+      const firstPdf = files.find((f) => f.name.toLowerCase().endsWith('.pdf'));
+      if (firstPdf) {
+        firstPdf.arrayBuffer().then((buf) => setPdfBuffer(buf)).catch(() => setPdfBuffer(null));
       }
     }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0];
-      setSelectedFile(file);
+      const files = Array.from(e.target.files);
+      setSelectedFiles((prev) => [...prev, ...files]);
       setUploadError(null);
-      if (file.name.toLowerCase().endsWith('.pdf')) {
-        file.arrayBuffer().then((buf) => setPdfBuffer(buf)).catch(() => setPdfBuffer(null));
-      } else {
-        setPdfBuffer(null);
+      const firstPdf = files.find((f) => f.name.toLowerCase().endsWith('.pdf'));
+      if (firstPdf) {
+        firstPdf.arrayBuffer().then((buf) => setPdfBuffer(buf)).catch(() => setPdfBuffer(null));
       }
     }
   };
 
   const handleUploadAndScan = async () => {
-    if (!selectedFile) return;
+    if (selectedFiles.length === 0) return;
 
     setIsUploading(true);
     setUploadProgress(20);
     setUploadError(null);
 
     const progressTimer = setInterval(() => {
-      setUploadProgress((p) => (p < 90 ? p + 25 : p));
+      setUploadProgress((p) => (p < 90 ? p + 20 : p));
     }, 150);
 
     try {
-      const report = await api.uploadAndScanDocument(selectedFile);
+      const newReports: ScanReport[] = [];
+      for (const file of selectedFiles) {
+        const report = await api.uploadAndScanDocument(file);
+        newReports.push(report);
+      }
       clearInterval(progressTimer);
       setUploadProgress(100);
 
-      setScans((prev) => [report, ...prev]);
-      setSelectedScan(report);
-      setSelectedFile(null);
-      setScanSuccessMessage(`Scan complete: ${report.filename} classified as [${report.verdict}] (Risk: ${report.risk_score}/100)`);
+      setScans((prev) => [...newReports, ...prev]);
+      if (newReports.length > 0) {
+        setSelectedScan(newReports[0]);
+      }
+      setSelectedFiles([]);
+      setScanSuccessMessage(`Successfully scanned ${newReports.length} document${newReports.length > 1 ? 's' : ''}.`);
       setTimeout(() => setScanSuccessMessage(null), 5000);
     } catch (err: any) {
       clearInterval(progressTimer);
@@ -396,50 +400,81 @@ export const ScansPage: React.FC = () => {
             <input
               ref={fileInputRef}
               type="file"
+              multiple
               accept=".pdf,.docx,.txt,.html,.png,.jpg,.jpeg,.zip"
               onChange={handleFileChange}
               style={{ display: 'none' }}
             />
           </div>
 
-          {/* Selected File Stage Bar */}
-          {selectedFile && (
+          {/* Selected Files Stage Bar */}
+          {selectedFiles.length > 0 && (
             <div
               style={{
                 display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: '12px 16px',
+                flexDirection: 'column',
+                gap: '10px',
+                padding: '14px 16px',
                 backgroundColor: 'var(--bg-surface-elevated)',
                 borderRadius: 'var(--radius-md)',
                 border: '1px solid var(--accent-cyan)',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <FileText size={20} style={{ color: 'var(--accent-cyan)' }} />
-                <div>
-                  <div style={{ fontWeight: 700, fontSize: '0.875rem', color: 'var(--text-primary)' }}>
-                    {selectedFile.name}
-                  </div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                    Size: {(selectedFile.size / 1024).toFixed(1)} KB • Type: {selectedFile.type || 'Document Payload'}
-                  </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ fontWeight: 700, fontSize: '0.875rem', color: 'var(--text-primary)' }}>
+                  Selected Payload Queue ({selectedFiles.length} {selectedFiles.length === 1 ? 'file' : 'files'})
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Button variant="ghost" size="xs" onClick={() => setSelectedFiles([])} disabled={isUploading}>
+                    Clear All
+                  </Button>
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    isLoading={isUploading}
+                    onClick={handleUploadAndScan}
+                    icon={<Zap size={14} />}
+                  >
+                    {isUploading ? `Scanning (${uploadProgress}%)...` : `Scan ${selectedFiles.length} File${selectedFiles.length > 1 ? 's' : ''}`}
+                  </Button>
                 </div>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Button variant="ghost" size="sm" onClick={() => setSelectedFile(null)}>
-                  Cancel
-                </Button>
-                <Button
-                  variant="primary"
-                  size="sm"
-                  isLoading={isUploading}
-                  onClick={handleUploadAndScan}
-                  icon={<Zap size={14} />}
-                >
-                  {isUploading ? `Scanning (${uploadProgress}%)...` : 'Execute Threat Scan'}
-                </Button>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '180px', overflowY: 'auto' }}>
+                {selectedFiles.map((file, idx) => (
+                  <div
+                    key={idx}
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      padding: '8px 12px',
+                      backgroundColor: 'var(--bg-app)',
+                      borderRadius: 'var(--radius-sm)',
+                      border: '1px solid var(--border-subtle)',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <FileText size={15} style={{ color: 'var(--accent-cyan)' }} />
+                      <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                        {file.name}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                        {(file.size / 1024).toFixed(1)} KB
+                      </span>
+                      <Button
+                        variant="ghost"
+                        size="xs"
+                        onClick={() => setSelectedFiles((prev) => prev.filter((_, i) => i !== idx))}
+                        disabled={isUploading}
+                      >
+                        ✕
+                      </Button>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           )}

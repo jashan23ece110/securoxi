@@ -2,7 +2,7 @@
  * Typed REST API Client consuming SECUROXI FastAPI Backend.
  */
 
-import { ScanReport, Incident, AuditEvent, PolicyRule, ScreeningResult } from './types';
+import { ScanReport, Incident, AuditEvent, PolicyRule, ScreeningResult, RAGAnswer } from './types';
 
 const API_BASE = '/api/v1';
 
@@ -128,6 +128,14 @@ export class SecuroxiApiClient {
   // System Health
   async getSystemHealth(): Promise<Record<string, any>> {
     return this.request<Record<string, any>>('/health');
+  }
+
+  // Grounded RAG & Question Answering
+  async askSecuroxi(query: string, topK: number = 4): Promise<RAGAnswer> {
+    return this.request<RAGAnswer>('/ask', {
+      method: 'POST',
+      body: JSON.stringify({ query, top_k: topK }),
+    });
   }
 }
 

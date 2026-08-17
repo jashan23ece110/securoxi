@@ -90,3 +90,23 @@ export interface Tenant {
   created_at: string;
   status: string;
 }
+
+export interface RAGCitation {
+  citation_id: number;
+  document_id: string;
+  page: number;
+  section?: string;
+  similarity_score: number;
+}
+
+export interface RAGAnswer {
+  query: string;
+  tenant_id: string;
+  answer_text: string;
+  citations: RAGCitation[];
+  confidence_score: number;
+  groundedness_score: number;
+  retrieved_chunks_count: number;
+  execution_time_ms: number;
+  is_grounded: boolean;
+}

@@ -9,7 +9,7 @@ import tempfile
 import zipfile
 import shutil
 from typing import List, Optional, Dict, Any
-from fastapi import FastAPI, UploadFile, File, Header, HTTPException, Depends, Query, Security
+from fastapi import FastAPI, UploadFile, File, Header, HTTPException, Depends, Query, Security, Body
 from fastapi.security import APIKeyHeader, HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -833,6 +833,28 @@ async def security_aware_rank_endpoint(
 def get_audit_logs(limit: int = Query(50, ge=1, le=500), client: ClientIdentity = Depends(verify_api_key)):
     """Fetch security audit logs with strict tenant isolation."""
     return db.get_audit_logs(limit=limit, tenant_id=client.tenant_id)
+
+
+@app.post("/api/v1/ask")
+def ask_securoxi_endpoint(
+    payload: Dict[str, Any] = Body(...),
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    Ask SECUROXI: Grounded document question answering across authorized tenant collection.
+    """
+    query = payload.get("query", "")
+    if not query:
+        raise HTTPException(status_code=400, detail="Query text is required.")
+
+    from securoxi.screening.rag_engine import SecuroxiRAGEngine
+    engine = SecuroxiRAGEngine()
+    answer = engine.query_enterprise_documents(
+        query=query,
+        tenant_id=client.tenant_id,
+        top_k=payload.get("top_k", 4)
+    )
+    return answer.to_dict()
 
 
 # Static Dashboard UI Mounting

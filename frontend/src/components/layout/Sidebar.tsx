@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
+  Home,
   LayoutDashboard,
   Brain,
   ShieldAlert,
@@ -35,9 +36,15 @@ export interface NavGroup {
 
 export const NAV_GROUPS: NavGroup[] = [
   {
+    groupName: 'HOME',
+    items: [
+      { label: 'Home', path: '/', icon: <Home size={17} /> },
+    ],
+  },
+  {
     groupName: 'SECURITY',
     items: [
-      { label: 'Overview', path: '/overview', icon: <LayoutDashboard size={17} /> },
+      { label: 'Security Operations', path: '/overview', icon: <LayoutDashboard size={17} /> },
       { label: 'Security Brain', path: '/security-brain', icon: <Brain size={17} />, badge: 'AI', badgeVariant: 'ai' },
       { label: 'Incidents', path: '/incidents', icon: <ShieldAlert size={17} />, badge: 'LIVE', badgeVariant: 'live' },
       { label: 'Monitoring', path: '/monitoring', icon: <Activity size={17} /> },
@@ -237,6 +244,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     <NavLink
                       key={item.path}
                       to={item.path}
+                      end={item.path === '/'}
                       style={({ isActive }) => ({
                         display: 'flex',
                         alignItems: 'center',
