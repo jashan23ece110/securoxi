@@ -73,6 +73,6 @@ Output: VerifiedEvidencePackage
 
 ---
 
-## 6. Next Steps: Stage 14 — Cross-Document Reasoning & Research Synthesis
+## 6. Synthesis Integration: Stage 14 — Cross-Document Reasoning & Research Synthesis
 
-Stage 14 will consume the `VerifiedEvidencePackage` to execute cross-document comparisons, candidate rankings, executive summaries, and multi-source research answers.
+The `VerifiedEvidencePackage` is consumed by `ResearchSynthesizer` (`securoxi/orchestrator/synthesis/`). See [`docs/INTELLIGENCE_2_STAGE_14_CROSS_DOCUMENT_REASONING.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_STAGE_14_CROSS_DOCUMENT_REASONING.md) for full synthesis documentation.

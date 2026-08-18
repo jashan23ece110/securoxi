@@ -270,3 +270,13 @@ Stage 13 enforces the principle of preferring *"I don't have enough evidence"* o
 - **VerifiedEvidencePackage**: Delivers verified claims, qualified claims, and publication `AnswerStatus` to downstream synthesis layers.
 
 See [`docs/INTELLIGENCE_2_STAGE_13_GROUNDEDNESS_VERIFICATION.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_STAGE_13_GROUNDEDNESS_VERIFICATION.md) for full architectural documentation.
+
+---
+
+## 20. Intelligence 2.0 Phase 3 Stage 14: Cross-Document Reasoning & Research Synthesis
+
+Stage 14 synthesizes high-quality reasoning across multiple documents and verified evidence:
+- **ResearchSynthesizer** (`securoxi/orchestrator/synthesis/synthesizer.py`): Ingests `VerifiedEvidencePackage`, generates structured `ComparisonItem` matrices, formulates `DerivedClaim` instances with explicit provenance, and executes two-stage re-verification.
+- **Synthesis Modes**: `COMPARISON`, `RANKING_EXPLANATION`, `DIRECT_ANSWER`, `SUMMARY`, `RESEARCH`.
+
+See [`docs/INTELLIGENCE_2_STAGE_14_CROSS_DOCUMENT_REASONING.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_STAGE_14_CROSS_DOCUMENT_REASONING.md) for full architectural documentation.

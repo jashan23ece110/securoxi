@@ -174,6 +174,15 @@ from securoxi.orchestrator.groundedness import (
     ClaimExtractor,
     GroundednessVerifier,
 )
+from securoxi.orchestrator.synthesis import (
+    SynthesisMode,
+    ComparisonDimension,
+    SynthesisStatus,
+    DerivedClaim,
+    ComparisonItem,
+    SynthesisResult,
+    ResearchSynthesizer,
+)
 
 __all__ = [
     "TrustLevel",
@@ -321,4 +330,11 @@ __all__ = [
     "VerifiedEvidencePackage",
     "ClaimExtractor",
     "GroundednessVerifier",
+    "SynthesisMode",
+    "ComparisonDimension",
+    "SynthesisStatus",
+    "DerivedClaim",
+    "ComparisonItem",
+    "SynthesisResult",
+    "ResearchSynthesizer",
 ]
