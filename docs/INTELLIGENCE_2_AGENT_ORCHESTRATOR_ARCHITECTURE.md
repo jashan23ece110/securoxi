@@ -259,3 +259,14 @@ Stage 12 consolidates multi-hop retrieval chunks into calibrated evidence sets:
 - **Requirement Coverage Matrix**: Structures coverage by topic and assigns explicit `CoverageState` (`COMPLETE`, `PARTIAL`, `MISSING`).
 
 See [`docs/INTELLIGENCE_2_STAGE_12_EVIDENCE_FUSION.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_STAGE_12_EVIDENCE_FUSION.md) for full architectural documentation.
+
+---
+
+## 19. Intelligence 2.0 Phase 3 Stage 13: Evidence Verification, Conflict Resolution & Groundedness Enforcement
+
+Stage 13 enforces the principle of preferring *"I don't have enough evidence"* over confident hallucinations:
+- **ClaimExtractor** (`securoxi/orchestrator/groundedness/extractor.py`): Decomposes reasoning output into atomic claims (`FACTUAL`, `SECURITY`, `RANKING`, `QUALIFICATION`).
+- **GroundednessVerifier** (`securoxi/orchestrator/groundedness/verifier.py`): Evaluates direct vs partial support against `FusedEvidenceSet`, performs claim repairs/qualifications, validates citation integrity across tenant boundaries, and enforces deterministic security authority.
+- **VerifiedEvidencePackage**: Delivers verified claims, qualified claims, and publication `AnswerStatus` to downstream synthesis layers.
+
+See [`docs/INTELLIGENCE_2_STAGE_13_GROUNDEDNESS_VERIFICATION.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_STAGE_13_GROUNDEDNESS_VERIFICATION.md) for full architectural documentation.

@@ -85,6 +85,6 @@ Output: FusedEvidenceSet (Ranked Items + Matrix + Conflicts)
 
 ---
 
-## 6. Next Steps: Stage 13 — Evidence Verification, Conflict Resolution & Groundedness Enforcement
+## 6. Groundedness Integration: Stage 13 — Groundedness Verification & Enforcement
 
-Stage 13 will consume the `FusedEvidenceSet` to enforce strict sentence-level citation verification, resolve inter-source conflicts, and enforce groundedness prior to final answer generation.
+The `FusedEvidenceSet` is validated and verified by `GroundednessVerifier` (`securoxi/orchestrator/groundedness/`). See [`docs/INTELLIGENCE_2_STAGE_13_GROUNDEDNESS_VERIFICATION.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_STAGE_13_GROUNDEDNESS_VERIFICATION.md) for full groundedness documentation.

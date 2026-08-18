@@ -162,6 +162,18 @@ from securoxi.orchestrator.evidence_fusion import (
     FusedEvidenceSet,
     EvidenceFusionEngine,
 )
+from securoxi.orchestrator.groundedness import (
+    ClaimType,
+    EvidenceSupportState,
+    GroundednessState,
+    AnswerStatus,
+    ConflictResolutionStrategy,
+    Claim,
+    Citation,
+    VerifiedEvidencePackage,
+    ClaimExtractor,
+    GroundednessVerifier,
+)
 
 __all__ = [
     "TrustLevel",
@@ -299,4 +311,14 @@ __all__ = [
     "EvidenceConflict",
     "FusedEvidenceSet",
     "EvidenceFusionEngine",
+    "ClaimType",
+    "EvidenceSupportState",
+    "GroundednessState",
+    "AnswerStatus",
+    "ConflictResolutionStrategy",
+    "Claim",
+    "Citation",
+    "VerifiedEvidencePackage",
+    "ClaimExtractor",
+    "GroundednessVerifier",
 ]
