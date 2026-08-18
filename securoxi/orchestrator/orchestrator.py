@@ -122,6 +122,7 @@ class AgentOrchestrator:
         from securoxi.orchestrator.coordination import MultiAgentCoordinator, CrossAgentVerifier
         from securoxi.orchestrator.retrieval_planner import AgenticRetrievalPlanner
         from securoxi.orchestrator.retrieval_execution import AdaptiveRetrievalExecutor
+        from securoxi.orchestrator.evidence_fusion import EvidenceFusionEngine
         self.verifier = CrossAgentVerifier(policy_engine=self.policy_engine)
         self.coordinator = MultiAgentCoordinator(
             agent_registry=self.agent_registry,
@@ -130,6 +131,7 @@ class AgentOrchestrator:
         )
         self.retrieval_planner = AgenticRetrievalPlanner()
         self.retrieval_executor = AdaptiveRetrievalExecutor()
+        self.evidence_fusion = EvidenceFusionEngine()
 
         # In-memory storage of active tasks, runs, DAGs, contexts, plans, and approvals
         self._tasks: Dict[str, Task] = {}

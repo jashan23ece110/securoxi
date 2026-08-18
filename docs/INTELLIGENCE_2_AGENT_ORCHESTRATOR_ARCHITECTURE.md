@@ -248,3 +248,14 @@ Stage 11 operationalizes the Stage 10 Retrieval Plans into an iterative executio
 - **Security Invariants**: Revalidates `security_status = SAFE` across all execution hops.
 
 See [`docs/INTELLIGENCE_2_STAGE_11_ADAPTIVE_RETRIEVAL.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_STAGE_11_ADAPTIVE_RETRIEVAL.md) for full architectural documentation.
+
+---
+
+## 18. Intelligence 2.0 Phase 3 Stage 12: Hybrid Retrieval, Advanced Reranking & Evidence Fusion
+
+Stage 12 consolidates multi-hop retrieval chunks into calibrated evidence sets:
+- **EvidenceFusionEngine** (`securoxi/orchestrator/evidence_fusion/fusion.py`): Performs hard security gating, content deduplication, score normalization, source authority weighting, requirement coverage mapping, and contradiction preservation.
+- **Source Authority Hierarchy**: Deterministic Security (`1.5x`) > ATS Metadata (`1.3x`) > Official JD (`1.2x`) > Candidate Resume (`1.0x`) > LLM Advisory (`0.6x`).
+- **Requirement Coverage Matrix**: Structures coverage by topic and assigns explicit `CoverageState` (`COMPLETE`, `PARTIAL`, `MISSING`).
+
+See [`docs/INTELLIGENCE_2_STAGE_12_EVIDENCE_FUSION.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_STAGE_12_EVIDENCE_FUSION.md) for full architectural documentation.

@@ -69,6 +69,6 @@ Output: RetrievalExecutionResult (QualityState, Hops, Provenance)
 
 ---
 
-## 5. Next Steps: Stage 12 — Hybrid Search + Advanced Reranking + Evidence Fusion
+## 5. Fusion Integration: Stage 12 — Hybrid Retrieval, Advanced Reranking & Evidence Fusion
 
-With Stage 11 complete, Stage 12 will implement **Hybrid Search + Advanced Reranking + Evidence Fusion**, synthesizing the multi-hop evidence before final grounded verification and enterprise answer generation.
+Evidence chunks produced by `AdaptiveRetrievalExecutor` are consolidated and ranked by `EvidenceFusionEngine` (`securoxi/orchestrator/evidence_fusion/`). See [`docs/INTELLIGENCE_2_STAGE_12_EVIDENCE_FUSION.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_STAGE_12_EVIDENCE_FUSION.md) for full fusion documentation.

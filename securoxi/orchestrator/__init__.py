@@ -151,6 +151,17 @@ from securoxi.orchestrator.retrieval_execution import (
     EvidenceGapEngine,
     AdaptiveRetrievalExecutor,
 )
+from securoxi.orchestrator.evidence_fusion import (
+    EvidenceSourceType,
+    EvidenceQualityTier,
+    ScoreNormalizationMethod,
+    CoverageState,
+    RetrievalCandidate,
+    RequirementCoverageItem,
+    EvidenceConflict,
+    FusedEvidenceSet,
+    EvidenceFusionEngine,
+)
 
 __all__ = [
     "TrustLevel",
@@ -279,4 +290,13 @@ __all__ = [
     "RetrievalExecutionResult",
     "EvidenceGapEngine",
     "AdaptiveRetrievalExecutor",
+    "EvidenceSourceType",
+    "EvidenceQualityTier",
+    "ScoreNormalizationMethod",
+    "CoverageState",
+    "RetrievalCandidate",
+    "RequirementCoverageItem",
+    "EvidenceConflict",
+    "FusedEvidenceSet",
+    "EvidenceFusionEngine",
 ]
