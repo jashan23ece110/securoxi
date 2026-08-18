@@ -48,6 +48,11 @@ from securoxi.orchestrator.planning.models import Plan
 from securoxi.orchestrator.planning.types import ReplanReason
 from securoxi.orchestrator.planning.planner import TaskPlanner
 from securoxi.orchestrator.planning.replanner import AdaptiveReplanner
+from securoxi.orchestrator.persistence.models import Checkpoint, MemoryItem
+from securoxi.orchestrator.persistence.types import CheckpointTrigger, MemoryScope, MemoryType, MemorySource
+from securoxi.orchestrator.persistence.store import DurableStateStore
+from securoxi.orchestrator.persistence.memory import DurableMemoryManager
+from securoxi.orchestrator.persistence.recovery import RunRecoveryManager
 from securoxi.brain.policy_engine import SecuroxiPolicyEngine
 from securoxi.storage.db import SecuroxiDatabase, db
 from securoxi.logger import get_logger
@@ -64,6 +69,8 @@ class AgentOrchestrator:
         policy_engine: Optional[SecuroxiPolicyEngine] = None,
         concurrency_controller: Optional[ConcurrencyController] = None,
         tool_registry: Optional[ToolRegistry] = None,
+        state_store: Optional[DurableStateStore] = None,
+        memory_manager: Optional[DurableMemoryManager] = None,
     ):
         self.db = database or db
         self.policy_engine = policy_engine or SecuroxiPolicyEngine()
@@ -72,6 +79,15 @@ class AgentOrchestrator:
         self.authorizer = ToolAuthorizer(self.policy_engine)
         self.planner = TaskPlanner(tool_registry=self.tools)
         self.replanner = AdaptiveReplanner()
+
+        # Durable State & Memory Infrastructure
+        self.state_store = state_store or DurableStateStore(database=self.db)
+        self.memory = memory_manager or DurableMemoryManager()
+        self.recovery = RunRecoveryManager(
+            state_store=self.state_store,
+            memory_manager=self.memory,
+            policy_engine=self.policy_engine
+        )
 
         # In-memory storage of active tasks, runs, DAGs, contexts, plans, and approvals
         self._tasks: Dict[str, Task] = {}
@@ -656,8 +672,91 @@ class AgentOrchestrator:
         return req
 
     # ==========================================
-    # 7. CANCELLATION & CONTROL
+    # 7. CANCELLATION, PAUSE & RESUME CONTROL
     # ==========================================
+
+    def checkpoint_run(
+        self,
+        run_id: str,
+        trigger: CheckpointTrigger = CheckpointTrigger.NODE_COMPLETED
+    ) -> Checkpoint:
+        """Captures and stores an immutable checkpoint for a run."""
+        run = self.get_run(run_id)
+        dag = self.get_dag(run_id)
+        ctx = self._contexts.get(run_id)
+        if not run or not dag or not ctx:
+            raise OrchestratorError(f"Cannot checkpoint incomplete run state for Run '{run_id}'")
+
+        checkpoint = self.recovery.capture_checkpoint(run, dag, ctx, trigger=trigger)
+        self._audit_log(
+            event_type="CHECKPOINT_CREATED",
+            actor=run.actor_id,
+            tenant_id=run.tenant_id,
+            details=f"Checkpoint {checkpoint.checkpoint_id} created for Run {run_id} (Trigger: {trigger.value})"
+        )
+        return checkpoint
+
+    def pause_run(self, run_id: str) -> Run:
+        """Safely pauses an active run and captures a checkpoint."""
+        run = self.get_run(run_id)
+        if not run:
+            raise OrchestratorError(f"Run '{run_id}' not found.")
+
+        run.state = RunState.PAUSED
+        self.checkpoint_run(run_id, trigger=CheckpointTrigger.RUN_PAUSED)
+
+        self._audit_log(
+            event_type="RUN_PAUSED",
+            actor=run.actor_id,
+            tenant_id=run.tenant_id,
+            details=f"Run {run_id} paused and checkpointed."
+        )
+        return run
+
+    def resume_run(
+        self,
+        run_id: str,
+        checkpoint_id: Optional[str] = None,
+        requester_tenant_id: Optional[str] = None,
+        parallel: bool = True,
+    ) -> Run:
+        """
+        Restores a run from its latest checkpoint and continues execution.
+        """
+        run = self.get_run(run_id)
+        base_dag = self.get_dag(run_id)
+        tenant_id = requester_tenant_id or (run.tenant_id if run else "TENANT-DEFAULT")
+
+        if not base_dag:
+            plan_id = self._run_to_plan.get(run_id)
+            plan = self._plans.get(plan_id) if plan_id else None
+            if plan:
+                base_dag = self.planner.convert_plan_to_dag(plan, run_id=run_id)
+            else:
+                raise OrchestratorError(f"Cannot resume Run '{run_id}' without valid base execution DAG or plan.")
+
+        # Rehydrate state from checkpoint
+        rehydrated_run, rehydrated_dag, ctx = self.recovery.rehydrate_run(
+            run_id=run_id,
+            base_dag=base_dag,
+            checkpoint_id=checkpoint_id,
+            requester_tenant_id=tenant_id
+        )
+
+        with self._lock:
+            self._runs[run_id] = rehydrated_run
+            self._dags[run_id] = rehydrated_dag
+            self._contexts[run_id] = ctx
+
+        self._audit_log(
+            event_type="RUN_RESUMED",
+            actor=rehydrated_run.actor_id,
+            tenant_id=rehydrated_run.tenant_id,
+            details=f"Run {run_id} resumed from checkpoint. Starting DAG execution."
+        )
+
+        # Continue execution
+        return self.start_run(run_id, parallel=parallel)
 
     def cancel_run(self, run_id: str):
         """Cancels an active execution run."""

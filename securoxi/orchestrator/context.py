@@ -17,19 +17,21 @@ class ExecutionContext:
 
     def __init__(
         self,
-        task: Task,
-        run: Run,
+        task: Optional[Task] = None,
+        run: Optional[Run] = None,
+        tenant_id: Optional[str] = None,
+        actor_id: Optional[str] = None,
         budget_tracker: Optional[BudgetTracker] = None,
         actor_permissions: Optional[List[str]] = None,
         actor_trust_level: TrustLevel = TrustLevel.LOW_RISK,
     ):
-        self.task = task
-        self.run = run
-        self.tenant_id = task.tenant_id
-        self.actor_id = task.actor_id
+        self.task = task or Task(objective="Execution Task", tenant_id=tenant_id or (run.tenant_id if run else "TENANT-DEFAULT"))
+        self.run = run or Run()
+        self.tenant_id = tenant_id or (task.tenant_id if task else self.run.tenant_id)
+        self.actor_id = actor_id or (task.actor_id if task else self.run.actor_id)
         self.actor_permissions = actor_permissions or ["*"]
         self.actor_trust_level = actor_trust_level
-        self.budget_tracker = budget_tracker or BudgetTracker(task.budget, task.deadline)
+        self.budget_tracker = budget_tracker or BudgetTracker(self.task.budget, self.task.deadline)
 
         self._shared_state: Dict[str, Any] = {}
         self._cancellation_event = threading.Event()

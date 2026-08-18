@@ -72,6 +72,22 @@ from securoxi.orchestrator.planning import (
     TaskPlanner,
     AdaptiveReplanner,
 )
+from securoxi.orchestrator.persistence import (
+    MemoryScope,
+    MemoryType,
+    MemorySource,
+    MemoryTrustHierarchy,
+    CheckpointTrigger,
+    LeaseStatus,
+    MemoryItem,
+    MemorySnapshot,
+    Checkpoint,
+    WorkerLease,
+    FailureJournalEntry,
+    DurableMemoryManager,
+    DurableStateStore,
+    RunRecoveryManager,
+)
 
 __all__ = [
     "TrustLevel",
@@ -131,4 +147,18 @@ __all__ = [
     "PlanValidator",
     "TaskPlanner",
     "AdaptiveReplanner",
+    "MemoryScope",
+    "MemoryType",
+    "MemorySource",
+    "MemoryTrustHierarchy",
+    "CheckpointTrigger",
+    "LeaseStatus",
+    "MemoryItem",
+    "MemorySnapshot",
+    "Checkpoint",
+    "WorkerLease",
+    "FailureJournalEntry",
+    "DurableMemoryManager",
+    "DurableStateStore",
+    "RunRecoveryManager",
 ]
