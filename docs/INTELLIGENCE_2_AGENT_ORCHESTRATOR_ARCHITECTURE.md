@@ -333,3 +333,14 @@ Stage 20 delivers the conversational research workspace powered by the canonical
 - **REST Endpoints**: `/api/v1/agentic/ask`.
 
 See [`docs/INTELLIGENCE_2_PHASE_4_STAGE_20_ASK_SECUROXI.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_4_STAGE_20_ASK_SECUROXI.md) for full architectural documentation.
+
+---
+
+## 26. Intelligence 2.0 Phase 4 Stage 21: Security Investigation & Evidence Workspace
+
+Stage 21 creates the unified investigation workspace for security analysts:
+- **`SecurityInvestigationWorkspace`** (`securoxi/orchestrator/security_investigation_workspace.py`): Coordinates synchronized evidence locations (`page`, `bbox`, `section`), contextual Security Brain attack chains (OBSERVED vs INFERRED), immutable enterprise policy enforcement, authoritative event timelines, and human-approved response actions (`QUARANTINE_BATCH`, `BLOCK_SENDER`).
+- **Scoped Natural Language Investigation**: Queries run over investigation evidence, prompting for explicit scope expansion before executing organization-wide searches.
+- **REST Endpoints**: `/api/v1/agentic/investigation/create`, `/api/v1/agentic/investigation/{id}`, `/api/v1/agentic/investigation/{id}/note`, `/api/v1/agentic/investigation/{id}/action`, `/api/v1/agentic/investigation/{id}/ask`, `/api/v1/agentic/investigation/{id}/export`.
+
+See [`docs/INTELLIGENCE_2_PHASE_4_STAGE_21_SECURITY_INVESTIGATION.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_4_STAGE_21_SECURITY_INVESTIGATION.md) for full architectural documentation.

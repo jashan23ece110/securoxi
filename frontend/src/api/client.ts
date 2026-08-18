@@ -331,6 +331,52 @@ export class SecuroxiApiClient {
       body: JSON.stringify(payload),
     });
   }
+
+  // Security Investigation & Evidence Workspace (Stage 21)
+  async createInvestigation(payload: {
+    subject: string;
+    document_id?: string;
+    candidate_id?: string;
+    finding_type?: string;
+    security_status?: string;
+    severity?: string;
+    evidence?: string;
+    metadata?: any;
+  }): Promise<any> {
+    return this.request<any>('/agentic/investigation/create', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  }
+
+  async getInvestigation(investigationId: string): Promise<any> {
+    return this.request<any>(`/agentic/investigation/${investigationId}`);
+  }
+
+  async addInvestigationNote(investigationId: string, text: string, author?: string): Promise<any> {
+    return this.request<any>(`/agentic/investigation/${investigationId}/note`, {
+      method: 'POST',
+      body: JSON.stringify({ text, author }),
+    });
+  }
+
+  async requestInvestigationAction(investigationId: string, actionType: string, reason: string): Promise<any> {
+    return this.request<any>(`/agentic/investigation/${investigationId}/action`, {
+      method: 'POST',
+      body: JSON.stringify({ action_type: actionType, reason }),
+    });
+  }
+
+  async askInvestigationQuestion(investigationId: string, query: string, expandScope: boolean = false): Promise<any> {
+    return this.request<any>(`/agentic/investigation/${investigationId}/ask`, {
+      method: 'POST',
+      body: JSON.stringify({ query, expand_scope: expandScope }),
+    });
+  }
+
+  async exportInvestigationReport(investigationId: string): Promise<any> {
+    return this.request<any>(`/agentic/investigation/${investigationId}/export`);
+  }
 }
 
 export const api = new SecuroxiApiClient();

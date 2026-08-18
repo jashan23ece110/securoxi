@@ -1277,6 +1277,147 @@ def agentic_ask_securoxi_endpoint(
     return result
 
 
+# =========================================================================
+# SECURITY INVESTIGATION & EVIDENCE WORKSPACE (Phase 4 Stage 21)
+# =========================================================================
+
+@app.post("/api/v1/agentic/investigation/create")
+def create_investigation_endpoint(
+    payload: Dict[str, Any] = Body(...),
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    Initializes a new structured investigation context.
+    """
+    subject = payload.get("subject", "Adversarial Document Subject")
+    doc_id = payload.get("document_id")
+    cand_id = payload.get("candidate_id")
+    finding_type = payload.get("finding_type", "PROMPT_INJECTION")
+    sec_status = payload.get("security_status", "HIGH_RISK")
+    severity = payload.get("severity", "HIGH")
+    evidence = payload.get("evidence")
+    meta = payload.get("metadata", {})
+
+    record = orchestrator_instance.investigation_workspace.create_investigation(
+        tenant_id=client.tenant_id,
+        subject=subject,
+        document_id=doc_id,
+        candidate_id=cand_id,
+        finding_type=finding_type,
+        security_status=sec_status,
+        severity=severity,
+        raw_evidence=evidence,
+        metadata=meta,
+    )
+    return record
+
+
+@app.get("/api/v1/agentic/investigation/{investigation_id}")
+def get_investigation_endpoint(
+    investigation_id: str,
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    Retrieves full investigation state with strict tenant isolation.
+    """
+    inv = orchestrator_instance.investigation_workspace.get_investigation(investigation_id, client.tenant_id)
+    if not inv:
+        raise HTTPException(status_code=404, detail=f"Investigation '{investigation_id}' not found or unauthorized.")
+    return inv
+
+
+@app.post("/api/v1/agentic/investigation/{investigation_id}/note")
+def add_investigation_note_endpoint(
+    investigation_id: str,
+    payload: Dict[str, Any] = Body(...),
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    Adds a structured user note (USER_NOTE) to the investigation.
+    """
+    note_text = payload.get("text", "").strip()
+    if not note_text:
+        raise HTTPException(status_code=400, detail="Note text is required.")
+    author = payload.get("author", client.client_name)
+
+    try:
+        note = orchestrator_instance.investigation_workspace.add_user_note(
+            investigation_id=investigation_id,
+            tenant_id=client.tenant_id,
+            note_text=note_text,
+            author=author,
+        )
+        return note
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+
+@app.post("/api/v1/agentic/investigation/{investigation_id}/action")
+def request_investigation_action_endpoint(
+    investigation_id: str,
+    payload: Dict[str, Any] = Body(...),
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    Requests high-impact response action gated by human approval.
+    """
+    action_type = payload.get("action_type", "QUARANTINE_BATCH")
+    reason = payload.get("reason", "Correlated security finding in investigation")
+
+    try:
+        res = orchestrator_instance.investigation_workspace.request_investigation_action(
+            investigation_id=investigation_id,
+            tenant_id=client.tenant_id,
+            action_type=action_type,
+            reason=reason,
+        )
+        return res
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+
+@app.post("/api/v1/agentic/investigation/{investigation_id}/ask")
+def ask_investigation_question_endpoint(
+    investigation_id: str,
+    payload: Dict[str, Any] = Body(...),
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    Executes scoped Q&A over the current investigation context.
+    """
+    query = payload.get("query", "").strip()
+    if not query:
+        raise HTTPException(status_code=400, detail="Query text is required.")
+    expand_scope = payload.get("expand_scope", False)
+
+    try:
+        answer = orchestrator_instance.investigation_workspace.ask_investigation_question(
+            investigation_id=investigation_id,
+            tenant_id=client.tenant_id,
+            query=query,
+            expand_scope=expand_scope,
+        )
+        return answer
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+
+@app.get("/api/v1/agentic/investigation/{investigation_id}/export")
+def export_investigation_report_endpoint(
+    investigation_id: str,
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    Exports a comprehensive confidential investigation report.
+    """
+    try:
+        report = orchestrator_instance.investigation_workspace.export_report(investigation_id, client.tenant_id)
+        return report
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+
+
 
 
 
