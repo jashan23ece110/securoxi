@@ -155,7 +155,7 @@ class AgentRuntime:
                     if tool_executor_fn:
                         tool_result = tool_executor_fn(tool_id, decision.tool_arguments, context)
                     else:
-                        tool_result = {"status": "SUCCESS", "tool": tool_id, "mock": True}
+                        tool_result = tool_def.handler(context, **decision.tool_arguments)
 
                     # Step 6: Ingest Tool Observation back to Agent
                     obs = AgentObservation(

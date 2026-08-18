@@ -24,6 +24,21 @@ from securoxi.orchestrator.agents.models import (
 from securoxi.orchestrator.agents.registry import AgentRegistry
 from securoxi.orchestrator.agents.base import AbstractAgent
 from securoxi.orchestrator.agents.runtime import AgentRuntime
+from securoxi.orchestrator.agents.security import (
+    SecurityAgent,
+    get_default_security_agent_definition,
+    register_security_agent_tools,
+    SecurityInvestigationState,
+    SecurityRecommendationType,
+    EvidenceVerificationState,
+    SecurityEvidenceReference,
+    SecurityAttackStep,
+    SecurityAttackChainSummary,
+    SecurityPolicyContext,
+    SecurityRiskContext,
+    IncidentProposal,
+    SecurityAgentResult,
+)
 
 __all__ = [
     "AgentDomain",
@@ -42,4 +57,17 @@ __all__ = [
     "AgentRegistry",
     "AbstractAgent",
     "AgentRuntime",
+    "SecurityAgent",
+    "get_default_security_agent_definition",
+    "register_security_agent_tools",
+    "SecurityInvestigationState",
+    "SecurityRecommendationType",
+    "EvidenceVerificationState",
+    "SecurityEvidenceReference",
+    "SecurityAttackStep",
+    "SecurityAttackChainSummary",
+    "SecurityPolicyContext",
+    "SecurityRiskContext",
+    "IncidentProposal",
+    "SecurityAgentResult",
 ]

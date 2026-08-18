@@ -169,3 +169,14 @@ Stage 4 establishes the uniform common runtime contract and centralized registry
 - **Inter-Agent Handoffs** (`securoxi/orchestrator/agents/models.py`): Validated schema and tenant boundaries for peer agent coordination.
 
 See [`docs/INTELLIGENCE_2_STAGE_4_AGENT_RUNTIME.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_STAGE_4_AGENT_RUNTIME.md) for full architectural documentation.
+
+---
+
+## 11. Intelligence 2.0 Phase 2 Stage 5: Specialized Autonomous Security Agent
+
+Stage 5 implements the platform's first specialized autonomous agent:
+- **Autonomous Security Agent** (`securoxi/orchestrator/agents/security/agent.py`): Triages documents, verifies evidence, coordinates Security Brain correlations, and drafts incident proposals.
+- **Authoritative Security Tools** (`securoxi/orchestrator/agents/security/tools.py`): Connects to `SecuroxiEngine`, `SecurityBrainCore`, `SecuroxiPolicyEngine`, and Evidence Store.
+- **Security Invariant Enforcement**: Deterministic engines remain authoritative; Security Agent output is strictly investigatory and advisory.
+
+See [`docs/INTELLIGENCE_2_STAGE_5_SECURITY_AGENT.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_STAGE_5_SECURITY_AGENT.md) for full architectural documentation.
