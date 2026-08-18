@@ -147,6 +147,8 @@ class AgentOrchestrator:
         self.ask_workspace = AskSecuroxiWorkspace(self)
         from securoxi.orchestrator.security_investigation_workspace import SecurityInvestigationWorkspace
         self.investigation_workspace = SecurityInvestigationWorkspace(self)
+        from securoxi.orchestrator.monitoring_workspace import UnifiedMonitoringWorkspace
+        self.monitoring_workspace = UnifiedMonitoringWorkspace(self)
 
         # In-memory storage of active tasks, runs, DAGs, contexts, plans, and approvals
         self._tasks: Dict[str, Task] = {}

@@ -377,6 +377,22 @@ export class SecuroxiApiClient {
   async exportInvestigationReport(investigationId: string): Promise<any> {
     return this.request<any>(`/agentic/investigation/${investigationId}/export`);
   }
+
+  // Unified Live Task & Security Monitoring Workspace (Stage 22)
+  async getMonitoringOverview(): Promise<any> {
+    return this.request<any>('/agentic/monitoring/overview');
+  }
+
+  async getMonitoringEvents(category?: string, limit: number = 50): Promise<any> {
+    const params = new URLSearchParams();
+    if (category) params.append('category', category);
+    params.append('limit', String(limit));
+    return this.request<any>(`/agentic/monitoring/events?${params.toString()}`);
+  }
+
+  async getMonitoringTelemetry(): Promise<any> {
+    return this.request<any>('/agentic/monitoring/telemetry');
+  }
 }
 
 export const api = new SecuroxiApiClient();

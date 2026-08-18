@@ -344,3 +344,14 @@ Stage 21 creates the unified investigation workspace for security analysts:
 - **REST Endpoints**: `/api/v1/agentic/investigation/create`, `/api/v1/agentic/investigation/{id}`, `/api/v1/agentic/investigation/{id}/note`, `/api/v1/agentic/investigation/{id}/action`, `/api/v1/agentic/investigation/{id}/ask`, `/api/v1/agentic/investigation/{id}/export`.
 
 See [`docs/INTELLIGENCE_2_PHASE_4_STAGE_21_SECURITY_INVESTIGATION.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_4_STAGE_21_SECURITY_INVESTIGATION.md) for full architectural documentation.
+
+---
+
+## 27. Intelligence 2.0 Phase 4 Stage 22: Unified Live Task & Security Monitoring Experience
+
+Stage 22 establishes the central operational and security monitoring surface:
+- **`UnifiedMonitoringWorkspace`** (`securoxi/orchestrator/monitoring_workspace.py`): Aggregates active background task states, live security alerts, open incident tracking, subsystem health checks, and actionable needs-attention items.
+- **Role-Based Telemetry**: Exposes deep agent performance and Agentic RAG synthesis metrics to administrators while preserving simple operational visibility for standard users.
+- **REST Endpoints**: `/api/v1/agentic/monitoring/overview`, `/api/v1/agentic/monitoring/events`, `/api/v1/agentic/monitoring/telemetry`.
+
+See [`docs/INTELLIGENCE_2_PHASE_4_STAGE_22_MONITORING.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_4_STAGE_22_MONITORING.md) for full architectural documentation.

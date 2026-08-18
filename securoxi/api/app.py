@@ -1417,6 +1417,56 @@ def export_investigation_report_endpoint(
         raise HTTPException(status_code=404, detail=str(e))
 
 
+# =========================================================================
+# UNIFIED LIVE TASK & SECURITY MONITORING WORKSPACE (Phase 4 Stage 22)
+# =========================================================================
+
+@app.get("/api/v1/agentic/monitoring/overview")
+def get_monitoring_overview_endpoint(
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    Returns top-level operational status summary, subsystem health, and actionable alerts.
+    """
+    overview = orchestrator_instance.monitoring_workspace.get_monitoring_overview(
+        tenant_id=client.tenant_id,
+        role=client.role.value if hasattr(client.role, "value") else str(client.role),
+    )
+    return overview
+
+
+@app.get("/api/v1/agentic/monitoring/events")
+def get_monitoring_events_endpoint(
+    category: Optional[str] = Query(None),
+    limit: int = Query(50, ge=1, le=200),
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    Returns normalized live event stream with timestamps and correlation links.
+    """
+    events = orchestrator_instance.monitoring_workspace.get_live_events(
+        tenant_id=client.tenant_id,
+        category=category,
+        limit=limit,
+    )
+    return events
+
+
+@app.get("/api/v1/agentic/monitoring/telemetry")
+def get_monitoring_telemetry_endpoint(
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    Returns advanced agent and RAG execution telemetry for administrators.
+    """
+    telemetry = orchestrator_instance.monitoring_workspace.get_telemetry(
+        tenant_id=client.tenant_id,
+        role=client.role.value if hasattr(client.role, "value") else str(client.role),
+    )
+    return telemetry
+
+
+
 
 
 
