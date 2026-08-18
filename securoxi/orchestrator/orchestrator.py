@@ -53,6 +53,9 @@ from securoxi.orchestrator.persistence.types import CheckpointTrigger, MemorySco
 from securoxi.orchestrator.persistence.store import DurableStateStore
 from securoxi.orchestrator.persistence.memory import DurableMemoryManager
 from securoxi.orchestrator.persistence.recovery import RunRecoveryManager
+from securoxi.orchestrator.agents.registry import AgentRegistry
+from securoxi.orchestrator.agents.runtime import AgentRuntime
+from securoxi.orchestrator.agents.models import AgentDefinition
 from securoxi.brain.policy_engine import SecuroxiPolicyEngine
 from securoxi.storage.db import SecuroxiDatabase, db
 from securoxi.logger import get_logger
@@ -71,6 +74,8 @@ class AgentOrchestrator:
         tool_registry: Optional[ToolRegistry] = None,
         state_store: Optional[DurableStateStore] = None,
         memory_manager: Optional[DurableMemoryManager] = None,
+        agent_registry: Optional[AgentRegistry] = None,
+        agent_runtime: Optional[AgentRuntime] = None,
     ):
         self.db = database or db
         self.policy_engine = policy_engine or SecuroxiPolicyEngine()
@@ -87,6 +92,15 @@ class AgentOrchestrator:
             state_store=self.state_store,
             memory_manager=self.memory,
             policy_engine=self.policy_engine
+        )
+
+        # Agent Registry & Runtime
+        self.agent_registry = agent_registry or AgentRegistry()
+        self.agent_runtime = agent_runtime or AgentRuntime(
+            agent_registry=self.agent_registry,
+            tool_registry=self.tools,
+            tool_authorizer=self.authorizer,
+            memory_manager=self.memory
         )
 
         # In-memory storage of active tasks, runs, DAGs, contexts, plans, and approvals
@@ -315,6 +329,22 @@ class AgentOrchestrator:
 
     def list_tools(self, tenant_id: Optional[str] = None) -> List[ToolDefinition]:
         return self.tools.list_tools(tenant_id)
+
+    # ==========================================
+    # 3B. AGENT REGISTRATION & RESOLUTION
+    # ==========================================
+
+    def register_agent(self, agent_def: AgentDefinition) -> AgentDefinition:
+        """Registers a specialized agent specification."""
+        return self.agent_registry.register_agent(agent_def)
+
+    def get_agent(self, agent_id: str, version: Optional[str] = None) -> Optional[AgentDefinition]:
+        """Retrieves a registered agent definition."""
+        return self.agent_registry.get_agent(agent_id, version=version)
+
+    def list_agents(self, enabled_only: bool = True) -> List[AgentDefinition]:
+        """Lists registered agents."""
+        return self.agent_registry.list_agents(enabled_only=enabled_only)
 
     def invoke_tool(
         self,

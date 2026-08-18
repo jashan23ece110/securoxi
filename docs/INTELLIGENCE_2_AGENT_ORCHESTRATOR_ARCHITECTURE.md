@@ -159,4 +159,13 @@ All three stages of Phase 1 are fully implemented and validated with **293 / 293
 - **Stage 2**: Advanced Task Understanding + Adaptive Planning ✅
 - **Stage 3**: Durable Execution State, Checkpointing, Resumability & Memory ✅
 
-Phase 2 will introduce **Specialized Autonomous Agents & Tool Implementations** built directly upon this rock-solid orchestration foundation.
+---
+
+## 10. Intelligence 2.0 Phase 2 Stage 4: Agent Registry & Runtime Contract
+
+Stage 4 establishes the uniform common runtime contract and centralized registry for all specialized agents:
+- **Central Agent Registry & Resolver** (`securoxi/orchestrator/agents/registry.py`): System-owned definitions, SemVer tracking, intent/capability routing, and validation.
+- **Controlled Agent Runtime Engine** (`securoxi/orchestrator/agents/runtime.py`): OBSERVE-DECIDE-EXECUTE loop, tool allowlists, memory permissions, and zero-leakage tracing.
+- **Inter-Agent Handoffs** (`securoxi/orchestrator/agents/models.py`): Validated schema and tenant boundaries for peer agent coordination.
+
+See [`docs/INTELLIGENCE_2_STAGE_4_AGENT_RUNTIME.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_STAGE_4_AGENT_RUNTIME.md) for full architectural documentation.
