@@ -5,6 +5,7 @@ dashboard stats, scan results, evidence investigation, and audit trail logs.
 """
 
 import os
+import uuid
 import tempfile
 import zipfile
 import shutil
@@ -1156,6 +1157,95 @@ def decide_approval_endpoint(
     if not success:
         raise HTTPException(status_code=400, detail=f"Could not process approval for task '{task_id}'.")
     return {"status": "APPROVED" if approved else "REJECTED", "task_id": task_id}
+
+
+# =========================================================================
+# INTELLIGENT HIRING & ATS WORKSPACE (Phase 4 Stage 19)
+# =========================================================================
+
+@app.post("/api/v1/agentic/hiring/screen")
+def screen_hiring_candidates_endpoint(
+    payload: Dict[str, Any] = Body(...),
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    Executes security-first candidate screening, calibrated fit scoring, and shortlist generation.
+    """
+    task_desc = payload.get("task_description", "Screen candidates against JD.")
+    job_desc = payload.get("job_description")
+    candidates = payload.get("candidates")
+    raw_context = payload.get("context")
+    constraints = payload.get("constraints")
+    target_count = payload.get("target_shortlist_count", 20)
+
+    result = orchestrator_instance.hiring_workspace.screen_candidates(
+        task_description=task_desc,
+        tenant_id=client.tenant_id,
+        job_description=job_desc,
+        candidates=candidates,
+        raw_context=raw_context,
+        constraints=constraints,
+        target_shortlist_count=target_count,
+    )
+    return result.to_dict()
+
+
+@app.post("/api/v1/agentic/hiring/compare")
+def compare_hiring_candidates_endpoint(
+    payload: Dict[str, Any] = Body(...),
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    Generates a structured comparison matrix across candidate dimensions.
+    """
+    cand_ids = payload.get("candidate_ids", [])
+    all_candidates = payload.get("all_candidates", [])
+    role_title = payload.get("role_title", "Senior Cloud Security Engineer")
+
+    matrix = orchestrator_instance.hiring_workspace.compare_candidates(
+        candidate_ids=cand_ids,
+        all_candidates=all_candidates,
+        role_title=role_title,
+    )
+    return matrix
+
+
+@app.post("/api/v1/agentic/hiring/ats/advance")
+def advance_ats_candidate_endpoint(
+    payload: Dict[str, Any] = Body(...),
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    Requests human approval to advance candidate to interview round.
+    Rejects HIGH_RISK candidates with 403 Forbidden.
+    """
+    cand_id = payload.get("candidate_id", "")
+    cand_name = payload.get("candidate_name", "Candidate")
+    sec_status = payload.get("security_status", "SAFE").upper()
+    target_stage = payload.get("target_stage", "Technical Interview")
+
+    if sec_status in ["HIGH_RISK", "UNINSPECTABLE"]:
+        raise HTTPException(
+            status_code=403,
+            detail=f"Security Policy Denied: Candidate '{cand_name}' is '{sec_status}' and cannot be advanced to '{target_stage}'."
+        )
+
+    task_id = f"TASK-ADVANCE-{uuid.uuid4().hex[:6].upper()}"
+    appr_id = orchestrator_instance.execution_runner.request_human_approval(
+        task_id=task_id,
+        action_summary=f"Advance candidate '{cand_name}' ({cand_id}) to '{target_stage}' in ATS",
+        payload=payload,
+        tenant_id=client.tenant_id,
+    )
+
+    return {
+        "status": "APPROVAL_REQUIRED",
+        "task_id": task_id,
+        "approval_id": appr_id,
+        "action_summary": f"Advance candidate '{cand_name}' to '{target_stage}'",
+        "candidate_id": cand_id,
+    }
+
 
 
 

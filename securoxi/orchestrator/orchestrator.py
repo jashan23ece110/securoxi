@@ -141,6 +141,8 @@ class AgentOrchestrator:
         self.context_manager = UniversalContextManager()
         from securoxi.orchestrator.execution_runner import AutonomousExecutionRunner
         self.execution_runner = AutonomousExecutionRunner(self)
+        from securoxi.orchestrator.hiring_workspace import IntelligentHiringWorkspace
+        self.hiring_workspace = IntelligentHiringWorkspace(self)
 
         # In-memory storage of active tasks, runs, DAGs, contexts, plans, and approvals
         self._tasks: Dict[str, Task] = {}

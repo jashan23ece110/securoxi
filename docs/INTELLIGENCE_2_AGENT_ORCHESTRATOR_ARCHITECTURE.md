@@ -311,3 +311,14 @@ Stage 18 implements the asynchronous, observable, and durable task execution eng
 - **REST Endpoints**: `/api/v1/agentic/task/submit`, `/api/v1/agentic/task/{id}/status`, `/api/v1/agentic/task/{id}/pause`, `/api/v1/agentic/task/{id}/resume`, `/api/v1/agentic/task/{id}/cancel`, `/api/v1/agentic/task/{id}/approval/decide`.
 
 See [`docs/INTELLIGENCE_2_PHASE_4_STAGE_18_TASK_EXECUTION.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_4_STAGE_18_TASK_EXECUTION.md) for full architectural documentation.
+
+---
+
+## 24. Intelligence 2.0 Phase 4 Stage 19: Intelligent Hiring & ATS Workspace
+
+Stage 19 establishes the recruiter-facing intelligent workspace for automated screening, ranking, and ATS management:
+- **`IntelligentHiringWorkspace`** (`securoxi/orchestrator/hiring_workspace.py`): Coordinates security clearance gating, calibrated fit scoring (0–100), requirement coverage, shortlist vs near-matches segregation, and multi-candidate comparison.
+- **Human-Governed ATS Actions**: Advancing candidates in connected ATS (Greenhouse, Workday, Lever) requires explicit human recruiter approval (`WAITING_FOR_APPROVAL`), while `HIGH_RISK` candidates are strictly blocked.
+- **REST Endpoints**: `/api/v1/agentic/hiring/screen`, `/api/v1/agentic/hiring/compare`, `/api/v1/agentic/hiring/ats/advance`.
+
+See [`docs/INTELLIGENCE_2_PHASE_4_STAGE_19_HIRING_WORKSPACE.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_4_STAGE_19_HIRING_WORKSPACE.md) for full architectural documentation.

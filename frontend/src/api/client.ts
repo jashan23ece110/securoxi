@@ -276,6 +276,47 @@ export class SecuroxiApiClient {
       body: JSON.stringify({ approval_id: approvalId, approved, reason }),
     });
   }
+
+  // Intelligent Hiring Workspace (Stage 19)
+  async screenHiringCandidates(payload: {
+    task_description?: string;
+    job_description?: any;
+    candidates?: any[];
+    context?: any;
+    constraints?: string[];
+    target_shortlist_count?: number;
+  }): Promise<any> {
+    return this.request<any>('/agentic/hiring/screen', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  }
+
+  async compareHiringCandidates(payload: {
+    candidate_ids: string[];
+    all_candidates: any[];
+    role_title?: string;
+  }): Promise<any> {
+    return this.request<any>('/agentic/hiring/compare', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  }
+
+  async advanceAtsCandidate(payload: {
+    candidate_id: string;
+    candidate_name: string;
+    security_status: string;
+    target_stage?: string;
+  }): Promise<{ status: string; task_id: string; approval_id: string; action_summary: string; candidate_id: string }> {
+    return this.request<{ status: string; task_id: string; approval_id: string; action_summary: string; candidate_id: string }>(
+      '/agentic/hiring/ats/advance',
+      {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      }
+    );
+  }
 }
 
 export const api = new SecuroxiApiClient();
