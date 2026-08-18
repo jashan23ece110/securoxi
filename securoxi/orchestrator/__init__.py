@@ -106,6 +106,23 @@ from securoxi.orchestrator.agents import (
     AbstractAgent,
     AgentRuntime,
 )
+from securoxi.orchestrator.coordination import (
+    AuthorityLevel,
+    HandoffStatus,
+    VerificationState,
+    ConflictType,
+    CoordinationCompletionStatus,
+    AgentHandoff,
+    AgentResultEnvelope,
+    CoordinationConflict,
+    CoordinationStep,
+    CoordinationPlan,
+    VerificationResult,
+    ConsensusResult,
+    CoordinationResult,
+    CrossAgentVerifier,
+    MultiAgentCoordinator,
+)
 
 __all__ = [
     "TrustLevel",
@@ -195,4 +212,19 @@ __all__ = [
     "AgentRegistry",
     "AbstractAgent",
     "AgentRuntime",
+    "AuthorityLevel",
+    "HandoffStatus",
+    "VerificationState",
+    "ConflictType",
+    "CoordinationCompletionStatus",
+    "AgentHandoff",
+    "AgentResultEnvelope",
+    "CoordinationConflict",
+    "CoordinationStep",
+    "CoordinationPlan",
+    "VerificationResult",
+    "ConsensusResult",
+    "CoordinationResult",
+    "CrossAgentVerifier",
+    "MultiAgentCoordinator",
 ]

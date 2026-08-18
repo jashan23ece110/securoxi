@@ -119,6 +119,14 @@ class AgentOrchestrator:
             memory_manager=self.memory
         )
 
+        from securoxi.orchestrator.coordination import MultiAgentCoordinator, CrossAgentVerifier
+        self.verifier = CrossAgentVerifier(policy_engine=self.policy_engine)
+        self.coordinator = MultiAgentCoordinator(
+            agent_registry=self.agent_registry,
+            agent_runtime=self.agent_runtime,
+            verifier=self.verifier,
+        )
+
         # In-memory storage of active tasks, runs, DAGs, contexts, plans, and approvals
         self._tasks: Dict[str, Task] = {}
         self._runs: Dict[str, Run] = {}

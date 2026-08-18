@@ -213,3 +213,14 @@ Stage 8 implements deep forensic investigation and incident response capabilitie
 - **Human Approval Gate**: Response mutations require explicit human authorization prior to execution.
 
 See [`docs/INTELLIGENCE_2_STAGE_8_FORENSIC_INCIDENT_AGENTS.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_STAGE_8_FORENSIC_INCIDENT_AGENTS.md) for full architectural documentation.
+
+---
+
+## 15. Intelligence 2.0 Phase 2 Stage 9: Secure Multi-Agent Coordination & Verification Layer
+
+Stage 9 establishes structured collaboration across all specialized agents:
+- **MultiAgentCoordinator** (`securoxi/orchestrator/coordination/coordinator.py`): Manages structured handoffs (`AgentHandoff`), result envelopes (`AgentResultEnvelope`), and bounded coordination plans.
+- **CrossAgentVerifier** (`securoxi/orchestrator/coordination/verifier.py`): Enforces deterministic security authority precedence, cross-agent conflict resolution, tenant isolation, and provenance integrity.
+- **Explicit Authority Hierarchy**: Precedence rule $\text{Security / Policy Authority} \gg \text{Deterministic Tools} \gg \text{Evidence} \gg \text{Advisory}$.
+
+See [`docs/INTELLIGENCE_2_STAGE_9_MULTI_AGENT_COORDINATION.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_STAGE_9_MULTI_AGENT_COORDINATION.md) for full architectural documentation.
