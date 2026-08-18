@@ -99,12 +99,18 @@ class AgentOrchestrator:
         from securoxi.orchestrator.agents.security import register_security_agent_tools, get_default_security_agent_definition
         from securoxi.orchestrator.agents.retrieval import register_retrieval_agent_tools, get_default_retrieval_agent_definition
         from securoxi.orchestrator.agents.hiring import register_hiring_agent_tools, get_default_hiring_agent_definition
+        from securoxi.orchestrator.agents.forensic import register_forensic_agent_tools, get_default_forensic_agent_definition
+        from securoxi.orchestrator.agents.incident import register_incident_agent_tools, get_default_incident_agent_definition
         register_security_agent_tools(self.tools, policy_engine=self.policy_engine)
         register_retrieval_agent_tools(self.tools)
         register_hiring_agent_tools(self.tools)
+        register_forensic_agent_tools(self.tools)
+        register_incident_agent_tools(self.tools)
         self.agent_registry.register_agent(get_default_security_agent_definition())
         self.agent_registry.register_agent(get_default_retrieval_agent_definition())
         self.agent_registry.register_agent(get_default_hiring_agent_definition())
+        self.agent_registry.register_agent(get_default_forensic_agent_definition())
+        self.agent_registry.register_agent(get_default_incident_agent_definition())
 
         self.agent_runtime = agent_runtime or AgentRuntime(
             agent_registry=self.agent_registry,

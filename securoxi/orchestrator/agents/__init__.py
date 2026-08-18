@@ -65,6 +65,29 @@ from securoxi.orchestrator.agents.hiring import (
     CandidateScreeningResult,
     HiringAgentResult,
 )
+from securoxi.orchestrator.agents.forensic import (
+    ForensicAgent,
+    get_default_forensic_agent_definition,
+    register_forensic_agent_tools,
+    ForensicFindingStatus,
+    EvidenceSufficiencyTier,
+    ForensicLocation,
+    ForensicFinding,
+    ForensicAttackStep,
+    ForensicAttackChain,
+    ForensicInvestigationResult,
+)
+from securoxi.orchestrator.agents.incident import (
+    IncidentAgent,
+    get_default_incident_agent_definition,
+    register_incident_agent_tools,
+    IncidentTriageSeverity,
+    IncidentRecommendationType,
+    IncidentTimelineEvent,
+    IncidentCorrelationItem,
+    IncidentProposal,
+    IncidentAgentResult,
+)
 
 __all__ = [
     "AgentDomain",
@@ -118,4 +141,22 @@ __all__ = [
     "JDAnalysis",
     "CandidateScreeningResult",
     "HiringAgentResult",
+    "ForensicAgent",
+    "get_default_forensic_agent_definition",
+    "register_forensic_agent_tools",
+    "ForensicFindingStatus",
+    "EvidenceSufficiencyTier",
+    "ForensicLocation",
+    "ForensicFinding",
+    "ForensicAttackStep",
+    "ForensicAttackChain",
+    "ForensicInvestigationResult",
+    "IncidentAgent",
+    "get_default_incident_agent_definition",
+    "register_incident_agent_tools",
+    "IncidentTriageSeverity",
+    "IncidentRecommendationType",
+    "IncidentTimelineEvent",
+    "IncidentCorrelationItem",
+    "IncidentAgentResult",
 ]

@@ -202,3 +202,14 @@ Stage 7 implements the autonomous candidate discovery and screening layer:
 - **Human Approval Gate**: High-impact ATS mutations (`ADVANCE_CANDIDATE`, `REJECT_CANDIDATE`) enforce mandatory human review prior to execution.
 
 See [`docs/INTELLIGENCE_2_STAGE_7_HIRING_AGENT.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_STAGE_7_HIRING_AGENT.md) for full architectural documentation.
+
+---
+
+## 14. Intelligence 2.0 Phase 2 Stage 8: Specialized Forensic & Incident Agents
+
+Stage 8 implements deep forensic investigation and incident response capabilities:
+- **Autonomous Forensic Agent** (`securoxi/orchestrator/agents/forensic/agent.py`): Resolves spatial document locations (page, bbox), correlates multi-vector attack chains with Security Brain, and produces grounded investigation reports.
+- **Autonomous Incident Agent** (`securoxi/orchestrator/agents/incident/agent.py`): Triages security incidents, synthesizes chronological audit timelines, tracks correlated assets, and drafts controlled response proposals.
+- **Human Approval Gate**: Response mutations require explicit human authorization prior to execution.
+
+See [`docs/INTELLIGENCE_2_STAGE_8_FORENSIC_INCIDENT_AGENTS.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_STAGE_8_FORENSIC_INCIDENT_AGENTS.md) for full architectural documentation.

@@ -192,6 +192,85 @@ class AgentRegistry:
             )
         )
 
+        # 7. Specialized Hiring & Screening Agent (v1.0.0)
+        self.register_agent(
+            AgentDefinition(
+                agent_id="hiring-agent",
+                name="Securoxi Autonomous Hiring & Screening Agent",
+                description="Evaluates candidate pools against JDs, enforces security gates, executes deterministic scoring, and generates shortlists",
+                version="1.0.0",
+                domain=AgentDomain.HIRING,
+                capabilities=[
+                    AgentCapability.CANDIDATE_SCREENING,
+                    AgentCapability.JD_MATCHING,
+                    AgentCapability.REPORT_GENERATION,
+                ],
+                trust_level=TrustLevel.CONTROLLED,
+                risk_level=AgentRiskLevel.MEDIUM,
+                allowed_tools={"jd_parser", "candidate_security_gate", "candidate_scorer", "ats_status_updater"},
+                supported_intents=[
+                    TaskIntent.CANDIDATE_SCREENING,
+                    TaskIntent.JD_MATCHING,
+                    TaskIntent.ATS_OPERATION,
+                    TaskIntent.DOCUMENT_ANALYSIS,
+                    TaskIntent.QUESTION_ANSWERING,
+                    TaskIntent.MIXED_WORKFLOW,
+                ],
+            )
+        )
+
+        # 8. Specialized Forensic Agent (v1.0.0)
+        self.register_agent(
+            AgentDefinition(
+                agent_id="forensic-agent",
+                name="Securoxi Autonomous Forensic Investigation Agent",
+                description="Investigates detected findings, resolves spatial bounding boxes, correlates attack chains, and produces forensic reports",
+                version="1.0.0",
+                domain=AgentDomain.FORENSICS,
+                capabilities=[
+                    AgentCapability.FORENSIC_ANALYSIS,
+                    AgentCapability.SECURITY_ANALYSIS,
+                    AgentCapability.REPORT_GENERATION,
+                ],
+                trust_level=TrustLevel.CONTROLLED,
+                risk_level=AgentRiskLevel.MEDIUM,
+                allowed_tools={"finding_lookup", "forensic_evidence_lookup", "attack_graph_lookup"},
+                supported_intents=[
+                    TaskIntent.SECURITY_INVESTIGATION,
+                    TaskIntent.DOCUMENT_ANALYSIS,
+                    TaskIntent.DOCUMENT_COMPARISON,
+                    TaskIntent.INCIDENT_INVESTIGATION,
+                    TaskIntent.REPORT_GENERATION,
+                    TaskIntent.MIXED_WORKFLOW,
+                ],
+            )
+        )
+
+        # 9. Specialized Incident Agent (v1.0.0)
+        self.register_agent(
+            AgentDefinition(
+                agent_id="incident-agent",
+                name="Securoxi Autonomous Incident Response Agent",
+                description="Triages incidents, builds event timelines, correlates affected assets, and prepares response proposals",
+                version="1.0.0",
+                domain=AgentDomain.INCIDENTS,
+                capabilities=[
+                    AgentCapability.INCIDENT_INVESTIGATION,
+                    AgentCapability.FORENSIC_ANALYSIS,
+                    AgentCapability.REPORT_GENERATION,
+                ],
+                trust_level=TrustLevel.HIGH_IMPACT,
+                risk_level=AgentRiskLevel.HIGH,
+                allowed_tools={"incident_lookup", "incident_timeline_builder", "incident_response_proposer"},
+                supported_intents=[
+                    TaskIntent.INCIDENT_INVESTIGATION,
+                    TaskIntent.SECURITY_INVESTIGATION,
+                    TaskIntent.MIXED_WORKFLOW,
+                    TaskIntent.REPORT_GENERATION,
+                ],
+            )
+        )
+
     def register_agent(self, agent_def: AgentDefinition) -> AgentDefinition:
         """Registers or updates a validated AgentDefinition."""
         with self._lock:
@@ -226,6 +305,12 @@ class AgentRegistry:
                 "security-agent": "AGENT-SECURITY",
                 "AGENT-RETRIEVAL": "retrieval-agent",
                 "retrieval-agent": "AGENT-RETRIEVAL",
+                "AGENT-HIRING": "hiring-agent",
+                "hiring-agent": "AGENT-HIRING",
+                "AGENT-INCIDENT": "incident-agent",
+                "incident-agent": "AGENT-INCIDENT",
+                "AGENT-FORENSIC": "forensic-agent",
+                "forensic-agent": "AGENT-FORENSIC",
             }
             alias_id = aliases.get(agent_id)
             if alias_id:
