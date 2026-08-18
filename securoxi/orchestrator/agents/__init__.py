@@ -52,6 +52,19 @@ from securoxi.orchestrator.agents.retrieval import (
     EvidenceConflict,
     EvidencePack,
 )
+from securoxi.orchestrator.agents.hiring import (
+    HiringAgent,
+    get_default_hiring_agent_definition,
+    register_hiring_agent_tools,
+    CandidateQualificationState,
+    RequirementType,
+    EvidenceQualityTier,
+    ATSOperationType,
+    RequirementCriterion,
+    JDAnalysis,
+    CandidateScreeningResult,
+    HiringAgentResult,
+)
 
 __all__ = [
     "AgentDomain",
@@ -94,4 +107,15 @@ __all__ = [
     "StructuredCitation",
     "EvidenceConflict",
     "EvidencePack",
+    "HiringAgent",
+    "get_default_hiring_agent_definition",
+    "register_hiring_agent_tools",
+    "CandidateQualificationState",
+    "RequirementType",
+    "EvidenceQualityTier",
+    "ATSOperationType",
+    "RequirementCriterion",
+    "JDAnalysis",
+    "CandidateScreeningResult",
+    "HiringAgentResult",
 ]

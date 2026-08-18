@@ -191,3 +191,14 @@ Stage 6 implements the autonomous retrieval and grounded research layer:
 - **Untrusted Data Isolation**: Document content containing adversarial prompt injections is treated strictly as data payloads, never as system instructions.
 
 See [`docs/INTELLIGENCE_2_STAGE_6_RETRIEVAL_AGENT.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_STAGE_6_RETRIEVAL_AGENT.md) for full architectural documentation.
+
+---
+
+## 13. Intelligence 2.0 Phase 2 Stage 7: Specialized Hiring & Screening Agent
+
+Stage 7 implements the autonomous candidate discovery and screening layer:
+- **Autonomous Hiring Agent** (`securoxi/orchestrator/agents/hiring/agent.py`): Parses JDs, enforces security gates, executes calibrated fit scoring, and generates shortlists.
+- **Security-First Clearance**: `HIGH_RISK` and `UNINSPECTABLE` candidates are quarantined at Rank #0 with 0.0 fit score and excluded from trusted shortlists.
+- **Human Approval Gate**: High-impact ATS mutations (`ADVANCE_CANDIDATE`, `REJECT_CANDIDATE`) enforce mandatory human review prior to execution.
+
+See [`docs/INTELLIGENCE_2_STAGE_7_HIRING_AGENT.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_STAGE_7_HIRING_AGENT.md) for full architectural documentation.
