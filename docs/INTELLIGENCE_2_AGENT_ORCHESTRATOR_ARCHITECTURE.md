@@ -236,3 +236,15 @@ Stage 10 introduces the intelligent strategy planning layer for Agentic RAG:
 - **Security & Tenant Invariants**: Injects `security_status = SAFE` filters and blocks unauthorized multi-tenant requests.
 
 See [`docs/INTELLIGENCE_2_STAGE_10_AGENTIC_RETRIEVAL_PLANNER.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_STAGE_10_AGENTIC_RETRIEVAL_PLANNER.md) for full architectural documentation.
+
+---
+
+## 17. Intelligence 2.0 Phase 3 Stage 11: Adaptive Multi-Hop Retrieval Execution
+
+Stage 11 operationalizes the Stage 10 Retrieval Plans into an iterative execution system:
+- **AdaptiveRetrievalExecutor** (`securoxi/orchestrator/retrieval_execution/executor.py`): Executes root and follow-up hops, accumulates evidence chunks, and produces `RetrievalExecutionResult`.
+- **EvidenceGapEngine** (`securoxi/orchestrator/retrieval_execution/gap_engine.py`): Identifies missing topics, attributes, and context to formulate targeted follow-up queries.
+- **Deduplication & Early Stopping**: Halts execution upon achieving sufficient coverage or when no new information is discovered (`StopReason.NO_NEW_INFORMATION`).
+- **Security Invariants**: Revalidates `security_status = SAFE` across all execution hops.
+
+See [`docs/INTELLIGENCE_2_STAGE_11_ADAPTIVE_RETRIEVAL.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_STAGE_11_ADAPTIVE_RETRIEVAL.md) for full architectural documentation.

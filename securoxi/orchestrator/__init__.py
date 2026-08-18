@@ -138,6 +138,19 @@ from securoxi.orchestrator.retrieval_planner import (
     RetrievalPlanValidator,
     AgenticRetrievalPlanner,
 )
+from securoxi.orchestrator.retrieval_execution import (
+    RetrievalHopType,
+    EvidenceGapType,
+    NextHopDecision,
+    RetrievalQualityState,
+    StopReason,
+    EvidenceGap,
+    RetrievalHop,
+    RetrievalExecutionState,
+    RetrievalExecutionResult,
+    EvidenceGapEngine,
+    AdaptiveRetrievalExecutor,
+)
 
 __all__ = [
     "TrustLevel",
@@ -255,4 +268,15 @@ __all__ = [
     "RetrievalComplexityClassifier",
     "RetrievalPlanValidator",
     "AgenticRetrievalPlanner",
+    "RetrievalHopType",
+    "EvidenceGapType",
+    "NextHopDecision",
+    "RetrievalQualityState",
+    "StopReason",
+    "EvidenceGap",
+    "RetrievalHop",
+    "RetrievalExecutionState",
+    "RetrievalExecutionResult",
+    "EvidenceGapEngine",
+    "AdaptiveRetrievalExecutor",
 ]

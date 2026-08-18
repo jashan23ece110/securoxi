@@ -201,8 +201,15 @@ class AgenticRetrievalPlanner:
     def _derive_evidence_requirements(self, objective: str, queries: List[RetrievalQuerySpec]) -> List[EvidenceRequirement]:
         """Derives explicit evidence criteria needed to ground downstream decisions."""
         reqs = []
-        for i, q in enumerate(queries[:3]):
-            topic = q.exact_terms[0] if q.exact_terms else "Domain Knowledge"
+        topics = []
+        for q in queries:
+            for term in q.exact_terms:
+                if term not in topics:
+                    topics.append(term)
+        if not topics:
+            topics = [objective.split()[0] if objective.split() else "General"]
+
+        for i, topic in enumerate(topics[:4]):
             reqs.append(
                 EvidenceRequirement(
                     requirement_id=f"REQ-{i+1}",
