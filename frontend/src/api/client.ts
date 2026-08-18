@@ -317,6 +317,20 @@ export class SecuroxiApiClient {
       }
     );
   }
+
+  // Agentic RAG / Ask SECUROXI (Stage 20)
+  async askAgenticSecuroxi(payload: {
+    query: string;
+    scope?: string;
+    context?: any;
+    mode?: string;
+    retrieval_chunks?: any[];
+  }): Promise<any> {
+    return this.request<any>('/agentic/ask', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  }
 }
 
 export const api = new SecuroxiApiClient();

@@ -322,3 +322,14 @@ Stage 19 establishes the recruiter-facing intelligent workspace for automated sc
 - **REST Endpoints**: `/api/v1/agentic/hiring/screen`, `/api/v1/agentic/hiring/compare`, `/api/v1/agentic/hiring/ats/advance`.
 
 See [`docs/INTELLIGENCE_2_PHASE_4_STAGE_19_HIRING_WORKSPACE.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_4_STAGE_19_HIRING_WORKSPACE.md) for full architectural documentation.
+
+---
+
+## 25. Intelligence 2.0 Phase 4 Stage 20: Agentic RAG + Ask SECUROXI Grounded Research Workspace
+
+Stage 20 delivers the conversational research workspace powered by the canonical Phase 3 Agentic RAG pipeline:
+- **`AskSecuroxiWorkspace`** (`securoxi/orchestrator/ask_workspace.py`): Automatic research mode inference (`DIRECT_ANSWER`, `RESEARCH`, `COMPARISON`, `SUMMARY`, `RANKING_EXPLANATION`), honest no-evidence handling, and multi-scope exploration (`DOCUMENT`, `FOLDER`, `CANDIDATE`, `TENANT`).
+- **Validated Forensic Citations**: Every claim is mapped to verified citations (`[CIT-1]`) linking to the forensic document viewer.
+- **REST Endpoints**: `/api/v1/agentic/ask`.
+
+See [`docs/INTELLIGENCE_2_PHASE_4_STAGE_20_ASK_SECUROXI.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_4_STAGE_20_ASK_SECUROXI.md) for full architectural documentation.

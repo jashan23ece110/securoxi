@@ -1247,6 +1247,37 @@ def advance_ats_candidate_endpoint(
     }
 
 
+# =========================================================================
+# AGENTIC RAG & ASK SECUROXI WORKSPACE (Phase 4 Stage 20)
+# =========================================================================
+
+@app.post("/api/v1/agentic/ask")
+def agentic_ask_securoxi_endpoint(
+    payload: Dict[str, Any] = Body(...),
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    Executes grounded, evidence-backed conversational research and document exploration.
+    """
+    query = payload.get("query", payload.get("question", payload.get("prompt", ""))).strip()
+    if not query:
+        raise HTTPException(status_code=400, detail="Query text is required.")
+
+    result = orchestrator_instance.ask_workspace.execute_research_query(
+        query=query,
+        tenant_id=client.tenant_id,
+        scope=payload.get("scope", "AUTO"),
+        context=payload.get("context"),
+        retrieval_chunks=payload.get("retrieval_chunks"),
+        security_clearance=payload.get("security_clearance", "SAFE"),
+        allow_untrusted=payload.get("allow_untrusted", False),
+        requested_mode=payload.get("mode"),
+        comparison_entities=payload.get("comparison_entities"),
+    )
+    return result
+
+
+
 
 
 

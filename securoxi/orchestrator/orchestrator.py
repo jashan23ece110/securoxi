@@ -143,6 +143,8 @@ class AgentOrchestrator:
         self.execution_runner = AutonomousExecutionRunner(self)
         from securoxi.orchestrator.hiring_workspace import IntelligentHiringWorkspace
         self.hiring_workspace = IntelligentHiringWorkspace(self)
+        from securoxi.orchestrator.ask_workspace import AskSecuroxiWorkspace
+        self.ask_workspace = AskSecuroxiWorkspace(self)
 
         # In-memory storage of active tasks, runs, DAGs, contexts, plans, and approvals
         self._tasks: Dict[str, Task] = {}
