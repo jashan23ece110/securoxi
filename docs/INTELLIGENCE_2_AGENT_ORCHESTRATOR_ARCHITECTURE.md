@@ -290,3 +290,14 @@ Stage 15 unites the complete Phase 3 retrieval, fusion, verification, and synthe
 - **Production Verification**: 14 enterprise scenarios tested in [`tests/test_agentic_rag_end_to_end.py`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/tests/test_agentic_rag_end_to_end.py) with 100% pass rate.
 
 See [`docs/INTELLIGENCE_2_PHASE_3_FINAL_AGENTIC_RAG.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_3_FINAL_AGENTIC_RAG.md) for complete Phase 3 architecture and freeze documentation.
+
+---
+
+## 22. Intelligence 2.0 Phase 4 Stage 17: Universal Input & Context System
+
+Stage 17 unifies heterogeneous inputs (Files, Folders, JDs, ATS Candidates, Collections, Prior Tasks) into a structured, relational, and tenant-isolated context:
+- **`UniversalTaskContext` & `ContextItem`** (`securoxi/orchestrator/universal_context/`): Encapsulates items, source origins, security states, and machine-readable relationships (`APPLIES_TO`, `CONTAINS`, `REFERENCES`).
+- **Input Adapters**: `FileInputAdapter`, `FolderInputAdapter`, `JDInputAdapter`, `ATSInputAdapter`, `CollectionInputAdapter`, `PreviousTaskAdapter`.
+- **`UniversalContextMerger` & `UniversalContextManager`**: Thread-safe assembly, deduplication, trust decoupling, and snapshot freezing.
+
+See [`docs/INTELLIGENCE_2_STAGE_17_UNIVERSAL_CONTEXT.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_STAGE_17_UNIVERSAL_CONTEXT.md) for full architectural documentation.

@@ -137,6 +137,8 @@ class AgentOrchestrator:
         self.evidence_fusion = EvidenceFusionEngine()
         self.groundedness_verifier = GroundednessVerifier()
         self.research_synthesizer = ResearchSynthesizer()
+        from securoxi.orchestrator.universal_context import UniversalContextManager
+        self.context_manager = UniversalContextManager()
 
         # In-memory storage of active tasks, runs, DAGs, contexts, plans, and approvals
         self._tasks: Dict[str, Task] = {}

@@ -989,6 +989,63 @@ def list_agentic_tasks_endpoint(
     return tasks
 
 
+@app.post("/api/v1/agentic/context/create")
+def create_universal_context_endpoint(
+    payload: Dict[str, Any] = Body(...),
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    Assembles and validates a UniversalTaskContext from heterogeneous inputs.
+    """
+    task_id = payload.get("task_id", "TASK-DEFAULT")
+    raw_inputs = payload.get("inputs", {})
+    constraints = payload.get("constraints")
+    source_restrictions = payload.get("source_restrictions")
+
+    ctx = orchestrator_instance.context_manager.create_context(
+        task_id=task_id,
+        tenant_id=client.tenant_id,
+        raw_inputs=raw_inputs,
+        actor_id=client.client_name,
+        constraints=constraints,
+        source_restrictions=source_restrictions,
+    )
+    validation = orchestrator_instance.context_manager.validate_context(ctx)
+    return {
+        "context": ctx.to_dict(),
+        "validation": validation,
+    }
+
+
+@app.get("/api/v1/agentic/context/{context_id}")
+def get_universal_context_endpoint(
+    context_id: str,
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    Fetches UniversalTaskContext with strict tenant isolation.
+    """
+    ctx = orchestrator_instance.context_manager.get_context(context_id, client.tenant_id)
+    if not ctx:
+        raise HTTPException(status_code=404, detail=f"Context '{context_id}' not found or unauthorized.")
+    return ctx.to_dict()
+
+
+@app.post("/api/v1/agentic/context/{context_id}/freeze")
+def freeze_universal_context_endpoint(
+    context_id: str,
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    Freezes a UniversalTaskContext into an immutable snapshot.
+    """
+    snapshot = orchestrator_instance.context_manager.freeze_context(context_id, client.tenant_id)
+    if not snapshot:
+        raise HTTPException(status_code=404, detail=f"Context '{context_id}' not found or unauthorized.")
+    return snapshot.to_dict()
+
+
+
 # Static Dashboard UI Mounting
 WEB_STATIC_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "web", "static"))
 WEB_STATIC_DIST_DIR = os.path.join(WEB_STATIC_DIR, "dist")
