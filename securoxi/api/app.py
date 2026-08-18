@@ -1466,6 +1466,139 @@ def get_monitoring_telemetry_endpoint(
     return telemetry
 
 
+# =========================================================================
+# HUMAN APPROVAL, GOVERNANCE & CONTROLLED ACTION WORKSPACE (Phase 4 Stage 23)
+# =========================================================================
+
+@app.post("/api/v1/agentic/governance/proposals")
+def create_governance_proposal_endpoint(
+    payload: Dict[str, Any] = Body(...),
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    Creates a strongly typed action proposal for human authorization.
+    """
+    task_id = payload.get("task_id", f"TASK-PROP-{uuid.uuid4().hex[:6].upper()}")
+    requester = payload.get("requester", client.client_name)
+    action_type = payload.get("action_type", "ADVANCE_CANDIDATE")
+    targets = payload.get("targets", [])
+    reason = payload.get("reason", "Action proposed by agent/user.")
+    impact = payload.get("impact_level", "HIGH")
+    policy_ref = payload.get("policy_ref", "POL-100-ENTERPRISE-GOVERNANCE")
+    sec_state = payload.get("security_state", "SAFE")
+    evidence = payload.get("evidence_refs", [])
+
+    prop = orchestrator_instance.governance_workspace.create_proposal(
+        tenant_id=client.tenant_id,
+        task_id=task_id,
+        requester=requester,
+        action_type=action_type,
+        targets=targets,
+        reason=reason,
+        impact_level=impact,
+        policy_ref=policy_ref,
+        security_state=sec_state,
+        evidence_refs=evidence,
+    )
+    return prop.to_dict()
+
+
+@app.get("/api/v1/agentic/governance/proposals")
+def list_governance_proposals_endpoint(
+    status: Optional[str] = Query(None),
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    Lists action proposals for the tenant filtered by status.
+    """
+    proposals = orchestrator_instance.governance_workspace.list_proposals(
+        tenant_id=client.tenant_id,
+        status=status,
+    )
+    return proposals
+
+
+@app.get("/api/v1/agentic/governance/proposals/{proposal_id}")
+def get_governance_proposal_endpoint(
+    proposal_id: str,
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    Retrieves full proposal details for review.
+    """
+    prop = orchestrator_instance.governance_workspace.get_proposal(
+        proposal_id=proposal_id,
+        tenant_id=client.tenant_id,
+    )
+    if not prop:
+        raise HTTPException(status_code=404, detail=f"Proposal '{proposal_id}' not found or unauthorized.")
+    return prop.to_dict()
+
+
+@app.post("/api/v1/agentic/governance/proposals/{proposal_id}/decide")
+def decide_governance_proposal_endpoint(
+    proposal_id: str,
+    payload: Dict[str, Any] = Body(...),
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    Approves or rejects an action proposal enforcing separation of duties.
+    """
+    approved = payload.get("approved", True)
+    decider = payload.get("decider_id", client.client_name)
+    comment = payload.get("comment")
+
+    try:
+        prop = orchestrator_instance.governance_workspace.decide_proposal(
+            proposal_id=proposal_id,
+            tenant_id=client.tenant_id,
+            approved=approved,
+            decider_id=decider,
+            comment=comment,
+        )
+        return prop.to_dict()
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.post("/api/v1/agentic/governance/proposals/{proposal_id}/execute")
+def execute_governance_proposal_endpoint(
+    proposal_id: str,
+    payload: Dict[str, Any] = Body(...),
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    Revalidates policy and security before executing an approved action (Replay Protected).
+    """
+    actor_id = payload.get("actor_id", client.client_name)
+
+    try:
+        res = orchestrator_instance.governance_workspace.execute_proposal(
+            proposal_id=proposal_id,
+            tenant_id=client.tenant_id,
+            actor_id=actor_id,
+        )
+        return res
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.get("/api/v1/agentic/governance/audit")
+def get_governance_audit_endpoint(
+    limit: int = Query(50, ge=1, le=500),
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    Retrieves immutable governance audit trail for tenant.
+    """
+    audit = orchestrator_instance.governance_workspace.get_audit_history(
+        tenant_id=client.tenant_id,
+        limit=limit,
+    )
+    return audit
+
+
+
 
 
 

@@ -355,3 +355,14 @@ Stage 22 establishes the central operational and security monitoring surface:
 - **REST Endpoints**: `/api/v1/agentic/monitoring/overview`, `/api/v1/agentic/monitoring/events`, `/api/v1/agentic/monitoring/telemetry`.
 
 See [`docs/INTELLIGENCE_2_PHASE_4_STAGE_22_MONITORING.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_4_STAGE_22_MONITORING.md) for full architectural documentation.
+
+---
+
+## 28. Intelligence 2.0 Phase 4 Stage 23: Human Approval, Governance & Controlled Action Workspace
+
+Stage 23 establishes the centralized governance workspace for privileged operations:
+- **`GovernanceApprovalWorkspace`** (`securoxi/orchestrator/governance_workspace.py`): Enforces typed action proposals, server-side separation of duties (blocks self-approval by agents or requesters), mandatory policy & security revalidation, and replay protection over consumed approvals.
+- **Batch Processing & Auditability**: Safely handles mixed-state batch actions and records immutable audit transitions (`APPROVAL_CREATED`, `APPROVAL_APPROVED`, `ACTION_REVALIDATED`, `ACTION_EXECUTED`).
+- **REST Endpoints**: `/api/v1/agentic/governance/proposals`, `/api/v1/agentic/governance/proposals/{id}`, `/api/v1/agentic/governance/proposals/{id}/decide`, `/api/v1/agentic/governance/proposals/{id}/execute`, `/api/v1/agentic/governance/audit`.
+
+See [`docs/INTELLIGENCE_2_PHASE_4_STAGE_23_GOVERNANCE_APPROVAL.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_4_STAGE_23_GOVERNANCE_APPROVAL.md) for full architectural documentation.

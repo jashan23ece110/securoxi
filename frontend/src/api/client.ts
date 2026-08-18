@@ -393,6 +393,52 @@ export class SecuroxiApiClient {
   async getMonitoringTelemetry(): Promise<any> {
     return this.request<any>('/agentic/monitoring/telemetry');
   }
+
+  // Human Approval, Governance & Controlled Action Workspace (Stage 23)
+  async createGovernanceProposal(payload: {
+    task_id?: string;
+    requester?: string;
+    action_type: string;
+    targets: any[];
+    reason: string;
+    impact_level?: string;
+    policy_ref?: string;
+    security_state?: string;
+    evidence_refs?: string[];
+  }): Promise<any> {
+    return this.request<any>('/agentic/governance/proposals', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  }
+
+  async listGovernanceProposals(status?: string): Promise<any[]> {
+    const params = new URLSearchParams();
+    if (status) params.append('status', status);
+    return this.request<any[]>(`/agentic/governance/proposals?${params.toString()}`);
+  }
+
+  async getGovernanceProposal(proposalId: string): Promise<any> {
+    return this.request<any>(`/agentic/governance/proposals/${proposalId}`);
+  }
+
+  async decideGovernanceProposal(proposalId: string, approved: boolean, deciderId?: string, comment?: string): Promise<any> {
+    return this.request<any>(`/agentic/governance/proposals/${proposalId}/decide`, {
+      method: 'POST',
+      body: JSON.stringify({ approved, decider_id: deciderId, comment }),
+    });
+  }
+
+  async executeGovernanceProposal(proposalId: string, actorId?: string): Promise<any> {
+    return this.request<any>(`/agentic/governance/proposals/${proposalId}/execute`, {
+      method: 'POST',
+      body: JSON.stringify({ actor_id: actorId }),
+    });
+  }
+
+  async getGovernanceAudit(limit: number = 50): Promise<any[]> {
+    return this.request<any[]>(`/agentic/governance/audit?limit=${limit}`);
+  }
 }
 
 export const api = new SecuroxiApiClient();
