@@ -39,6 +39,19 @@ from securoxi.orchestrator.agents.security import (
     IncidentProposal,
     SecurityAgentResult,
 )
+from securoxi.orchestrator.agents.retrieval import (
+    RetrievalAgent,
+    get_default_retrieval_agent_definition,
+    register_retrieval_agent_tools,
+    RetrievalStrategy,
+    EvidenceSufficiencyState,
+    ResearchResultType,
+    QueryAnalysis,
+    RetrievedChunkEvidence,
+    StructuredCitation,
+    EvidenceConflict,
+    EvidencePack,
+)
 
 __all__ = [
     "AgentDomain",
@@ -70,4 +83,15 @@ __all__ = [
     "SecurityRiskContext",
     "IncidentProposal",
     "SecurityAgentResult",
+    "RetrievalAgent",
+    "get_default_retrieval_agent_definition",
+    "register_retrieval_agent_tools",
+    "RetrievalStrategy",
+    "EvidenceSufficiencyState",
+    "ResearchResultType",
+    "QueryAnalysis",
+    "RetrievedChunkEvidence",
+    "StructuredCitation",
+    "EvidenceConflict",
+    "EvidencePack",
 ]

@@ -139,6 +139,59 @@ class AgentRegistry:
             )
         )
 
+        # 5. Specialized Security Agent (v1.0.0)
+        self.register_agent(
+            AgentDefinition(
+                agent_id="security-agent",
+                name="Securoxi Autonomous Security Agent",
+                description="Specialized agent for prompt injection detection, visual deception analysis, and threat correlation",
+                version="1.0.0",
+                domain=AgentDomain.SECURITY,
+                capabilities=[
+                    AgentCapability.SECURITY_ANALYSIS,
+                    AgentCapability.FORENSIC_ANALYSIS,
+                    AgentCapability.REPORT_GENERATION,
+                ],
+                trust_level=TrustLevel.CONTROLLED,
+                risk_level=AgentRiskLevel.MEDIUM,
+                allowed_tools={"document_security_scan", "evidence_lookup", "security_brain_lookup", "policy_lookup"},
+                supported_intents=[
+                    TaskIntent.DOCUMENT_SCAN,
+                    TaskIntent.BULK_SCAN,
+                    TaskIntent.SECURITY_INVESTIGATION,
+                    TaskIntent.MIXED_WORKFLOW,
+                ],
+            )
+        )
+
+        # 6. Specialized Retrieval & Research Agent (v1.0.0)
+        self.register_agent(
+            AgentDefinition(
+                agent_id="retrieval-agent",
+                name="Securoxi Autonomous Retrieval & Research Agent",
+                description="Specialized agent for semantic vector retrieval, reranking, and citation synthesis",
+                version="1.0.0",
+                domain=AgentDomain.RETRIEVAL,
+                capabilities=[
+                    AgentCapability.DOCUMENT_RETRIEVAL,
+                    AgentCapability.GENERAL_REASONING,
+                    AgentCapability.REPORT_GENERATION,
+                ],
+                trust_level=TrustLevel.LOW_RISK,
+                risk_level=AgentRiskLevel.LOW,
+                allowed_tools={"vector_search", "keyword_search", "hybrid_search", "rerank_evidence"},
+                supported_intents=[
+                    TaskIntent.QUESTION_ANSWERING,
+                    TaskIntent.DOCUMENT_ANALYSIS,
+                    TaskIntent.DOCUMENT_COMPARISON,
+                    TaskIntent.REPORT_GENERATION,
+                    TaskIntent.CANDIDATE_SCREENING,
+                    TaskIntent.JD_MATCHING,
+                    TaskIntent.MIXED_WORKFLOW,
+                ],
+            )
+        )
+
     def register_agent(self, agent_def: AgentDefinition) -> AgentDefinition:
         """Registers or updates a validated AgentDefinition."""
         with self._lock:
@@ -161,8 +214,23 @@ class AgentRegistry:
         """Retrieves an agent by ID and optional version."""
         with self._lock:
             if version:
-                return self._versioned_agents.get((agent_id, version))
-            return self._agents.get(agent_id)
+                res = self._versioned_agents.get((agent_id, version))
+                if res:
+                    return res
+            res = self._agents.get(agent_id)
+            if res:
+                return res
+            # Check legacy alias
+            aliases = {
+                "AGENT-SECURITY": "security-agent",
+                "security-agent": "AGENT-SECURITY",
+                "AGENT-RETRIEVAL": "retrieval-agent",
+                "retrieval-agent": "AGENT-RETRIEVAL",
+            }
+            alias_id = aliases.get(agent_id)
+            if alias_id:
+                return self._agents.get(alias_id)
+            return None
 
     def resolve_agent(
         self,
@@ -214,20 +282,42 @@ class AgentRegistry:
     def enable_agent(self, agent_id: str) -> bool:
         """Enables a registered agent."""
         with self._lock:
-            agent = self._agents.get(agent_id)
-            if agent:
-                agent.enabled = True
-                return True
-            return False
+            aliases = {
+                "AGENT-SECURITY": "security-agent",
+                "security-agent": "AGENT-SECURITY",
+                "AGENT-RETRIEVAL": "retrieval-agent",
+                "retrieval-agent": "AGENT-RETRIEVAL",
+            }
+            target_ids = [agent_id]
+            if agent_id in aliases:
+                target_ids.append(aliases[agent_id])
+            success = False
+            for tid in target_ids:
+                agent = self._agents.get(tid)
+                if agent:
+                    agent.enabled = True
+                    success = True
+            return success
 
     def disable_agent(self, agent_id: str) -> bool:
         """Disables a registered agent."""
         with self._lock:
-            agent = self._agents.get(agent_id)
-            if agent:
-                agent.enabled = False
-                return True
-            return False
+            aliases = {
+                "AGENT-SECURITY": "security-agent",
+                "security-agent": "AGENT-SECURITY",
+                "AGENT-RETRIEVAL": "retrieval-agent",
+                "retrieval-agent": "AGENT-RETRIEVAL",
+            }
+            target_ids = [agent_id]
+            if agent_id in aliases:
+                target_ids.append(aliases[agent_id])
+            success = False
+            for tid in target_ids:
+                agent = self._agents.get(tid)
+                if agent:
+                    agent.enabled = False
+                    success = True
+            return success
 
     def validate_agent_definition(self, agent_def: AgentDefinition) -> bool:
         """Validates agent definition requirements."""

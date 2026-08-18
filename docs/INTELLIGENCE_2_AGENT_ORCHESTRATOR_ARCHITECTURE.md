@@ -180,3 +180,14 @@ Stage 5 implements the platform's first specialized autonomous agent:
 - **Security Invariant Enforcement**: Deterministic engines remain authoritative; Security Agent output is strictly investigatory and advisory.
 
 See [`docs/INTELLIGENCE_2_STAGE_5_SECURITY_AGENT.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_STAGE_5_SECURITY_AGENT.md) for full architectural documentation.
+
+---
+
+## 12. Intelligence 2.0 Phase 2 Stage 6: Specialized Retrieval & Research Agent
+
+Stage 6 implements the autonomous retrieval and grounded research layer:
+- **Autonomous Retrieval Agent** (`securoxi/orchestrator/agents/retrieval/agent.py`): Decomposes compound queries, performs hybrid search, evaluates evidence sufficiency, and compiles verified `EvidencePack` packages.
+- **Authoritative Retrieval Toolset** (`securoxi/orchestrator/agents/retrieval/tools.py`): Connects to `SecuroxiVectorStore`, sparse keyword search, reranking, and citation synthesis.
+- **Untrusted Data Isolation**: Document content containing adversarial prompt injections is treated strictly as data payloads, never as system instructions.
+
+See [`docs/INTELLIGENCE_2_STAGE_6_RETRIEVAL_AGENT.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_STAGE_6_RETRIEVAL_AGENT.md) for full architectural documentation.

@@ -97,8 +97,11 @@ class AgentOrchestrator:
         # Agent Registry & Runtime
         self.agent_registry = agent_registry or AgentRegistry()
         from securoxi.orchestrator.agents.security import register_security_agent_tools, get_default_security_agent_definition
+        from securoxi.orchestrator.agents.retrieval import register_retrieval_agent_tools, get_default_retrieval_agent_definition
         register_security_agent_tools(self.tools, policy_engine=self.policy_engine)
+        register_retrieval_agent_tools(self.tools)
         self.agent_registry.register_agent(get_default_security_agent_definition())
+        self.agent_registry.register_agent(get_default_retrieval_agent_definition())
 
         self.agent_runtime = agent_runtime or AgentRuntime(
             agent_registry=self.agent_registry,
