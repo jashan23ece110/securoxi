@@ -9,7 +9,7 @@ import uuid
 import random
 import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import Dict, Any, List, Optional, Callable, Set
+from typing import Dict, Any, List, Optional, Callable, Set, Tuple
 
 from securoxi.orchestrator.types import (
     TrustLevel,
@@ -44,6 +44,10 @@ from securoxi.orchestrator.budget import BudgetTracker
 from securoxi.orchestrator.concurrency import ConcurrencyController
 from securoxi.orchestrator.tools import ToolRegistry, ToolAuthorizer, ToolDefinition
 from securoxi.orchestrator.context import ExecutionContext
+from securoxi.orchestrator.planning.models import Plan
+from securoxi.orchestrator.planning.types import ReplanReason
+from securoxi.orchestrator.planning.planner import TaskPlanner
+from securoxi.orchestrator.planning.replanner import AdaptiveReplanner
 from securoxi.brain.policy_engine import SecuroxiPolicyEngine
 from securoxi.storage.db import SecuroxiDatabase, db
 from securoxi.logger import get_logger
@@ -66,12 +70,16 @@ class AgentOrchestrator:
         self.concurrency = concurrency_controller or ConcurrencyController()
         self.tools = tool_registry or ToolRegistry()
         self.authorizer = ToolAuthorizer(self.policy_engine)
+        self.planner = TaskPlanner(tool_registry=self.tools)
+        self.replanner = AdaptiveReplanner()
 
-        # In-memory storage of active tasks, runs, DAGs, contexts, and approvals
+        # In-memory storage of active tasks, runs, DAGs, contexts, plans, and approvals
         self._tasks: Dict[str, Task] = {}
         self._runs: Dict[str, Run] = {}
         self._dags: Dict[str, ExecutionDAG] = {}
         self._contexts: Dict[str, ExecutionContext] = {}
+        self._plans: Dict[str, Plan] = {}
+        self._run_to_plan: Dict[str, str] = {}  # run_id -> plan_id
         self._approvals: Dict[str, ApprovalRequest] = {}
         self._lock = threading.Lock()
 
@@ -183,6 +191,103 @@ class AgentOrchestrator:
             raise OrchestratorError(f"DAG for run '{run_id}' not found.")
         node.run_id = run_id
         return dag.add_node(node)
+
+    def plan_task(
+        self,
+        task_id: str,
+        context: Optional[Dict[str, Any]] = None,
+        actor_id: Optional[str] = None,
+        actor_permissions: Optional[List[str]] = None,
+        actor_trust_level: TrustLevel = TrustLevel.LOW_RISK,
+    ) -> Tuple[Plan, Run]:
+        """
+        Translates a task into a validated Plan, compiles the ExecutionDAG,
+        and initializes an associated Execution Run ready for execution.
+        """
+        task = self.get_task(task_id)
+        if not task:
+            raise OrchestratorError(f"Task '{task_id}' not found.")
+
+        # 1. Plan task with TaskPlanner
+        plan, dag = self.planner.plan_task(task, context=context)
+
+        # 2. Create associated execution run
+        run = self.create_run(
+            task_id=task_id,
+            actor_id=actor_id,
+            actor_permissions=actor_permissions,
+            actor_trust_level=actor_trust_level,
+            metadata={"plan_id": plan.plan_id, "plan_version": plan.version}
+        )
+
+        # 3. Associate compiled DAG with run
+        dag.run_id = run.run_id
+        for node in dag.nodes.values():
+            node.run_id = run.run_id
+
+        with self._lock:
+            self._dags[run.run_id] = dag
+            self._plans[plan.plan_id] = plan
+            self._run_to_plan[run.run_id] = plan.plan_id
+
+        self._audit_log(
+            event_type="PLAN_CREATED",
+            actor=run.actor_id,
+            tenant_id=run.tenant_id,
+            details=f"Plan {plan.plan_id} (v{plan.version}) created for Task {task_id}: {len(plan.nodes)} nodes planned"
+        )
+        return plan, run
+
+    def replan_run(
+        self,
+        run_id: str,
+        reason: ReplanReason,
+        details: str,
+        failed_node_id: Optional[str] = None
+    ) -> Plan:
+        """
+        Performs adaptive bounded replanning on an active or failed run.
+        """
+        run = self.get_run(run_id)
+        if not run:
+            raise OrchestratorError(f"Run '{run_id}' not found.")
+
+        plan_id = self._run_to_plan.get(run_id)
+        current_plan = self._plans.get(plan_id) if plan_id else None
+        if not current_plan:
+            raise OrchestratorError(f"No Plan associated with Run '{run_id}'")
+
+        ctx = self._contexts.get(run_id)
+        shared_state = ctx.get_all_shared_state() if ctx else {}
+
+        # Adapt plan via AdaptiveReplanner
+        new_plan = self.replanner.replan(
+            current_plan=current_plan,
+            reason=reason,
+            details=details,
+            failed_node_id=failed_node_id,
+            intermediate_state=shared_state,
+            tenant_id=run.tenant_id
+        )
+
+        # Recompile ExecutionDAG for run
+        new_dag = self.planner.convert_plan_to_dag(new_plan, run_id=run_id)
+
+        with self._lock:
+            self._plans[new_plan.plan_id] = new_plan
+            self._dags[run_id] = new_dag
+
+        self._audit_log(
+            event_type="REPLAN_COMPLETED",
+            actor=run.actor_id,
+            tenant_id=run.tenant_id,
+            details=f"Run {run_id} replanned to version {new_plan.version} ({reason.value}): {details}"
+        )
+        return new_plan
+
+    def get_plan(self, plan_id: str) -> Optional[Plan]:
+        with self._lock:
+            return self._plans.get(plan_id)
 
     # ==========================================
     # 3. TOOL REGISTRATION & DISPATCH

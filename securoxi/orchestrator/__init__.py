@@ -53,6 +53,25 @@ from securoxi.orchestrator.tools import (
 from securoxi.orchestrator.context import ExecutionContext
 from securoxi.orchestrator.agent_interface import BaseAgent
 from securoxi.orchestrator.orchestrator import AgentOrchestrator
+from securoxi.orchestrator.planning import (
+    TaskIntent,
+    ConditionType,
+    ConstraintPriorityLevel,
+    PlanConfidence,
+    ReplanReason,
+    PlanningStatus,
+    StructuredCondition,
+    ResolvedEntity,
+    ClarificationRequest,
+    PlanNodeSpec,
+    TaskUnderstanding,
+    Plan,
+    PlanVersionRecord,
+    TaskUnderstandingEngine,
+    PlanValidator,
+    TaskPlanner,
+    AdaptiveReplanner,
+)
 
 __all__ = [
     "TrustLevel",
@@ -95,4 +114,21 @@ __all__ = [
     "ExecutionContext",
     "BaseAgent",
     "AgentOrchestrator",
+    "TaskIntent",
+    "ConditionType",
+    "ConstraintPriorityLevel",
+    "PlanConfidence",
+    "ReplanReason",
+    "PlanningStatus",
+    "StructuredCondition",
+    "ResolvedEntity",
+    "ClarificationRequest",
+    "PlanNodeSpec",
+    "TaskUnderstanding",
+    "Plan",
+    "PlanVersionRecord",
+    "TaskUnderstandingEngine",
+    "PlanValidator",
+    "TaskPlanner",
+    "AdaptiveReplanner",
 ]

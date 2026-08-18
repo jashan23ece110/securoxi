@@ -129,9 +129,21 @@ It avoids simplistic, uncontrolled "LLM $\to$ tool call $\to$ LLM" loops by stri
 
 ---
 
-## 7. Next Steps: Intelligence 2.0 Phase 1 Stage 2
+## 7. Stage 2 Integration: Task Understanding & Adaptive Planning
 
-With the **Agent Orchestrator Core** fully validated and regression-tested, Stage 2 will introduce:
-- **Advanced Task Understanding**: Multi-intent extraction and requirement decomposition.
-- **Adaptive Planning & Replanning**: Dynamic DAG generation based on intermediate findings.
-- **Agentic Document Screening**: Orchestrated multi-step candidate evaluation.
+Stage 2 adds the high-level cognitive layer on top of the Orchestration Core:
+- **Task Understanding Engine** (`securoxi/orchestrator/planning/understanding.py`): 12 intent taxonomies, typed condition normalization, precedence hierarchy (Levels 1–7), and actionable ambiguity clarification.
+- **Plan Validator** (`securoxi/orchestrator/planning/validator.py`): Deterministic graph acyclicity verification, tool checking, and security scan precedence invariant enforcement.
+- **Task Planner** (`securoxi/orchestrator/planning/planner.py`): Decomposes objectives into `Plan` specifications and compiles them directly into Stage 1 `ExecutionDAG` instances.
+- **Adaptive Replanner** (`securoxi/orchestrator/planning/replanner.py`): Handles dynamic runtime adaptations (`OCR_FAILED`, `SECURITY_FINDING_ESCALATED`, `BRANCH_FAILED`) with bounded replan enforcement and version history auditing.
+
+See [`docs/INTELLIGENCE_2_STAGE_2_TASK_PLANNING.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_STAGE_2_TASK_PLANNING.md) for full architectural documentation.
+
+---
+
+## 8. Next Steps: Intelligence 2.0 Phase 1 Stage 3
+
+With Stage 1 (Orchestrator Core) and Stage 2 (Task Understanding & Planning) complete, Stage 3 will introduce:
+- **Durable Execution State & Checkpointing**: Persisting execution snapshots to database/storage.
+- **Resumability & Crash Recovery**: Resuming interrupted DAG runs from the exact last successful node.
+- **Memory Management**: Episodic task memory and long-running context summarization.
