@@ -123,6 +123,21 @@ from securoxi.orchestrator.coordination import (
     CrossAgentVerifier,
     MultiAgentCoordinator,
 )
+from securoxi.orchestrator.retrieval_planner import (
+    RetrievalStrategyType,
+    RetrievalComplexity,
+    RetrievalDepth,
+    RetrievalLatencyMode,
+    RetrievalStopCondition,
+    QueryRewritePurpose,
+    RetrievalQuerySpec,
+    EvidenceRequirement,
+    RetrievalPlan,
+    RetrievalStrategyDecision,
+    RetrievalComplexityClassifier,
+    RetrievalPlanValidator,
+    AgenticRetrievalPlanner,
+)
 
 __all__ = [
     "TrustLevel",
@@ -227,4 +242,17 @@ __all__ = [
     "CoordinationResult",
     "CrossAgentVerifier",
     "MultiAgentCoordinator",
+    "RetrievalStrategyType",
+    "RetrievalComplexity",
+    "RetrievalDepth",
+    "RetrievalLatencyMode",
+    "RetrievalStopCondition",
+    "QueryRewritePurpose",
+    "RetrievalQuerySpec",
+    "EvidenceRequirement",
+    "RetrievalPlan",
+    "RetrievalStrategyDecision",
+    "RetrievalComplexityClassifier",
+    "RetrievalPlanValidator",
+    "AgenticRetrievalPlanner",
 ]

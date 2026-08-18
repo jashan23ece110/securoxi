@@ -224,3 +224,15 @@ Stage 9 establishes structured collaboration across all specialized agents:
 - **Explicit Authority Hierarchy**: Precedence rule $\text{Security / Policy Authority} \gg \text{Deterministic Tools} \gg \text{Evidence} \gg \text{Advisory}$.
 
 See [`docs/INTELLIGENCE_2_STAGE_9_MULTI_AGENT_COORDINATION.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_STAGE_9_MULTI_AGENT_COORDINATION.md) for full architectural documentation.
+
+---
+
+## 16. Intelligence 2.0 Phase 3 Stage 10: Agentic Retrieval Planner & Strategy Selection
+
+Stage 10 introduces the intelligent strategy planning layer for Agentic RAG:
+- **AgenticRetrievalPlanner** (`securoxi/orchestrator/retrieval_planner/planner.py`): Formulates validated `RetrievalPlan`s based on query complexity, domain requirements, and budget limits.
+- **RetrievalComplexityClassifier** (`securoxi/orchestrator/retrieval_planner/classifier.py`): Classifies queries into `SIMPLE`, `MODERATE`, `COMPLEX`, `MULTI_HOP`, and `RESEARCH`.
+- **Query Decomposition & Rewriting**: Rewrites queries with explicit justifications (`EXPAND_SYNONYMS`, `CLARIFY_CONTEXT`, `ADD_REQUIRED_TERM`, `NARROW_SCOPE`).
+- **Security & Tenant Invariants**: Injects `security_status = SAFE` filters and blocks unauthorized multi-tenant requests.
+
+See [`docs/INTELLIGENCE_2_STAGE_10_AGENTIC_RETRIEVAL_PLANNER.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_STAGE_10_AGENTIC_RETRIEVAL_PLANNER.md) for full architectural documentation.
