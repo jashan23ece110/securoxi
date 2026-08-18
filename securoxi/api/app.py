@@ -918,6 +918,77 @@ def ask_securoxi_endpoint(
     return answer.to_dict()
 
 
+# =========================================================================
+# INTELLIGENCE 2.0 AGENTIC WORKSPACE ENDPOINTS (PHASE 4 STAGE 16)
+# =========================================================================
+
+from securoxi.orchestrator import AgentOrchestrator, SynthesisMode
+orchestrator_instance = AgentOrchestrator(database=db)
+
+
+@app.post("/api/v1/agentic/understand")
+def agentic_understand_endpoint(
+    payload: Dict[str, Any] = Body(...),
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    Analyzes natural language task prompt and returns structured task understanding preview.
+    """
+    prompt = payload.get("prompt", "").strip()
+    if not prompt:
+        raise HTTPException(status_code=400, detail="Task prompt is required.")
+
+    task_understanding = orchestrator_instance.task_understanding_engine.analyze_task(
+        prompt=prompt,
+        tenant_id=client.tenant_id,
+        available_context=payload.get("context", {}),
+    )
+    return task_understanding.to_dict()
+
+
+@app.post("/api/v1/agentic/execute")
+def agentic_execute_endpoint(
+    payload: Dict[str, Any] = Body(...),
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    Executes the canonical Intelligence 2.0 end-to-end Agentic RAG pipeline.
+    """
+    prompt = payload.get("task_description", "").strip()
+    if not prompt:
+        raise HTTPException(status_code=400, detail="Task description is required.")
+
+    mode_str = payload.get("synthesis_mode")
+    synthesis_mode = SynthesisMode(mode_str) if mode_str and mode_str in SynthesisMode.__members__ else None
+
+    result = orchestrator_instance.execute_agentic_rag(
+        task_description=prompt,
+        tenant_id=client.tenant_id,
+        context=payload.get("context"),
+        security_clearance=payload.get("security_clearance", "SAFE"),
+        allow_untrusted=payload.get("allow_untrusted", False),
+        synthesis_mode=synthesis_mode,
+        comparison_entities=payload.get("comparison_entities"),
+        retrieval_chunks=payload.get("retrieval_chunks"),
+    )
+    return result
+
+
+@app.get("/api/v1/agentic/tasks")
+def list_agentic_tasks_endpoint(
+    limit: int = Query(20, ge=1, le=100),
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    List recent tasks and runs for the tenant.
+    """
+    tasks = [
+        t.to_dict() for t in orchestrator_instance._tasks.values()
+        if t.tenant_id == client.tenant_id
+    ][:limit]
+    return tasks
+
+
 # Static Dashboard UI Mounting
 WEB_STATIC_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "web", "static"))
 WEB_STATIC_DIST_DIR = os.path.join(WEB_STATIC_DIR, "dist")

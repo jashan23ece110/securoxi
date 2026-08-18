@@ -110,3 +110,48 @@ export interface RAGAnswer {
   execution_time_ms: number;
   is_grounded: boolean;
 }
+
+export interface TaskUnderstandingPreview {
+  intent: string;
+  primary_objective: string;
+  resolved_entities: Array<{ entity_type: string; name: string; value: string }>;
+  required_conditions: Array<{ condition_type: string; description: string; is_mandatory: boolean }>;
+  priority_hierarchy?: string[];
+  detected_ambiguities: string[];
+  clarification_questions: string[];
+}
+
+export interface AgenticExecutionResult {
+  task_id: string;
+  tenant_id: string;
+  status: string;
+  groundedness_state: string;
+  answer_status: string;
+  executive_summary: string;
+  detailed_answer: string;
+  derived_claims: Array<{
+    derived_claim_id: string;
+    text: string;
+    source_claim_ids: string[];
+    derivation_rationale: string;
+    is_reverified: boolean;
+    confidence: number;
+  }>;
+  comparisons: Array<{
+    dimension: string;
+    entity_a_value: string;
+    entity_b_value: string;
+    comparison_verdict: string;
+  }>;
+  recommendations: string[];
+  citations: Array<{
+    citation_id: string;
+    document_id: string;
+    chunk_id: string;
+    source: string;
+    snippet: string;
+  }>;
+  conflicts: any[];
+  collected_chunks_count: number;
+  hops_executed: number;
+}

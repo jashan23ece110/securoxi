@@ -196,6 +196,33 @@ export class SecuroxiApiClient {
       body: JSON.stringify({ query, top_k: topK }),
     });
   }
+
+  // Intelligence 2.0 Agentic RAG & Unified Command Workspace (Phase 4)
+  async understandTask(prompt: string, context?: any): Promise<import('./types').TaskUnderstandingPreview> {
+    return this.request<import('./types').TaskUnderstandingPreview>('/agentic/understand', {
+      method: 'POST',
+      body: JSON.stringify({ prompt, context }),
+    });
+  }
+
+  async executeAgenticTask(payload: {
+    task_description: string;
+    synthesis_mode?: string;
+    comparison_entities?: any[];
+    retrieval_chunks?: any[];
+    security_clearance?: string;
+    allow_untrusted?: boolean;
+    context?: any;
+  }): Promise<import('./types').AgenticExecutionResult> {
+    return this.request<import('./types').AgenticExecutionResult>('/agentic/execute', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  }
+
+  async listAgenticTasks(limit: number = 20): Promise<any[]> {
+    return this.request<any[]>(`/agentic/tasks?limit=${limit}`);
+  }
 }
 
 export const api = new SecuroxiApiClient();
