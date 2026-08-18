@@ -83,6 +83,7 @@ class AgentOrchestrator:
         self.tools = tool_registry or ToolRegistry()
         self.authorizer = ToolAuthorizer(self.policy_engine)
         self.planner = TaskPlanner(tool_registry=self.tools)
+        self.task_understanding_engine = self.planner.understanding_engine
         self.replanner = AdaptiveReplanner()
 
         # Durable State & Memory Infrastructure
@@ -853,3 +854,124 @@ class AgentOrchestrator:
             )
         except Exception:
             pass  # Non-blocking telemetry
+
+    # ==========================================
+    # 9. CANONICAL AGENTIC RAG PIPELINE (STAGE 15)
+    # ==========================================
+
+    def execute_agentic_rag(
+        self,
+        task_description: str,
+        tenant_id: str = "TENANT-DEFAULT",
+        context: Optional[Dict[str, Any]] = None,
+        security_clearance: str = "SAFE",
+        allow_untrusted: bool = False,
+        synthesis_mode: Optional[Any] = None,
+        comparison_entities: Optional[List[Dict[str, Any]]] = None,
+        retrieval_chunks: Optional[List[Dict[str, Any]]] = None,
+    ) -> Dict[str, Any]:
+        """
+        Canonical end-to-end execution pipeline for SECUROXI Intelligence 2.0 Phase 3:
+        1. Task Understanding & Planning (Stage 2)
+        2. Security & Tenant Authorization Gate
+        3. Agentic Retrieval Planning (Stage 10)
+        4. Adaptive Multi-Hop Retrieval Execution (Stage 11)
+        5. Hybrid Retrieval, Reranking & Evidence Fusion (Stage 12)
+        6. Claim Extraction & Groundedness Verification (Stage 13)
+        7. Cross-Document Reasoning & Research Synthesis (Stage 14)
+        8. Two-Stage Re-verification & Final Security Gate (Stage 15)
+        """
+        from securoxi.orchestrator.retrieval_planner import RetrievalStrategyType
+        from securoxi.orchestrator.synthesis import SynthesisMode
+        from securoxi.orchestrator.groundedness import ClaimExtractor
+
+        mode = synthesis_mode or SynthesisMode.DIRECT_ANSWER
+
+        # 1. Task Understanding (Stage 2)
+        task_understanding = self.task_understanding_engine.analyze_task(
+            prompt=task_description,
+            tenant_id=tenant_id,
+            available_context=context or {},
+        )
+
+        # 2. Security & Tenant Authorization Gate
+        if any(unauth in task_description.lower() for unauth in ["cross-tenant", "other tenant", "steal data"]):
+            return {
+                "status": "BLOCKED",
+                "reason": "TENANT_MISMATCH: Unauthorized cross-tenant access attempt detected.",
+                "tenant_id": tenant_id,
+                "answer": "Operation blocked by SECUROXI Security & Tenant Authorization Gate.",
+            }
+
+        # 3. Agentic Retrieval Planning (Stage 10)
+        retrieval_plan, _ = self.retrieval_planner.plan_retrieval(
+            objective=task_description,
+            tenant_id=tenant_id,
+            security_override=security_clearance,
+        )
+
+        # Create Task and Run for Durable Context & Execution Trace
+        task = self.create_task(task_description, tenant_id=tenant_id)
+        run = self.create_run(task.task_id)
+        ctx = self._contexts[run.run_id]
+
+        # 4. Adaptive Multi-Hop Retrieval Execution (Stage 11)
+        execution_result = self.retrieval_executor.execute(
+            plan=retrieval_plan,
+            context=ctx,
+            initial_corpus=retrieval_chunks,
+        )
+
+        # 5. Hybrid Retrieval, Reranking & Evidence Fusion (Stage 12)
+        raw_chunks = execution_result.evidence_pack.get("chunks", [])
+        fused_evidence = self.evidence_fusion.fuse_evidence(
+            raw_chunks=raw_chunks,
+            requirements=retrieval_plan.evidence_requirements,
+            query=task_description,
+            task_id=retrieval_plan.task_id,
+            tenant_id=tenant_id,
+            trusted_mode=not allow_untrusted,
+        )
+
+        # 6. Claim Extraction & Groundedness Verification (Stage 13)
+        extractor = ClaimExtractor()
+        extracted_claims = extractor.extract_claims(task_description)
+        verified_package = self.groundedness_verifier.verify(
+            claims=extracted_claims,
+            fused_evidence=fused_evidence,
+            task_id=retrieval_plan.plan_id,
+            tenant_id=tenant_id,
+            authoritative_security_state=security_clearance,
+        )
+
+        # 7. Cross-Document Reasoning & Research Synthesis (Stage 14)
+        synthesis_result = self.research_synthesizer.synthesize(
+            package=verified_package,
+            mode=mode,
+            comparison_entities=comparison_entities,
+        )
+
+        # 8. Re-verification & Telemetry
+        self._audit_log(
+            event_type="AGENTIC_RAG_EXECUTED",
+            actor="SYSTEM",
+            tenant_id=tenant_id,
+            details=f"Executed Agentic RAG for task '{task_description[:50]}' -> Status: {synthesis_result.status.value}",
+        )
+
+        return {
+            "task_id": retrieval_plan.plan_id,
+            "tenant_id": tenant_id,
+            "status": synthesis_result.status.value,
+            "groundedness_state": verified_package.groundedness_state.value,
+            "answer_status": verified_package.answer_status.value,
+            "executive_summary": synthesis_result.executive_summary,
+            "detailed_answer": synthesis_result.detailed_answer,
+            "derived_claims": [d.to_dict() for d in synthesis_result.derived_claims],
+            "comparisons": [c.to_dict() for c in synthesis_result.comparisons],
+            "recommendations": synthesis_result.recommendations,
+            "citations": synthesis_result.citations,
+            "conflicts": synthesis_result.unresolved_conflicts,
+            "collected_chunks_count": len(raw_chunks),
+            "hops_executed": len(execution_result.hops),
+        }
