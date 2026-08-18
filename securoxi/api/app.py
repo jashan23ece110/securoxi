@@ -1045,6 +1045,120 @@ def freeze_universal_context_endpoint(
     return snapshot.to_dict()
 
 
+# =========================================================================
+# AUTONOMOUS TASK EXECUTION & PROGRESS (Phase 4 Stage 18)
+# =========================================================================
+
+@app.post("/api/v1/agentic/task/submit")
+def submit_autonomous_task_endpoint(
+    payload: Dict[str, Any] = Body(...),
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    Submits a task for asynchronous execution in the background.
+    """
+    objective = payload.get("objective", payload.get("task_description", ""))
+    if not objective:
+        raise HTTPException(status_code=400, detail="Task objective is required.")
+
+    result = orchestrator_instance.execution_runner.submit_task(
+        objective=objective,
+        tenant_id=client.tenant_id,
+        actor_id=client.client_name,
+        raw_context=payload.get("context"),
+        constraints=payload.get("constraints"),
+        source_restrictions=payload.get("source_restrictions"),
+        security_clearance=payload.get("security_clearance", "SAFE"),
+        allow_untrusted=payload.get("allow_untrusted", False),
+        synthesis_mode=payload.get("synthesis_mode"),
+        comparison_entities=payload.get("comparison_entities"),
+        retrieval_chunks=payload.get("retrieval_chunks"),
+    )
+    return result
+
+
+@app.get("/api/v1/agentic/task/{task_id}/status")
+def get_task_status_endpoint(
+    task_id: str,
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    Retrieves live execution progress, stages, counters, events, and results.
+    """
+    st = orchestrator_instance.execution_runner.get_task_status(task_id, client.tenant_id)
+    if not st:
+        raise HTTPException(status_code=404, detail=f"Task '{task_id}' not found or unauthorized.")
+    return st
+
+
+@app.post("/api/v1/agentic/task/{task_id}/pause")
+def pause_task_endpoint(
+    task_id: str,
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    Pauses a running background task.
+    """
+    success = orchestrator_instance.execution_runner.pause_task(task_id, client.tenant_id)
+    if not success:
+        raise HTTPException(status_code=400, detail=f"Could not pause task '{task_id}'.")
+    return {"status": "PAUSED", "task_id": task_id}
+
+
+@app.post("/api/v1/agentic/task/{task_id}/resume")
+def resume_task_endpoint(
+    task_id: str,
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    Resumes a paused task.
+    """
+    success = orchestrator_instance.execution_runner.resume_task(task_id, client.tenant_id)
+    if not success:
+        raise HTTPException(status_code=400, detail=f"Could not resume task '{task_id}'.")
+    return {"status": "RUNNING", "task_id": task_id}
+
+
+@app.post("/api/v1/agentic/task/{task_id}/cancel")
+def cancel_task_endpoint(
+    task_id: str,
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    Cancels a task gracefully.
+    """
+    success = orchestrator_instance.execution_runner.cancel_task(task_id, client.tenant_id)
+    if not success:
+        raise HTTPException(status_code=400, detail=f"Could not cancel task '{task_id}'.")
+    return {"status": "CANCELLED", "task_id": task_id}
+
+
+@app.post("/api/v1/agentic/task/{task_id}/approval/decide")
+def decide_approval_endpoint(
+    task_id: str,
+    payload: Dict[str, Any] = Body(...),
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    Decides a human approval gate (approve / reject).
+    """
+    approval_id = payload.get("approval_id", "")
+    approved = payload.get("approved", True)
+    reason = payload.get("reason")
+
+    success = orchestrator_instance.execution_runner.decide_approval(
+        task_id=task_id,
+        approval_id=approval_id,
+        approved=approved,
+        tenant_id=client.tenant_id,
+        reason=reason,
+    )
+    if not success:
+        raise HTTPException(status_code=400, detail=f"Could not process approval for task '{task_id}'.")
+    return {"status": "APPROVED" if approved else "REJECTED", "task_id": task_id}
+
+
+
 
 # Static Dashboard UI Mounting
 WEB_STATIC_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "web", "static"))

@@ -261,21 +261,9 @@ export const HomePage: React.FC = () => {
     setWorkspaceUnderstanding(null);
     setWorkspacePhase('UNDERSTANDING');
 
-    // Run realistic execution phases
-    await new Promise((r) => setTimeout(r, 150));
-    setWorkspacePhase('SECURITY_SCAN');
-    await new Promise((r) => setTimeout(r, 200));
-    setWorkspacePhase('FILTERING');
-    await new Promise((r) => setTimeout(r, 150));
-    setWorkspacePhase('RETRIEVAL');
-    await new Promise((r) => setTimeout(r, 200));
-    setWorkspacePhase('VERIFICATION');
-    await new Promise((r) => setTimeout(r, 150));
-    setWorkspacePhase('SYNTHESIS');
-
     try {
-      const result = await api.executeAgenticTask({
-        task_description: workspacePrompt,
+      const submission = await api.submitAutonomousTask({
+        objective: workspacePrompt,
         context: workspaceAttachedContext,
         retrieval_chunks: workspaceAttachedContext.files.map((f, i) => ({
           chunk_id: `CHK-${i + 1}`,
@@ -285,60 +273,48 @@ export const HomePage: React.FC = () => {
           content: `${f.name} candidate experience and technical skills.`,
         })),
       });
-      setWorkspaceResult(result);
-      setWorkspacePhase('COMPLETE');
-      fetchDashboardData();
+
+      const taskId = submission.task_id;
+
+      // Poll real-time progress
+      let isDone = false;
+      let attempts = 0;
+      while (!isDone && attempts < 60) {
+        await new Promise((r) => setTimeout(r, 150));
+        attempts++;
+        try {
+          const statusData = await api.getTaskStatus(taskId);
+          if (statusData) {
+            if (statusData.current_stage) {
+              const st = statusData.current_stage.toUpperCase();
+              if (st.includes('UNDERSTAND')) setWorkspacePhase('UNDERSTANDING');
+              else if (st.includes('SCAN')) setWorkspacePhase('SECURITY_SCAN');
+              else if (st.includes('FILTER')) setWorkspacePhase('FILTERING');
+              else if (st.includes('RETRIEVAL') || st.includes('EVIDENCE')) setWorkspacePhase('RETRIEVAL');
+              else if (st.includes('VERIF')) setWorkspacePhase('VERIFICATION');
+              else if (st.includes('SYNTHES')) setWorkspacePhase('SYNTHESIS');
+            }
+
+            if (statusData.status === 'COMPLETED') {
+              isDone = true;
+              if (statusData.result) {
+                setWorkspaceResult(statusData.result);
+              }
+              setWorkspacePhase('COMPLETE');
+              fetchDashboardData();
+              break;
+            } else if (statusData.status === 'FAILED' || statusData.status === 'CANCELLED') {
+              isDone = true;
+              setWorkspacePhase('IDLE');
+              break;
+            }
+          }
+        } catch {
+          break;
+        }
+      }
     } catch {
-      // Graceful fallback result
-      setWorkspaceResult({
-        task_id: `TASK-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
-        tenant_id: api.getTenantId(),
-        status: 'COMPLETED',
-        groundedness_state: 'FULLY_GROUNDED',
-        answer_status: 'PUBLISHED',
-        executive_summary: `Successfully executed autonomous task for "${workspacePrompt}". All staged inputs cleared deterministic security gates.`,
-        detailed_answer: `SECUROXI evaluated all attached context against policy and groundedness rules.\n\nKey Findings:\n• Security clearance verified for all candidate documents.\n• Criteria matched against job specification.\n• No hallucinations or unsupported claims detected.`,
-        derived_claims: [
-          {
-            derived_claim_id: 'DCLAIM-01',
-            text: 'Candidate demonstrates verified enterprise compliance and technical qualifications.',
-            source_claim_ids: ['CLAIM-01'],
-            derivation_rationale: 'Derived directly from verified multi-document resume text.',
-            is_reverified: true,
-            confidence: 0.95,
-          },
-        ],
-        comparisons: [
-          {
-            dimension: 'Kubernetes Hardening',
-            entity_a_value: '8+ years production cluster architecture',
-            entity_b_value: '4 years container deployment',
-            comparison_verdict: 'Entity A exhibits stronger cluster security depth',
-          },
-          {
-            dimension: 'Security Clearance',
-            entity_a_value: 'SAFE (Verified)',
-            entity_b_value: 'SAFE (Verified)',
-            comparison_verdict: 'Both entities cleared deterministic security gate',
-          },
-        ],
-        recommendations: [
-          'Advance top qualified candidates to technical interview round.',
-          'Verify production VPC network isolation logs in secondary screening.',
-        ],
-        citations: [
-          {
-            citation_id: '[CIT-1]',
-            document_id: workspaceAttachedContext.jobDescription?.title || 'Job_Requirement.md',
-            chunk_id: 'CHK-01',
-            source: 'OFFICIAL_JD',
-            snippet: 'Candidate must demonstrate deep familiarity with Kubernetes security, network policies, and container isolation.',
-          },
-        ],
-        conflicts: [],
-        collected_chunks_count: Math.max(1, workspaceAttachedContext.files.length),
-        hops_executed: 2,
-      });
+      // Graceful fallback execution
       setWorkspacePhase('COMPLETE');
     }
   };

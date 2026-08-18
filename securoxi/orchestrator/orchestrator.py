@@ -139,6 +139,8 @@ class AgentOrchestrator:
         self.research_synthesizer = ResearchSynthesizer()
         from securoxi.orchestrator.universal_context import UniversalContextManager
         self.context_manager = UniversalContextManager()
+        from securoxi.orchestrator.execution_runner import AutonomousExecutionRunner
+        self.execution_runner = AutonomousExecutionRunner(self)
 
         # In-memory storage of active tasks, runs, DAGs, contexts, plans, and approvals
         self._tasks: Dict[str, Task] = {}

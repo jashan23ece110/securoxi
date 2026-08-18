@@ -301,3 +301,13 @@ Stage 17 unifies heterogeneous inputs (Files, Folders, JDs, ATS Candidates, Coll
 - **`UniversalContextMerger` & `UniversalContextManager`**: Thread-safe assembly, deduplication, trust decoupling, and snapshot freezing.
 
 See [`docs/INTELLIGENCE_2_STAGE_17_UNIVERSAL_CONTEXT.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_STAGE_17_UNIVERSAL_CONTEXT.md) for full architectural documentation.
+
+---
+
+## 23. Intelligence 2.0 Phase 4 Stage 18: Autonomous Task Execution Experience
+
+Stage 18 implements the asynchronous, observable, and durable task execution engine:
+- **`AutonomousExecutionRunner`** (`securoxi/orchestrator/execution_runner.py`): Non-blocking background thread worker driving multi-stage agentic RAG, live document counters, human approval gates (`WAITING_FOR_APPROVAL`), and thread-safe pause/resume/cancellation.
+- **REST Endpoints**: `/api/v1/agentic/task/submit`, `/api/v1/agentic/task/{id}/status`, `/api/v1/agentic/task/{id}/pause`, `/api/v1/agentic/task/{id}/resume`, `/api/v1/agentic/task/{id}/cancel`, `/api/v1/agentic/task/{id}/approval/decide`.
+
+See [`docs/INTELLIGENCE_2_PHASE_4_STAGE_18_TASK_EXECUTION.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_4_STAGE_18_TASK_EXECUTION.md) for full architectural documentation.

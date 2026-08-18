@@ -223,6 +223,59 @@ export class SecuroxiApiClient {
   async listAgenticTasks(limit: number = 20): Promise<any[]> {
     return this.request<any[]>(`/agentic/tasks?limit=${limit}`);
   }
+
+  // Autonomous Task Execution (Stage 18)
+  async submitAutonomousTask(payload: {
+    objective: string;
+    context?: any;
+    constraints?: string[];
+    source_restrictions?: string[];
+    synthesis_mode?: string;
+    comparison_entities?: any[];
+    retrieval_chunks?: any[];
+  }): Promise<{ task_id: string; run_id: string; tenant_id: string; status: string; context_id: string }> {
+    return this.request<{ task_id: string; run_id: string; tenant_id: string; status: string; context_id: string }>(
+      '/agentic/task/submit',
+      {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      }
+    );
+  }
+
+  async getTaskStatus(taskId: string): Promise<any> {
+    return this.request<any>(`/agentic/task/${taskId}/status`);
+  }
+
+  async pauseTask(taskId: string): Promise<{ status: string; task_id: string }> {
+    return this.request<{ status: string; task_id: string }>(`/agentic/task/${taskId}/pause`, {
+      method: 'POST',
+    });
+  }
+
+  async resumeTask(taskId: string): Promise<{ status: string; task_id: string }> {
+    return this.request<{ status: string; task_id: string }>(`/agentic/task/${taskId}/resume`, {
+      method: 'POST',
+    });
+  }
+
+  async cancelTask(taskId: string): Promise<{ status: string; task_id: string }> {
+    return this.request<{ status: string; task_id: string }>(`/agentic/task/${taskId}/cancel`, {
+      method: 'POST',
+    });
+  }
+
+  async decideTaskApproval(
+    taskId: string,
+    approvalId: string,
+    approved: boolean,
+    reason?: string
+  ): Promise<{ status: string; task_id: string }> {
+    return this.request<{ status: string; task_id: string }>(`/agentic/task/${taskId}/approval/decide`, {
+      method: 'POST',
+      body: JSON.stringify({ approval_id: approvalId, approved, reason }),
+    });
+  }
 }
 
 export const api = new SecuroxiApiClient();
