@@ -666,3 +666,16 @@ Stage 51 establishes an Enterprise Digital Twin representing entities, relations
 - **Strict Multi-Tenant Isolation**: Strictly prevents cross-tenant edge linking or graph traversal leaks.
 
 See [`docs/INTELLIGENCE_2_PHASE_8_STAGE_51_ENTERPRISE_INTELLIGENCE_GRAPH.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_8_STAGE_51_ENTERPRISE_INTELLIGENCE_GRAPH.md) for full documentation.
+
+---
+
+## 56. Intelligence 2.0 Phase 8 Stage 52: Controlled Autonomous Action & Closed-Loop Operations
+
+Stage 52 delivers bounded, verified autonomous action execution:
+- **Autonomy Levels (L0-L4, No Unrestricted L5)**: High-impact actions unconditionally enforce human approval gates (L2).
+- **Deterministic Pre-Execution Security Gate**: Actions targeting `HIGH_RISK` or `UNINSPECTABLE` resources are deterministically blocked.
+- **Stale Action Defense**: Action proposals are rejected if underlying evidence versions have drifted or expired.
+- **Idempotency & Closed-Loop Verification**: Validates observed state against expected state and prevents duplicate executions.
+- **Operational Safe Mode / Kill Switch**: Global and provider-specific kill switches instantly revert actions to recommendation-only.
+
+See [`docs/INTELLIGENCE_2_PHASE_8_STAGE_52_CONTROLLED_AUTONOMOUS_ACTION.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_8_STAGE_52_CONTROLLED_AUTONOMOUS_ACTION.md) for full documentation.
