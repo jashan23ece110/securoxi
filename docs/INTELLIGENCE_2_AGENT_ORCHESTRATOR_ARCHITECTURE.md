@@ -507,3 +507,14 @@ Stage 36 introduces enterprise multi-tenant organizations and specialized worksp
 - **Tenant Compatibility Bridge**: `OrganizationContext.tenant_id` maps seamlessly to `organization_id` to guarantee 100% backward compatibility.
 
 See [`docs/INTELLIGENCE_2_PHASE_7_STAGE_36_ORGANIZATIONS_WORKSPACES.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_7_STAGE_36_ORGANIZATIONS_WORKSPACES.md) for full documentation.
+
+---
+
+## 42. Intelligence 2.0 Phase 7 Stage 37: Advanced RBAC, Enterprise Identity & SSO
+
+Stage 37 establishes granular enterprise RBAC, bounded agent delegation, and enterprise SSO integration:
+- **Canonical Identity (`IdentityContext`)**: Carries user/service identity, memberships, and granular permissions with deny-by-default enforcement.
+- **Bounded Agent Delegation (`DelegationContext`)**: Time-bounded delegation where agents cannot exceed the delegating user's scope.
+- **Enterprise SSO & Dual Verification**: OIDC/SAML claim verification, domain verification, and the dual verification invariant (`RBAC ALLOW + Policy ALLOW = ALLOW`).
+
+See [`docs/INTELLIGENCE_2_PHASE_7_STAGE_37_RBAC_IDENTITY_SSO.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_7_STAGE_37_RBAC_IDENTITY_SSO.md) for full documentation.
