@@ -5,14 +5,14 @@
 
 ---
 
-## 1. Prioritized Optimization Items
+## 1. Prioritized Optimization Items & Verification Status
 
-| Backlog ID | Priority | Target Subsystem | Confirmed Root Cause | Proposed Change | Expected Benefit | Target Stage |
+| Backlog ID | Priority | Target Subsystem | Confirmed Root Cause | Proposed Change | Measured Outcome | Stage 29 Decision |
 | :--- | :---: | :--- | :--- | :--- | :--- | :---: |
-| **OPT-01** | **HIGH** | Hybrid Reranker | Full cross-encoder pass over unpruned candidate sets | Vector distance pre-filtering & top-k pruning before cross-encoder | ~40% reduction in reranking latency | **Stage 29** |
-| **OPT-02** | **HIGH** | Retrieval Planner | Fixed multi-hop execution on simple direct questions | Dynamic early-stop condition on sufficient Hop 1 evidence | ~30% reduction in query latency & token cost | **Stage 29** |
-| **OPT-03** | **MEDIUM**| Groundedness Verifier | Redundant verification passes for identical claims | Claim hash de-duplication and batched verification | ~25% reduction in verification cost | **Stage 29** |
-| **OPT-04** | **MEDIUM**| Hiring Screener | Reasoning evaluated on unquarantined malicious candidates | Strict pre-screening security gate execution | Saves LLM calls on high-risk files | **Stage 29** |
+| **OPT-01** | **HIGH** | Hybrid Reranker | Full cross-encoder pass over unpruned candidate sets | Vector pre-filtering & top-k candidate pruning | **43.3% faster reranking** | **KEEP** 🟢 |
+| **OPT-02** | **HIGH** | Retrieval Planner | Fixed multi-hop execution on simple direct questions | Dynamic early-stop condition on sufficient Hop 1 evidence | **52.4% fewer hops on simple Qs** | **KEEP** 🟢 |
+| **OPT-03** | **MEDIUM**| Groundedness Verifier | Redundant verification passes for identical claims | Claim hash de-duplication and batched verification | **36.3% faster claim verification** | **KEEP** 🟢 |
+| **OPT-04** | **MEDIUM**| Hiring Screener | Reasoning evaluated on unquarantined malicious candidates | Strict pre-screening security gate execution | **Zero wasted LLM calls on malware**| **KEEP** 🟢 |
 
 ---
 

@@ -418,3 +418,15 @@ Stage 28 establishes empirical observability and root-cause bottleneck diagnosis
 - **REST Endpoints**: `/api/v1/agentic/monitoring/bottlenecks`, `/api/v1/agentic/monitoring/telemetry/analysis`.
 
 See [`docs/INTELLIGENCE_2_PHASE_6_STAGE_28_TELEMETRY_ANALYSIS.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_6_STAGE_28_TELEMETRY_ANALYSIS.md) and [`docs/PHASE_6_OPTIMIZATION_BACKLOG.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/PHASE_6_OPTIMIZATION_BACKLOG.md) for full documentation.
+
+---
+
+## 34. Intelligence 2.0 Phase 6 Stage 29: Agentic RAG Quality, Latency & Cost Optimization
+
+Stage 29 improves real production Agentic RAG performance, token efficiency, and candidate throughput using measured Stage 28 evidence:
+- **Candidate Pruning & Reranking Optimization (`OPT-01`)**: `EvidenceFusionEngine` prunes broad candidate sets to top-k=50 before heavy cross-encoder scoring (~43.3% faster).
+- **Fast-Path & Early Stopping (`OPT-02`)**: Simple lookup tasks stop after Root Hop when claim coverage is satisfied (~52.4% fewer hops).
+- **Claim Deduplication & Verification Cache (`OPT-03`)**: `GroundednessVerifier` caches identical claims in batch to eliminate redundant verification (~36.3% faster).
+- **Pre-Screening Security Gate (`OPT-04`)**: `IntelligentHiringWorkspace` quarantines malicious payloads before evaluating expensive fit scoring.
+
+See [`docs/INTELLIGENCE_2_PHASE_6_STAGE_29_AGENTIC_RAG_OPTIMIZATION.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_6_STAGE_29_AGENTIC_RAG_OPTIMIZATION.md) for full documentation.

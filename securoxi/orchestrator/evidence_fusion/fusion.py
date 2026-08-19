@@ -50,12 +50,13 @@ class EvidenceFusionEngine:
         task_id: str = "TASK-DEFAULT",
         tenant_id: str = "TENANT-DEFAULT",
         trusted_mode: bool = True,
+        top_k_candidates: int = 50,
     ) -> FusedEvidenceSet:
         """
         Fuses multi-hop chunks into a calibrated, ranked FusedEvidenceSet:
         1. Hard security filtering (exclude HIGH_RISK/UNINSPECTABLE if trusted_mode).
         2. Deduplication and near-duplicate consolidation.
-        3. Score normalization and source authority weighting.
+        3. Score normalization, authority weighting, and top-k candidate pruning (OPT-01).
         4. Requirement coverage matrix generation.
         5. Contradiction detection.
         """
@@ -105,12 +106,14 @@ class EvidenceFusionEngine:
             seen_hashes.add(content_hash)
             unique_candidates.append(cand)
 
-        # 3. Score Normalization & Source Authority Reranking
+        # 3. Score Normalization, Source Authority Reranking & Top-K Pruning (OPT-01)
         for cand in unique_candidates:
             mult = self.AUTHORITY_WEIGHTS.get(cand.source_type, 1.0)
             cand.normalized_score = cand.raw_score * mult
 
         unique_candidates.sort(key=lambda x: x.normalized_score, reverse=True)
+        if len(unique_candidates) > top_k_candidates:
+            unique_candidates = unique_candidates[:top_k_candidates]
 
         # 4. Requirement Coverage Matrix
         matrix, covered_count = self._build_requirement_matrix(unique_candidates, requirements)

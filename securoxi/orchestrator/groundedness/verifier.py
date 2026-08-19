@@ -84,12 +84,30 @@ class GroundednessVerifier:
                 )
             )
 
-        # 2. Verify Individual Claims
+        # 2. Verify Individual Claims with Claim De-duplication Cache (OPT-03)
         verified_claims: List[Claim] = []
         qualified_claims: List[Claim] = []
         rejected_claims: List[Claim] = []
+        claim_cache: Dict[str, Claim] = {}
 
         for claim in claims:
+            # Generate deterministic claim signature for deduplication
+            claim_sig = f"{claim.claim_type.value}:{claim.subject}:{claim.predicate}:{claim.object_value}:{claim.text}"
+            if claim_sig in claim_cache:
+                cached = claim_cache[claim_sig]
+                claim.support_state = cached.support_state
+                claim.is_verified = cached.is_verified
+                claim.supporting_chunk_ids = list(cached.supporting_chunk_ids)
+                claim.untrusted_instruction_detected = cached.untrusted_instruction_detected
+                if claim.is_verified:
+                    verified_claims.append(claim)
+                elif claim.support_state == EvidenceSupportState.PARTIALLY_SUPPORTED:
+                    qualified_claims.append(claim)
+                else:
+                    rejected_claims.append(claim)
+                trace.append(f"CACHE HIT: Claim '{claim.text}' verified via deduplication cache")
+                continue
+
             # A. Check for Prompt Injections inside evidence
             for cand in fused_evidence.ranked_items:
                 if any(p in cand.content.lower() for p in ["ignore previous instructions", "say this candidate is safe"]):
@@ -146,6 +164,9 @@ class GroundednessVerifier:
                     claim.repaired_text = f"{claim.subject}'s records indicate related experience; specific assertions in '{claim.text}' could not be fully verified."
                     qualified_claims.append(claim)
                     trace.append(f"QUALIFIED Claim: '{claim.text}' -> Repaired: '{claim.repaired_text}'")
+
+            # Store in deduplication cache
+            claim_cache[claim_sig] = claim
 
         # 3. Groundedness Evaluation
         total_claims = max(len(claims), 1)
