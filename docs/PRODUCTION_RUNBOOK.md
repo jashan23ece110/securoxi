@@ -50,3 +50,24 @@ docker compose -f docker-compose.prod.yml stop -t 30
 ### 2.3 Failed or Stale Task Recovery
 - **Symptom**: Tasks remain in `WAITING_FOR_APPROVAL` past expiration.
 - **Action**: The Governance Workspace automatically transitions expired proposals to `EXPIRED`. Re-trigger or re-submit the task from Command Workspace.
+
+---
+
+## 3. Phase 8 Autonomy Emergency Procedures & Kill Switches
+
+### 3.1 Global Autonomy Safe Mode Activation (Kill Switch)
+- **Objective**: Instantly halt all autonomous actions across the entire enterprise, reverting all operations to recommendation-only without degrading underlying security detection or event collection.
+- **Procedure**:
+  ```python
+  from securoxi.enterprise.autonomy import ControlledAutonomyEngine
+  autonomy_engine = ControlledAutonomyEngine()
+  autonomy_engine.set_safe_mode(True)
+  ```
+
+### 3.2 Provider-Specific Write Lock & Reconciliation
+- **Objective**: Freeze external mutations to a misbehaving external ATS or service while continuing read-only ingestion.
+- **Procedure**:
+  1. Set provider state to `READ_ONLY` in Customer Configuration Workspace.
+  2. Initiate state reconciliation to compare internal expected states with external provider states.
+  3. Resolve detected `STATE_DRIFT` through governed manual review.
+
