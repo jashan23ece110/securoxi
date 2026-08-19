@@ -562,3 +562,14 @@ Stage 41 provides a secure, versioned developer platform with granular API key s
 - **SSRF-Protected Outbound Webhooks**: HMAC-SHA256 event signing with strict protection against internal loopback and cloud metadata targets.
 
 See [`docs/INTELLIGENCE_2_PHASE_7_STAGE_41_DEVELOPER_PLATFORM.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_7_STAGE_41_DEVELOPER_PLATFORM.md) for full documentation.
+
+---
+
+## 47. Intelligence 2.0 Phase 7 Stage 42: Customer-Level Policies, Configuration & Intelligence Controls
+
+Stage 42 establishes a canonical, typed, and hierarchical customer policy & configuration management engine:
+- **Canonical Setting Registry**: Bounded settings across Security, Hiring, Retrieval, Tasks, AI, Governance, and Integrations.
+- **Immutable Security Invariants**: Foundational security rules (`security_authority`, `policy_bypass`, `mark_high_risk_as_safe`) strictly protected against customer overrides.
+- **Hierarchical Inheritance & Dry-Run**: Organization defaults with Workspace overrides, plus non-destructive dry-run simulation of workflow impacts.
+
+See [`docs/INTELLIGENCE_2_PHASE_7_STAGE_42_CUSTOMER_CONFIGURATION.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_7_STAGE_42_CUSTOMER_CONFIGURATION.md) for full documentation.
