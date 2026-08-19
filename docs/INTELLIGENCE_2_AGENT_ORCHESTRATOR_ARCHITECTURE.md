@@ -630,3 +630,15 @@ Stage 48 establishes a continuously maintained, authorized, and security-aware e
 - **Question Subscriptions & Freshness Tracking**: Live subscriptions track answer dependencies and emit `ANSWER_CHANGED` signals upon source changes.
 
 See [`docs/INTELLIGENCE_2_PHASE_8_STAGE_48_CONTINUOUS_KNOWLEDGE_INTELLIGENCE.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_8_STAGE_48_CONTINUOUS_KNOWLEDGE_INTELLIGENCE.md) for full documentation.
+
+---
+
+## 53. Intelligence 2.0 Phase 8 Stage 49: Cross-System Autonomous Investigation & Response
+
+Stage 49 establishes cross-system autonomous investigations across Security, ATS, Hiring, Knowledge, and Policy dimensions:
+- **Bounded Investigation Cases**: Explicit step and resource budgets preventing infinite agentic loops.
+- **Chronological Cross-System Timelines**: Assembles multi-system event evidence (ATS events, scan findings, policy blocks) with verified provenance.
+- **Competing Hypothesis Testing**: Evaluates alternative explanations before classifying findings.
+- **Governed Response Recommendations**: Consequential response recommendations (e.g. quarantine, blocking mutations) strictly require Stage 23 human approval.
+
+See [`docs/INTELLIGENCE_2_PHASE_8_STAGE_49_AUTONOMOUS_INVESTIGATION_RESPONSE.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_8_STAGE_49_AUTONOMOUS_INVESTIGATION_RESPONSE.md) for full documentation.
