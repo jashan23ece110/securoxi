@@ -496,3 +496,14 @@ Stage 35 validates the complete integration and final freeze of Phase 6 across a
 - **Phase 6 Production Baseline Freeze**: All 35 stages across Phases 1 through 6 are officially frozen for enterprise production deployment.
 
 See [`docs/INTELLIGENCE_2_PHASE_6_FINAL_VALIDATION_AND_FREEZE.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_6_FINAL_VALIDATION_AND_FREEZE.md) for full documentation.
+
+---
+
+## 41. Intelligence 2.0 Phase 7 Stage 36: Enterprise Organizations & Workspace Management
+
+Stage 36 introduces enterprise multi-tenant organizations and specialized workspace hierarchies around the frozen Intelligence 2.0 core:
+- **Enterprise Hierarchy**: Full support for Organizations, Workspaces (`HIRING`, `SECURITY`, `RESEARCH`, `OPERATIONS`, `GENERAL`), Teams, and Memberships.
+- **Context Propagation (`OrganizationContext`)**: Canonical context propagated through all API calls, orchestrator tasks, agents, retrieval queries, and governance requests.
+- **Tenant Compatibility Bridge**: `OrganizationContext.tenant_id` maps seamlessly to `organization_id` to guarantee 100% backward compatibility.
+
+See [`docs/INTELLIGENCE_2_PHASE_7_STAGE_36_ORGANIZATIONS_WORKSPACES.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_7_STAGE_36_ORGANIZATIONS_WORKSPACES.md) for full documentation.
