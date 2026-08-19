@@ -25,6 +25,12 @@ class PromptInjectionAnalyzer(BaseAnalyzer):
         "7": "t", "@": "a", "$": "s", "!": "i"
     }
 
+    HOMOGLYPH_MAP = {
+        "а": "a", "е": "e", "о": "o", "р": "p", "с": "c", "у": "y", "х": "x", "і": "i", "ѕ": "s",
+        "Α": "a", "Β": "b", "Ε": "e", "Ζ": "z", "Η": "h", "Ι": "i", "Κ": "k", "Μ": "m", "Ν": "n",
+        "Ο": "o", "Ρ": "p", "Τ": "t", "Υ": "y", "Χ": "x",
+    }
+
     SAFE_JOB_TITLES = [
         "system administrator", "systems engineer", "system architect", "systems analyst",
         "ai engineer", "ai researcher", "ai developer", "llm researcher",
@@ -79,6 +85,12 @@ class PromptInjectionAnalyzer(BaseAnalyzer):
         r"<\s*tool_call\s*>.*?<\s*/\s*tool_call\s*>"
     ]
 
+    RETRIEVAL_AND_MEMORY_POISONING_PATTERNS = [
+        r"\b(authoritative|verified|ground truth)\b.*(candidate is safe|bypass policy|grant clearance)",
+        r"\b(remember this|save to memory|long-term memory)\b.*\b(admin|safe|bypass|trusted|policy)\b",
+        r"\b(override citations?|ignore previous evidence|fabricated citation)\b",
+    ]
+
     def __init__(self, config: Optional[SecuroxiConfig] = None, **kwargs):
         super().__init__()
         self.config = config or SecuroxiConfig()
@@ -126,7 +138,16 @@ class PromptInjectionAnalyzer(BaseAnalyzer):
             else:
                 leetspeak_words.append(word)
         
-        normalized = " ".join(leetspeak_words).lower()
+        text = " ".join(leetspeak_words)
+
+        # 5. Homoglyph decoding (Cyrillic/Greek to Latin lookalikes)
+        homoglyph_chars = [self.HOMOGLYPH_MAP.get(c, c) for c in text]
+        text_homo = "".join(homoglyph_chars)
+        if text_homo != text:
+            was_obfuscated = True
+            text = text_homo
+
+        normalized = text.lower()
         return normalized, was_obfuscated
 
     def _is_false_positive_context(self, text_lower: str) -> bool:
@@ -272,6 +293,24 @@ class PromptInjectionAnalyzer(BaseAnalyzer):
                         severity=Severity.HIGH,
                         title="Unauthorized Tool Execution Directive",
                         description="Text attempts to invoke external tools, plugins, or system commands.",
+                        evidence=raw_text,
+                        location=f"Page {span.page_number}, span bbox {span.bbox_str()}",
+                        confidence=0.95,
+                        metadata=meta
+                    )
+                    findings.append(finding)
+                    break
+
+            # 7. Retrieval and Memory Poisoning Patterns
+            for pattern in self.RETRIEVAL_AND_MEMORY_POISONING_PATTERNS:
+                if re.search(pattern, norm_text, re.IGNORECASE):
+                    meta = dict(metadata_extra)
+                    meta["matched_pattern"] = pattern
+                    finding = SecurityFinding.create(
+                        category=AttackCategory.PROMPT_INJECTION,
+                        severity=Severity.HIGH,
+                        title="Retrieval / Memory Poisoning Payload Detected",
+                        description="Text attempts to poison RAG retrieval context, citations, or persistent memory.",
                         evidence=raw_text,
                         location=f"Page {span.page_number}, span bbox {span.bbox_str()}",
                         confidence=0.95,

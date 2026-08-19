@@ -430,3 +430,14 @@ Stage 29 improves real production Agentic RAG performance, token efficiency, and
 - **Pre-Screening Security Gate (`OPT-04`)**: `IntelligentHiringWorkspace` quarantines malicious payloads before evaluating expensive fit scoring.
 
 See [`docs/INTELLIGENCE_2_PHASE_6_STAGE_29_AGENTIC_RAG_OPTIMIZATION.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_6_STAGE_29_AGENTIC_RAG_OPTIMIZATION.md) for full documentation.
+
+---
+
+## 35. Intelligence 2.0 Phase 6 Stage 30: Security Detection Accuracy & Adversarial Evolution
+
+Stage 30 advances defense-in-depth against complex evasion, homoglyph obfuscation, and retrieval/memory poisoning vectors:
+- **Homoglyph Normalization**: Decodes Cyrillic and Greek lookalike characters to defeat cross-alphabet evasion.
+- **Retrieval & Memory Poisoning Detection**: Flags attempts to inject fake authoritative ground truth into RAG citations or long-term agent memory.
+- **False-Positive Suppression**: Safeguards legitimate DevOps, systems administration, and AI engineering vocabulary.
+
+See [`docs/INTELLIGENCE_2_PHASE_6_STAGE_30_SECURITY_DETECTION_EVOLUTION.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_6_STAGE_30_SECURITY_DETECTION_EVOLUTION.md) for full documentation.
