@@ -529,3 +529,14 @@ Stage 38 standardizes enterprise ATS integrations and governed write mutations a
 - **Governed Mutation Pipeline**: External ATS writes require formal proposals (`ATSWriteProposal`), RBAC permission checks, policy clearance, and human sign-off.
 
 See [`docs/INTELLIGENCE_2_PHASE_7_STAGE_38_ENTERPRISE_INTEGRATIONS.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_7_STAGE_38_ENTERPRISE_INTEGRATIONS.md) for full documentation.
+
+---
+
+## 44. Intelligence 2.0 Phase 7 Stage 39: Enterprise Data Governance, Retention & Compliance Controls
+
+Stage 39 implements a canonical enterprise data governance, retention, and secure deletion pipeline:
+- **Data Inventory & Classification**: Categorizes assets (`RESTRICTED`, `CONFIDENTIAL`, `INTERNAL`) and tracks retention states.
+- **Legal Holds & Dependency Protection**: Explicit locks that block deletion for litigation/compliance and prevent deletion of items referenced by live investigations.
+- **Governed Safe Deletion & Exports**: Dependency-aware deletion with downstream index and cache invalidation, plus time-bounded data exports.
+
+See [`docs/INTELLIGENCE_2_PHASE_7_STAGE_39_DATA_GOVERNANCE.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_7_STAGE_39_DATA_GOVERNANCE.md) for full documentation.
