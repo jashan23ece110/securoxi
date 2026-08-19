@@ -135,20 +135,43 @@ def register_hiring_agent_tools(
         min_years: float = 0.0,
     ) -> Dict[str, Any]:
         pref = preferred_requirements or []
-        logger.info(f"Executing Deterministic Candidate Scoring for {len(candidates)} candidates (Tenant: {ctx.tenant_id})")
+        logger.info(f"Executing Calibrated Candidate Scoring for {len(candidates)} candidates (Tenant: {ctx.tenant_id})")
+
+        # 1. Consolidate Duplicate Candidates
+        unique_candidates: Dict[str, Dict[str, Any]] = {}
+        for cand in candidates:
+            cid = cand.get("candidate_id", cand.get("name", "UNKNOWN"))
+            if cid in unique_candidates:
+                # Merge experience and text
+                existing = unique_candidates[cid]
+                existing["experience_years"] = max(existing.get("experience_years", 0.0), float(cand.get("experience_years", 0.0)))
+                existing["resume_text"] = existing.get("resume_text", "") + " " + cand.get("resume_text", "")
+            else:
+                unique_candidates[cid] = dict(cand)
+
+        negation_prefixes = ["no ", "never ", "not ", "without ", "lacks ", "limited exposure to "]
+
+        def is_skill_present_and_positive(skill: str, text: str) -> bool:
+            s_lower = skill.lower()
+            if s_lower not in text:
+                return False
+            # Check if skill is negated
+            for neg in negation_prefixes:
+                if neg + s_lower in text:
+                    return False
+            return True
 
         scored_results = []
-        for cand in candidates:
-            cand_id = cand.get("candidate_id", "CAND-01")
+        for cand_id, cand in unique_candidates.items():
             name = cand.get("name", cand_id)
             text = cand.get("resume_text", "").lower()
             years = float(cand.get("experience_years", 3.0))
 
-            matched_mand = [req for req in mandatory_requirements if req.lower() in text]
-            matched_pref = [req for req in pref if req.lower() in text]
-            missing_mand = [req for req in mandatory_requirements if req.lower() not in text]
+            matched_mand = [req for req in mandatory_requirements if is_skill_present_and_positive(req, text)]
+            matched_pref = [req for req in pref if is_skill_present_and_positive(req, text)]
+            missing_mand = [req for req in mandatory_requirements if not is_skill_present_and_positive(req, text)]
 
-            # Fit scoring computation
+            # Calibrated Fit Scoring: 60% Mandatory, 20% Preferred, 20% Experience
             mand_score = (len(matched_mand) / max(len(mandatory_requirements), 1)) * 60.0
             pref_score = (len(matched_pref) / max(len(pref), 1)) * 20.0 if pref else 20.0
             exp_score = min(years / max(min_years, 1.0), 1.0) * 20.0 if min_years > 0 else 20.0

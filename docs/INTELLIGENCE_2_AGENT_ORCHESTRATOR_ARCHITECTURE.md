@@ -441,3 +441,14 @@ Stage 30 advances defense-in-depth against complex evasion, homoglyph obfuscatio
 - **False-Positive Suppression**: Safeguards legitimate DevOps, systems administration, and AI engineering vocabulary.
 
 See [`docs/INTELLIGENCE_2_PHASE_6_STAGE_30_SECURITY_DETECTION_EVOLUTION.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_6_STAGE_30_SECURITY_DETECTION_EVOLUTION.md) for full documentation.
+
+---
+
+## 36. Intelligence 2.0 Phase 6 Stage 31: Hiring Intelligence Calibration & Evaluation
+
+Stage 31 improves candidate qualification precision and requirement alignment while strictly enforcing the separation between job fit and security clearance:
+- **Negation Filtering**: Ensures phrases like "no Kubernetes experience" or "limited exposure" are correctly identified as missing criteria.
+- **Duplicate Candidate Consolidation**: Deduplicates candidate entities across multiple resume snippets/sources.
+- **Strict Invariant**: High fit scores never override `HIGH_RISK` or `UNINSPECTABLE` security states.
+
+See [`docs/INTELLIGENCE_2_PHASE_6_STAGE_31_HIRING_CALIBRATION.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_6_STAGE_31_HIRING_CALIBRATION.md) for full documentation.
