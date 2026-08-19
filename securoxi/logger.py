@@ -16,11 +16,30 @@ class RedactingFormatter(logging.Formatter):
         self.log_sensitive = log_sensitive
 
 
+class SafeStreamHandler(logging.StreamHandler):
+    """Stream handler that safely ignores writes to closed streams during test/process teardown."""
+
+    def emit(self, record):
+        try:
+            if self.stream is None:
+                return
+            if hasattr(self.stream, "closed") and self.stream.closed:
+                return
+            msg = self.format(record)
+            self.stream.write(msg + self.terminator)
+            self.flush()
+        except Exception:
+            pass
+
+    def handleError(self, record):
+        pass
+
+
 def get_logger(name: str = "securoxi", log_level: int = logging.INFO) -> logging.Logger:
     logger = logging.getLogger(name)
     if not logger.handlers:
         logger.setLevel(log_level)
-        handler = logging.StreamHandler(sys.stdout)
+        handler = SafeStreamHandler(sys.stdout)
         formatter = logging.Formatter(
             '[%(asctime)s] [%(name)s] [%(levelname)s] %(message)s',
             datefmt='%Y-%m-%d %H:%M:%S'
@@ -28,3 +47,4 @@ def get_logger(name: str = "securoxi", log_level: int = logging.INFO) -> logging
         handler.setFormatter(formatter)
         logger.addHandler(handler)
     return logger
+
