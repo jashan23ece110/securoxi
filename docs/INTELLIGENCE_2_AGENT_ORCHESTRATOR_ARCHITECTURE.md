@@ -551,3 +551,14 @@ Stage 40 establishes a permission-aware enterprise analytics, anomaly detection,
 - **Grounded Executive Reports**: Synthesizes verified metric records into immutable snapshots with direct traceability.
 
 See [`docs/INTELLIGENCE_2_PHASE_7_STAGE_40_ANALYTICS_REPORTING.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_7_STAGE_40_ANALYTICS_REPORTING.md) for full documentation.
+
+---
+
+## 46. Intelligence 2.0 Phase 7 Stage 41: Enterprise API, Webhooks & Developer Platform
+
+Stage 41 provides a secure, versioned developer platform with granular API key scopes, idempotent task execution, and cryptographic HMAC webhook dispatching:
+- **Granular API Scopes**: Granular access control (`task:create`, `candidate:read`, `ats:write`) with immediate key revocation.
+- **Task Idempotency**: Deduplication via `Idempotency-Key` headers prevents duplicate autonomous workflows.
+- **SSRF-Protected Outbound Webhooks**: HMAC-SHA256 event signing with strict protection against internal loopback and cloud metadata targets.
+
+See [`docs/INTELLIGENCE_2_PHASE_7_STAGE_41_DEVELOPER_PLATFORM.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_7_STAGE_41_DEVELOPER_PLATFORM.md) for full documentation.
