@@ -452,3 +452,14 @@ Stage 31 improves candidate qualification precision and requirement alignment wh
 - **Strict Invariant**: High fit scores never override `HIGH_RISK` or `UNINSPECTABLE` security states.
 
 See [`docs/INTELLIGENCE_2_PHASE_6_STAGE_31_HIRING_CALIBRATION.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_6_STAGE_31_HIRING_CALIBRATION.md) for full documentation.
+
+---
+
+## 37. Intelligence 2.0 Phase 6 Stage 32: Full-Stack Agent, Workflow Cost & Latency Optimization
+
+Stage 32 delivers full-stack performance improvements across agent execution, caching, and resource bounding:
+- **Execution-Scoped Result Caching (`OPT-AGNT-01`)**: Identical agent steps within a coordination plan reuse cached envelopes to cut token and compute costs.
+- **Tenant-Isolated Provenance**: Every cached step records `AgentCached:<agent_id>` while guaranteeing zero cross-tenant contamination.
+- **Strict Trust Boundary Preservation**: Security, policy authority, and human review gates remain completely uncompromised.
+
+See [`docs/INTELLIGENCE_2_PHASE_6_STAGE_32_FULL_STACK_OPTIMIZATION.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_6_STAGE_32_FULL_STACK_OPTIMIZATION.md) for full documentation.

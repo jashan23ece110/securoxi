@@ -98,7 +98,27 @@ class MultiAgentCoordinator:
 
             run_id = context.run.run_id if context.run else "RUN-DEFAULT"
 
-            # 2. Build Structured Handoff
+            # 2. Check Execution-Scoped Cache for Identical Step
+            cache_key = f"{step.agent_id}:{str(sorted(step.inputs.items()))}"
+            if cache_key in step_results:
+                logger.info(f"Reusing cached agent result for '{step.agent_id}' in plan '{plan.plan_id}'")
+                cached_output = step_results[cache_key]
+                envelope = AgentResultEnvelope(
+                    agent_identity=step.agent_id,
+                    agent_version=agent_def.version,
+                    status=AgentLifecycleState.COMPLETED.value,
+                    authority_level=step.authority_level,
+                    result_data=cached_output,
+                    evidence_refs=[],
+                    provenance=list(provenance_chain) + [f"AgentCached:{step.agent_id}"],
+                    warnings=[],
+                    verification_state=VerificationState.VERIFIED,
+                )
+                envelopes.append(envelope)
+                provenance_chain.append(f"AgentCached:{step.agent_id}")
+                continue
+
+            # 3. Build Structured Handoff
             handoff = AgentHandoff(
                 source_agent_id="COORDINATOR",
                 target_agent_id=step.agent_id,
@@ -112,7 +132,7 @@ class MultiAgentCoordinator:
                 status=HandoffStatus.AUTHORIZED,
             )
 
-            # 3. Instantiate and Execute Agent
+            # 4. Instantiate and Execute Agent
             agent_instance = self._resolve_agent_instance(step.agent_id, agent_def)
             if not agent_instance:
                 logger.error(f"Could not instantiate agent '{step.agent_id}'")
@@ -129,6 +149,7 @@ class MultiAgentCoordinator:
             output, trace = self.agent_runtime.execute_agent(agent_instance, agent_input, context)
             handoffs_executed += 1
             handoff.status = HandoffStatus.COMPLETED
+            step_results[cache_key] = output.result_data
 
             # 4. Wrap in Result Envelope with explicit Authority Level
             envelope = AgentResultEnvelope(
