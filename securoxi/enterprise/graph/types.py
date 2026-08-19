@@ -1,0 +1,41 @@
+"""
+SECUROXI AI Intelligence 2.0 — Enterprise Digital Twin & Intelligence Graph Types & Enums (Phase 8 Stage 51)
+"""
+
+from enum import Enum
+
+
+class NodeType(str, Enum):
+    ORGANIZATION = "ORGANIZATION"
+    WORKSPACE = "WORKSPACE"
+    USER = "USER"
+    JOB = "JOB"
+    CANDIDATE = "CANDIDATE"
+    DOCUMENT = "DOCUMENT"
+    POLICY = "POLICY"
+    TASK = "TASK"
+    INTEGRATION = "INTEGRATION"
+    INVESTIGATION = "INVESTIGATION"
+    RISK_FORECAST = "RISK_FORECAST"
+
+
+class EdgeType(str, Enum):
+    BELONGS_TO = "BELONGS_TO"
+    OWNS = "OWNS"
+    APPLIES_TO = "APPLIES_TO"
+    CANDIDATE_FOR = "CANDIDATE_FOR"
+    TRIGGERS = "TRIGGERS"
+    DEPENDS_ON = "DEPENDS_ON"
+    AFFECTS = "AFFECTS"
+    SUPPORTS = "SUPPORTS"
+    CONTRADICTS = "CONTRADICTS"
+    ASSOCIATED_WITH = "ASSOCIATED_WITH"
+
+
+class GraphTrustLevel(str, Enum):
+    AUTHORITATIVE = "AUTHORITATIVE"
+    VERIFIED = "VERIFIED"
+    SUPPORTED = "SUPPORTED"
+    DERIVED = "DERIVED"
+    INFERRED = "INFERRED"
+    UNTRUSTED = "UNTRUSTED"
