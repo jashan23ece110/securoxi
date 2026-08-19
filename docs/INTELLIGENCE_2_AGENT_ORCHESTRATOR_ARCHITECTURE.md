@@ -540,3 +540,14 @@ Stage 39 implements a canonical enterprise data governance, retention, and secur
 - **Governed Safe Deletion & Exports**: Dependency-aware deletion with downstream index and cache invalidation, plus time-bounded data exports.
 
 See [`docs/INTELLIGENCE_2_PHASE_7_STAGE_39_DATA_GOVERNANCE.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_7_STAGE_39_DATA_GOVERNANCE.md) for full documentation.
+
+---
+
+## 45. Intelligence 2.0 Phase 7 Stage 40: Advanced Analytics, Reporting & Executive Intelligence
+
+Stage 40 establishes a permission-aware enterprise analytics, anomaly detection, and executive reporting layer:
+- **Canonical Metric Catalog**: Standardized definitions across Security, Hiring, Operations, AI Efficiency, and Cost.
+- **Privacy & Small-Sample Protection**: Enforces suppression when sample sizes are small ($N < 3$) and restricts financial/cost metrics to authorized admins.
+- **Grounded Executive Reports**: Synthesizes verified metric records into immutable snapshots with direct traceability.
+
+See [`docs/INTELLIGENCE_2_PHASE_7_STAGE_40_ANALYTICS_REPORTING.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_7_STAGE_40_ANALYTICS_REPORTING.md) for full documentation.
