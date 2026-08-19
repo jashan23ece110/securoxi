@@ -1,0 +1,44 @@
+"""
+SECUROXI AI Intelligence 2.0 — Predictive Risk & Decision Intelligence Types & Enums (Phase 8 Stage 50)
+"""
+
+from enum import Enum
+
+
+class RiskType(str, Enum):
+    SECURITY_ESCALATION = "SECURITY_ESCALATION"
+    RECURRING_PROMPT_INJECTION = "RECURRING_PROMPT_INJECTION"
+    TASK_FAILURE = "TASK_FAILURE"
+    QUEUE_OVERLOAD = "QUEUE_OVERLOAD"
+    INTEGRATION_FAILURE = "INTEGRATION_FAILURE"
+    KNOWLEDGE_STALENESS = "KNOWLEDGE_STALENESS"
+    PIPELINE_BOTTLENECK = "PIPELINE_BOTTLENECK"
+
+
+class PredictionHorizon(str, Enum):
+    HOURS_24 = "24H"
+    DAYS_7 = "7D"
+    DAYS_30 = "30D"
+
+
+class PredictionUncertainty(str, Enum):
+    HIGH_CONFIDENCE = "HIGH_CONFIDENCE"
+    MEDIUM_CONFIDENCE = "MEDIUM_CONFIDENCE"
+    LOW_CONFIDENCE = "LOW_CONFIDENCE"
+    INSUFFICIENT_DATA = "INSUFFICIENT_DATA"
+
+
+class ForecastStatus(str, Enum):
+    ACTIVE = "ACTIVE"
+    EXPIRED = "EXPIRED"
+    SUPERSEDED = "SUPERSEDED"
+    INSUFFICIENT_DATA = "INSUFFICIENT_DATA"
+    RETRACTED = "RETRACTED"
+
+
+class PredictiveRecommendationStatus(str, Enum):
+    PROPOSED = "PROPOSED"
+    REVIEW_REQUIRED = "REVIEW_REQUIRED"
+    APPROVED = "APPROVED"
+    REJECTED = "REJECTED"
+    EXPIRED = "EXPIRED"
