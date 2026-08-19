@@ -377,3 +377,23 @@ Stage 24 completes and freezes the entire Phase 4 Intelligence 2.0 User Experien
 - **Architectural Freeze**: Phase 4 is declared complete and frozen.
 
 See [`docs/INTELLIGENCE_2_PHASE_4_FINAL_UX_E2E_FREEZE.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_4_FINAL_UX_E2E_FREEZE.md) for full architectural documentation.
+
+---
+
+## 30. Intelligence 2.0 Phase 5 Stage 25: Production Deployment Architecture & Environment Hardening
+
+Stage 25 hardens the runtime topology into an isolated, reproducible, multi-tenant container architecture:
+- **Configuration & Secret Validation** (`securoxi/environment.py`): Rejects insecure defaults in production and enforces strict CORS allowlists.
+- **Container Hardening**: Multi-stage Docker build, non-root unprivileged execution (`securoxiuser:10001`), and integrated healthcheck probes.
+- **Runbooks & Operational Documentation**: [`docs/PRODUCTION_DEPLOYMENT.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/PRODUCTION_DEPLOYMENT.md) and [`docs/PRODUCTION_RUNBOOK.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/PRODUCTION_RUNBOOK.md).
+
+---
+
+## 31. Intelligence 2.0 Phase 5 Stage 26: Production Security, Load, Chaos & Reliability Validation
+
+Stage 26 validates real-world resilience across high concurrency, failure injection, and adversarial attacks:
+- **Concurrency & Backpressure**: 15+ concurrent asynchronous tasks per worker pool with predictable queue behavior.
+- **Multi-Tenant Isolation**: Verified concurrent isolation between tenants with 0% data cross-over.
+- **Failure Injection & Replay Defense**: Robust pause/resume/cancellation lifecycle and 100% duplicate execution prevention for human approvals.
+
+See [`docs/PRODUCTION_SECURITY_LOAD_CHAOS_VALIDATION.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/PRODUCTION_SECURITY_LOAD_CHAOS_VALIDATION.md) for full architectural documentation.
