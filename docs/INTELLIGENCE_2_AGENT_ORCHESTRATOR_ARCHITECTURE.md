@@ -607,3 +607,15 @@ Stage 45 builds the foundational continuous intelligence substrate for autonomou
 - **Zero-Side-Effect Simulation Replay**: Historical event stream replay for validation and training without mutating production state.
 
 See [`docs/INTELLIGENCE_2_PHASE_8_STAGE_45_CONTINUOUS_ENTERPRISE_INTELLIGENCE.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_8_STAGE_45_CONTINUOUS_ENTERPRISE_INTELLIGENCE.md) for full documentation.
+
+---
+
+## 51. Intelligence 2.0 Phase 8 Stage 47: Autonomous Hiring Intelligence & Candidate Monitoring
+
+Stage 47 establishes continuous candidate and JD monitoring with deterministic security gates:
+- **Security-First Re-evaluation**: `HIGH_RISK` and `UNINSPECTABLE` candidate updates are immediately quarantined and excluded from trusted recommendations.
+- **Change Significance Filtering**: Distinguishes non-material contact updates from material experience changes to optimize resource consumption.
+- **Top-K Ranking Impact Analysis**: Calculates rank deltas and produces evidence-backed `HiringRecommendation`s without bypassing human governance.
+- **Stale State Management**: JD requirement updates automatically mark affected candidate evaluations as stale.
+
+See [`docs/INTELLIGENCE_2_PHASE_8_STAGE_47_AUTONOMOUS_HIRING_INTELLIGENCE.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_8_STAGE_47_AUTONOMOUS_HIRING_INTELLIGENCE.md) for full documentation.
