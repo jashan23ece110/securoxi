@@ -518,3 +518,14 @@ Stage 37 establishes granular enterprise RBAC, bounded agent delegation, and ent
 - **Enterprise SSO & Dual Verification**: OIDC/SAML claim verification, domain verification, and the dual verification invariant (`RBAC ALLOW + Policy ALLOW = ALLOW`).
 
 See [`docs/INTELLIGENCE_2_PHASE_7_STAGE_37_RBAC_IDENTITY_SSO.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_7_STAGE_37_RBAC_IDENTITY_SSO.md) for full documentation.
+
+---
+
+## 43. Intelligence 2.0 Phase 7 Stage 38: Enterprise Integrations & ATS Expansion
+
+Stage 38 standardizes enterprise ATS integrations and governed write mutations across Greenhouse, Lever, and Workday:
+- **Canonical Provider Adapters**: Standardized interfaces for Greenhouse (Full Read/Write), Lever, and Workday (Read-Only).
+- **Automated Capability Discovery**: Integrations declare supported operations, preventing invalid mutation attempts.
+- **Governed Mutation Pipeline**: External ATS writes require formal proposals (`ATSWriteProposal`), RBAC permission checks, policy clearance, and human sign-off.
+
+See [`docs/INTELLIGENCE_2_PHASE_7_STAGE_38_ENTERPRISE_INTEGRATIONS.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_7_STAGE_38_ENTERPRISE_INTEGRATIONS.md) for full documentation.
