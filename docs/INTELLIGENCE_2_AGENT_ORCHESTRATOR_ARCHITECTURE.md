@@ -463,3 +463,14 @@ Stage 32 delivers full-stack performance improvements across agent execution, ca
 - **Strict Trust Boundary Preservation**: Security, policy authority, and human review gates remain completely uncompromised.
 
 See [`docs/INTELLIGENCE_2_PHASE_6_STAGE_32_FULL_STACK_OPTIMIZATION.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_6_STAGE_32_FULL_STACK_OPTIMIZATION.md) for full documentation.
+
+---
+
+## 38. Intelligence 2.0 Phase 6 Stage 33: Continuous Evaluation, Regression Intelligence & Automated Quality Gates
+
+Stage 33 implements an automated quality gating and regression intelligence framework:
+- **Quality Gate Hierarchy**: Hard gates (`SECURITY_GATE`, `GROUNDING_GATE`, `HIRING_GATE`) and soft gates (`PERFORMANCE_GATE`).
+- **Regression Diffing**: Automatically tracks baseline vs. current measurements and computes deltas.
+- **Release-Blocking Guarantees**: Any critical prompt injection or tenant bypass unconditionally triggers an overall `FAIL` status.
+
+See [`docs/INTELLIGENCE_2_PHASE_6_STAGE_33_CONTINUOUS_EVALUATION.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_6_STAGE_33_CONTINUOUS_EVALUATION.md) for full documentation.
