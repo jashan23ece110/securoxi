@@ -1466,6 +1466,30 @@ def get_monitoring_telemetry_endpoint(
     return telemetry
 
 
+
+@app.get("/api/v1/agentic/monitoring/bottlenecks")
+def get_monitoring_bottlenecks_endpoint(
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    Returns ranked production bottlenecks with confirmed root causes and mitigations.
+    """
+    bottlenecks = orchestrator_instance.telemetry_analyzer.get_bottlenecks(tenant_id=client.tenant_id)
+    return bottlenecks
+
+
+@app.get("/api/v1/agentic/monitoring/telemetry/analysis")
+def get_monitoring_telemetry_analysis_endpoint(
+    client: ClientIdentity = Depends(verify_api_key)
+):
+    """
+    Returns stage breakdown and latency percentiles (P50/P75/P95/P99) for administrators.
+    """
+    analysis = orchestrator_instance.telemetry_analyzer.get_latency_breakdown(tenant_id=client.tenant_id)
+    return analysis
+
+
+
 # =========================================================================
 # HUMAN APPROVAL, GOVERNANCE & CONTROLLED ACTION WORKSPACE (Phase 4 Stage 23)
 # =========================================================================

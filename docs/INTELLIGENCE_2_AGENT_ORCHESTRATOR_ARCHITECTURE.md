@@ -407,3 +407,14 @@ Stage 27 marks the complete verification, operational release, and final freeze 
 - **Production Go-Live Smoke Tests**: Live verification across Command Workspace, Grounded Ask SECUROXI, Intelligent Hiring, Forensic Security Investigation, Governance & Approvals, and Live Monitoring.
 - **Release Documentation**: [`docs/GO_LIVE_CHECKLIST.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/GO_LIVE_CHECKLIST.md) and [`docs/PRODUCTION_GO_LIVE_SECURITY_REPORT.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/PRODUCTION_GO_LIVE_SECURITY_REPORT.md).
 - **Intelligence 2.0 Production Freeze**: All 27 stages across Phases 1–5 are officially completed, fully tested (490/490 tests passing), and frozen for enterprise production deployment.
+
+---
+
+## 33. Intelligence 2.0 Phase 6 Stage 28: Production Telemetry Analysis & Bottleneck Detection
+
+Stage 28 establishes empirical observability and root-cause bottleneck diagnosis across real production task traces:
+- **`ProductionTelemetryAnalyzer`** (`securoxi/orchestrator/telemetry_analysis.py`): Ingests end-to-end task traces, calculates latency percentiles (P50/P75/P95/P99), decomposes execution stages, and detects prioritized system bottlenecks.
+- **Prioritized Backlog**: Identifies top optimization candidates (hybrid reranking latency, redundant retrieval hops, verification token overhead) without leaking private document content or secrets.
+- **REST Endpoints**: `/api/v1/agentic/monitoring/bottlenecks`, `/api/v1/agentic/monitoring/telemetry/analysis`.
+
+See [`docs/INTELLIGENCE_2_PHASE_6_STAGE_28_TELEMETRY_ANALYSIS.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_6_STAGE_28_TELEMETRY_ANALYSIS.md) and [`docs/PHASE_6_OPTIMIZATION_BACKLOG.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/PHASE_6_OPTIMIZATION_BACKLOG.md) for full documentation.

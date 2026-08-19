@@ -394,6 +394,14 @@ export class SecuroxiApiClient {
     return this.request<any>('/agentic/monitoring/telemetry');
   }
 
+  async getMonitoringBottlenecks(): Promise<any[]> {
+    return this.request<any[]>('/agentic/monitoring/bottlenecks');
+  }
+
+  async getMonitoringTelemetryAnalysis(): Promise<any> {
+    return this.request<any>('/agentic/monitoring/telemetry/analysis');
+  }
+
   // Human Approval, Governance & Controlled Action Workspace (Stage 23)
   async createGovernanceProposal(payload: {
     task_id?: string;
