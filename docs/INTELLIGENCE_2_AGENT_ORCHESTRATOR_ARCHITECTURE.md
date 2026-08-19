@@ -619,3 +619,14 @@ Stage 47 establishes continuous candidate and JD monitoring with deterministic s
 - **Stale State Management**: JD requirement updates automatically mark affected candidate evaluations as stale.
 
 See [`docs/INTELLIGENCE_2_PHASE_8_STAGE_47_AUTONOMOUS_HIRING_INTELLIGENCE.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_8_STAGE_47_AUTONOMOUS_HIRING_INTELLIGENCE.md) for full documentation.
+
+---
+
+## 52. Intelligence 2.0 Phase 8 Stage 48: Continuous Enterprise RAG & Knowledge Intelligence
+
+Stage 48 establishes a continuously maintained, authorized, and security-aware enterprise knowledge intelligence layer:
+- **Security-First Knowledge Admission**: `HIGH_RISK` and `UNINSPECTABLE` sources are quarantined and excluded from trusted search indexes.
+- **Incremental Updates & Deletion Propagation**: Document modifications update chunks incrementally, while deletions immediately purge chunks, embeddings, and retrieval caches.
+- **Question Subscriptions & Freshness Tracking**: Live subscriptions track answer dependencies and emit `ANSWER_CHANGED` signals upon source changes.
+
+See [`docs/INTELLIGENCE_2_PHASE_8_STAGE_48_CONTINUOUS_KNOWLEDGE_INTELLIGENCE.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_8_STAGE_48_CONTINUOUS_KNOWLEDGE_INTELLIGENCE.md) for full documentation.

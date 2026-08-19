@@ -1,0 +1,37 @@
+"""
+SECUROXI AI Intelligence 2.0 — Continuous Knowledge Intelligence Types & Enums (Phase 8 Stage 48)
+"""
+
+from enum import Enum
+
+
+class SourceAuthority(str, Enum):
+    AUTHORITATIVE = "AUTHORITATIVE"
+    VERIFIED = "VERIFIED"
+    SUPPORTED = "SUPPORTED"
+    ADVISORY = "ADVISORY"
+    UNTRUSTED = "UNTRUSTED"
+
+
+class AdmissionDecision(str, Enum):
+    ADMITTED = "ADMITTED"
+    ADMITTED_WITH_LIMITATIONS = "ADMITTED_WITH_LIMITATIONS"
+    QUARANTINED = "QUARANTINED"
+    REVIEW_REQUIRED = "REVIEW_REQUIRED"
+    REJECTED = "REJECTED"
+    DELETED = "DELETED"
+
+
+class KnowledgeFreshness(str, Enum):
+    CURRENT = "CURRENT"
+    STALE = "STALE"
+    REBUILDING = "REBUILDING"
+    INVALID = "INVALID"
+
+
+class KnowledgeChangeType(str, Enum):
+    NEW_SOURCE = "NEW_SOURCE"
+    CONTENT_UPDATED = "CONTENT_UPDATED"
+    DELETED = "DELETED"
+    PERMISSION_CHANGED = "PERMISSION_CHANGED"
+    SECURITY_STATE_CHANGED = "SECURITY_STATE_CHANGED"
