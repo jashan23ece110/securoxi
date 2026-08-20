@@ -750,3 +750,15 @@ Stage 58 delivers privacy-preserving aggregate benchmarking:
 - **Actionable Optimization Recommendations**: Derives evidence-backed guidance for lagging operational metrics.
 
 See [`docs/INTELLIGENCE_2_PHASE_9_STAGE_58_BENCHMARKING_OPTIMIZATION.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_9_STAGE_58_BENCHMARKING_OPTIMIZATION.md) for full documentation.
+
+---
+
+## 63. Intelligence 2.0 Phase 9 Stage 59: Autonomous Platform Operations & Self-Healing Infrastructure
+
+Stage 59 delivers a controlled platform-operations intelligence layer:
+- **Continuous Health Observation**: Observes latency, error rates, and queue saturation across all core services.
+- **Root-Cause Hypothesis Diagnosis**: Generates evidence-grounded hypotheses separating observation from causation.
+- **Bounded Auto-Remediation (L3 Auto vs L2 Approval)**: Low-risk actions (cache flush, index refresh, job retry) execute autonomously, while moderate/high risk actions strictly enforce Stage 23 Human Approval.
+- **Remediation Loop Limits & Global Freeze**: Max 3 self-healing attempts per service, backed by instant operational kill switches.
+
+See [`docs/INTELLIGENCE_2_PHASE_9_STAGE_59_AUTONOMOUS_PLATFORM_OPERATIONS.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_9_STAGE_59_AUTONOMOUS_PLATFORM_OPERATIONS.md) for full documentation.
