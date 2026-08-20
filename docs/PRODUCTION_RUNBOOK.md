@@ -71,3 +71,40 @@ docker compose -f docker-compose.prod.yml stop -t 30
   2. Initiate state reconciliation to compare internal expected states with external provider states.
   3. Resolve detected `STATE_DRIFT` through governed manual review.
 
+---
+
+## 4. Phase 9 Extensibility, Marketplace & Partner Emergency Procedures
+
+### 4.1 Marketplace Supply-Chain Emergency Revocation
+- **Objective**: Instantly revoke a vulnerable marketplace package and disable all active installations across all enterprise tenants.
+- **Procedure**:
+  ```python
+  from securoxi.enterprise.marketplace import EnterpriseMarketplaceEngine
+  mkt = EnterpriseMarketplaceEngine()
+  mkt.revoke_package(package_id="PKG-VULNERABLE", reason="CVE-2026-XXXX Zero-Day Vulnerability")
+  ```
+
+### 4.2 Partner Revocation & Instant Delegation Offboarding
+- **Objective**: Immediately offboard a compromised partner organization and terminate all active customer delegations across the platform.
+- **Procedure**:
+  ```python
+  from securoxi.enterprise.ecosystem import EnterprisePartnerEcosystemEngine
+  eco = EnterprisePartnerEcosystemEngine()
+  eco.offboard_partner(partner_id="PARTNER-COMPROMISED")
+  ```
+
+### 4.3 Platform Operations & Workflow Automation Emergency Freeze
+- **Objective**: Halt all autonomous self-healing remediations and declarative workflow executions during infrastructure change freezes.
+- **Procedure**:
+  ```python
+  from securoxi.enterprise.operations import AutonomousPlatformOperationsEngine
+  from securoxi.enterprise.workflow import EnterpriseWorkflowComposer
+  ops = AutonomousPlatformOperationsEngine()
+  ops.set_kill_switch(True)
+  ops.set_change_freeze(True)
+  
+  composer = EnterpriseWorkflowComposer()
+  composer.set_global_automation_paused(True)
+  ```
+
+
