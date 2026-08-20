@@ -17,6 +17,8 @@ from securoxi.enterprise.controlplane.models import (
     CapabilityDefinition,
     EnterpriseDecisionContext,
     ControlPlaneSnapshot,
+    PolicySimulationResult,
+    PolicyDiff,
 )
 from securoxi.logger import get_logger
 
@@ -84,6 +86,80 @@ class EnterpriseControlPlane:
         self._policies[new_pol.policy_id] = new_pol
         logger.info(f"Rolled back Policy '{policy_id}' -> New Active Policy '{new_pol.policy_id}'")
         return new_pol
+
+    def simulate_policy(
+        self,
+        organization_id: str,
+        policy: PolicyDefinition,
+        test_scenarios: List[Dict[str, Any]],
+    ) -> PolicySimulationResult:
+        """
+        Simulates the evaluation of a draft or active policy against representative scenarios (zero side-effects).
+        """
+        allowed = 0
+        denied = 0
+        approval_req = 0
+
+        for sc in test_scenarios:
+            security_state = sc.get("security_state", "SAFE")
+            is_high_impact = sc.get("is_high_impact", False)
+            eval_state = sc.get("evaluation_state", EvaluationGateState.PASS)
+
+            # Evaluate against simulation rules
+            if security_state in {"HIGH_RISK", "UNINSPECTABLE"} or eval_state == EvaluationGateState.FAIL:
+                denied += 1
+            elif is_high_impact or self._safe_mode:
+                approval_req += 1
+            else:
+                allowed += 1
+
+        result = PolicySimulationResult(
+            organization_id=organization_id,
+            policy_id=policy.policy_id,
+            scenarios_tested=len(test_scenarios),
+            scenarios_allowed=allowed,
+            scenarios_denied=denied,
+            scenarios_approval_required=approval_req,
+            is_simulation=True,
+        )
+        logger.info(f"Simulated Policy '{policy.policy_id}': Allowed={allowed}, Denied={denied}, ApprovalReq={approval_req}")
+        return result
+
+    def diff_policies(self, base_policy_id: str, target_policy_id: str) -> Optional[PolicyDiff]:
+        """Calculates structured rule differences between two policy versions."""
+        base_pol = self._policies.get(base_policy_id)
+        tgt_pol = self._policies.get(target_policy_id)
+
+        if not base_pol or not tgt_pol:
+            return None
+
+        base_rules = base_pol.rules
+        tgt_rules = tgt_pol.rules
+
+        added = {k: v for k, v in tgt_rules.items() if k not in base_rules}
+        removed = {k: v for k, v in base_rules.items() if k not in tgt_rules}
+        modified = {k: {"before": base_rules[k], "after": tgt_rules[k]} for k in base_rules if k in tgt_rules and base_rules[k] != tgt_rules[k]}
+
+        return PolicyDiff(
+            organization_id=base_pol.organization_id,
+            base_policy_id=base_policy_id,
+            target_policy_id=target_policy_id,
+            added_rules=added,
+            removed_rules=removed,
+            modified_rules=modified,
+            has_conflicts=bool(modified),
+        )
+
+    def detect_policy_drift(self, organization_id: str, runtime_version: int) -> bool:
+        """Emits a drift signal if runtime version does not match active registered policy version."""
+        active_policies = self.get_policies(organization_id)
+        if not active_policies:
+            return False
+        max_active_version = max(p.version for p in active_policies)
+        has_drift = runtime_version != max_active_version
+        if has_drift:
+            logger.warning(f"POLICY_DRIFT DETECTED: Runtime v{runtime_version} != Active v{max_active_version} for Org '{organization_id}'")
+        return has_drift
 
     def register_capability(
         self,

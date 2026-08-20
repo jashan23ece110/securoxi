@@ -14,6 +14,8 @@ from securoxi.enterprise.controlplane.models import (
     CapabilityDefinition,
     EnterpriseDecisionContext,
     ControlPlaneSnapshot,
+    PolicySimulationResult,
+    PolicyDiff,
 )
 from securoxi.enterprise.controlplane.engine import EnterpriseControlPlane
 
@@ -27,5 +29,7 @@ __all__ = [
     "CapabilityDefinition",
     "EnterpriseDecisionContext",
     "ControlPlaneSnapshot",
+    "PolicySimulationResult",
+    "PolicyDiff",
     "EnterpriseControlPlane",
 ]

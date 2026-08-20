@@ -70,3 +70,30 @@ class ControlPlaneSnapshot:
     reason: str = "All deterministic security and policy gates passed"
     context: Optional[EnterpriseDecisionContext] = None
     created_at: float = field(default_factory=time.time)
+
+
+@dataclass
+class PolicySimulationResult:
+    """Side-effect-free policy simulation evaluation outcome."""
+    simulation_id: str = field(default_factory=lambda: f"SIM-POL-{uuid.uuid4().hex[:8].upper()}")
+    organization_id: str = "ORG-DEFAULT"
+    policy_id: str = "POL-DEFAULT"
+    scenarios_tested: int = 0
+    scenarios_allowed: int = 0
+    scenarios_denied: int = 0
+    scenarios_approval_required: int = 0
+    is_simulation: bool = True
+    simulated_at: float = field(default_factory=time.time)
+
+
+@dataclass
+class PolicyDiff:
+    """Structured diff between two policy versions."""
+    organization_id: str
+    base_policy_id: str
+    target_policy_id: str
+    added_rules: Dict[str, Any] = field(default_factory=dict)
+    removed_rules: Dict[str, Any] = field(default_factory=dict)
+    modified_rules: Dict[str, Any] = field(default_factory=dict)
+    has_conflicts: bool = False
+    generated_at: float = field(default_factory=time.time)

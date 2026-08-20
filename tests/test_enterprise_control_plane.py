@@ -1,7 +1,8 @@
 """
 SECUROXI AI Intelligence 2.0 — Enterprise Control Plane Test Suite (Phase 9 Stage 54)
 Validates policy registration & rollback, capability registry evaluation gates,
-unified decision context evaluation, and strict multi-tenant scoping.
+unified decision context evaluation, policy simulation, structured diffing,
+drift detection, and strict multi-tenant scoping.
 """
 
 import pytest
@@ -16,27 +17,41 @@ from securoxi.enterprise.controlplane import (
 
 
 # =========================================================================
-# 1. POLICY REGISTRATION & VERSIONED ROLLBACK
+# 1. POLICY REGISTRATION, VERSIONED ROLLBACK & STRUCTURED DIFF
 # =========================================================================
 
-def test_policy_registration_and_rollback():
-    """Verifies registering declarative policies and rolling them back with version tracking."""
+def test_policy_registration_rollback_and_diff():
+    """Verifies registering declarative policies, rolling them back, and computing structured diffs."""
     cp = EnterpriseControlPlane()
 
-    # 1. Register Policy
-    pol = cp.register_policy(
+    # 1. Register Base Policy
+    pol_v1 = cp.register_policy(
         organization_id="ORG-TEST",
         domain=PolicyDomain.SECURITY,
-        rules={"mandatory_mfa": True, "strict_clearance": True},
+        rules={"mandatory_mfa": True, "strict_clearance": True, "max_login_attempts": 5},
     )
-    assert pol.status == PolicyStatus.ACTIVE
-    assert pol.version == 1
+    assert pol_v1.status == PolicyStatus.ACTIVE
+    assert pol_v1.version == 1
 
-    # 2. Rollback Policy -> Old becomes ROLLED_BACK, new active policy version created
-    new_pol = cp.rollback_policy(pol.policy_id)
+    # 2. Register Target Policy
+    pol_v2 = cp.register_policy(
+        organization_id="ORG-TEST",
+        domain=PolicyDomain.SECURITY,
+        rules={"mandatory_mfa": True, "strict_clearance": True, "max_login_attempts": 3, "ip_allowlist": True},
+    )
+
+    # 3. Compute Diff
+    diff = cp.diff_policies(pol_v1.policy_id, pol_v2.policy_id)
+    assert diff is not None
+    assert "ip_allowlist" in diff.added_rules
+    assert diff.modified_rules["max_login_attempts"] == {"before": 5, "after": 3}
+    assert diff.has_conflicts is True
+
+    # 4. Rollback Policy -> Old becomes ROLLED_BACK, new active policy version created
+    new_pol = cp.rollback_policy(pol_v1.policy_id)
     assert new_pol is not None
     assert new_pol.version == 2
-    assert pol.status == PolicyStatus.ROLLED_BACK
+    assert pol_v1.status == PolicyStatus.ROLLED_BACK
     assert new_pol.status == PolicyStatus.ACTIVE
 
 
@@ -70,7 +85,42 @@ def test_capability_registry_evaluation_gate():
 
 
 # =========================================================================
-# 3. UNIFIED DECISION CONTEXT & TENANT ISOLATION
+# 3. POLICY SIMULATION & DRIFT DETECTION
+# =========================================================================
+
+def test_policy_simulation_and_drift_detection():
+    """Verifies side-effect-free policy simulations and drift detection against runtime versions."""
+    cp = EnterpriseControlPlane()
+
+    pol = cp.register_policy(
+        organization_id="ORG-TEST",
+        domain=PolicyDomain.HIRING_ATS,
+        rules={"require_review": True},
+    )
+
+    # 1. Simulate Policy against 3 scenarios
+    scenarios = [
+        {"security_state": "SAFE", "is_high_impact": False},
+        {"security_state": "HIGH_RISK", "is_high_impact": False},
+        {"security_state": "SAFE", "is_high_impact": True},
+    ]
+    sim = cp.simulate_policy("ORG-TEST", pol, scenarios)
+    assert sim.is_simulation is True
+    assert sim.scenarios_tested == 3
+    assert sim.scenarios_allowed == 1
+    assert sim.scenarios_denied == 1
+    assert sim.scenarios_approval_required == 1
+
+    # 2. Detect Policy Drift
+    has_drift = cp.detect_policy_drift(organization_id="ORG-TEST", runtime_version=2)
+    assert has_drift is True  # Active policy is v1 != runtime v2
+
+    no_drift = cp.detect_policy_drift(organization_id="ORG-TEST", runtime_version=1)
+    assert no_drift is False
+
+
+# =========================================================================
+# 4. UNIFIED DECISION CONTEXT & TENANT ISOLATION
 # =========================================================================
 
 def test_unified_decision_evaluation_and_tenant_isolation():
