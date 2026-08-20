@@ -702,3 +702,15 @@ Stage 54 establishes the centralized Enterprise Intelligence Control Plane coord
 - **Global Safe Mode & Precedence Fabric**: Platform security and policy limits strictly dominate organization and workspace configurations.
 
 See [`docs/INTELLIGENCE_2_PHASE_9_STAGE_54_CONTROL_PLANE_POLICY_FABRIC.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_9_STAGE_54_CONTROL_PLANE_POLICY_FABRIC.md) for full documentation.
+
+---
+
+## 59. Intelligence 2.0 Phase 9 Stage 55: Advanced Workflow Composer & Enterprise Automation Studio
+
+Stage 55 introduces declarative visual workflow composition and automation:
+- **Declarative Node DAG**: Composes Triggers, Security Scans, Hiring Screening, RAG, and Governed Actions without arbitrary user code.
+- **DAG Cycle Validation**: Detects and rejects cyclic graphs using depth-first search graph analysis.
+- **Side-Effect-Free Simulation**: Tests branches, conditions, and proposed actions without live provider mutations.
+- **Deterministic Execution & Security Priority**: `HIGH_RISK` resources halt execution, and high-impact actions require Stage 23 approval.
+
+See [`docs/INTELLIGENCE_2_PHASE_9_STAGE_55_WORKFLOW_COMPOSER_AUTOMATION.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_9_STAGE_55_WORKFLOW_COMPOSER_AUTOMATION.md) for full documentation.

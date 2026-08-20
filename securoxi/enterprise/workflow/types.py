@@ -1,0 +1,53 @@
+"""
+SECUROXI AI Intelligence 2.0 — Enterprise Workflow Composer Types & Enums (Phase 9 Stage 55)
+"""
+
+from enum import Enum
+
+
+class WorkflowStatus(str, Enum):
+    DRAFT = "DRAFT"
+    VALIDATING = "VALIDATING"
+    SIMULATION = "SIMULATION"
+    PENDING_APPROVAL = "PENDING_APPROVAL"
+    APPROVED = "APPROVED"
+    ACTIVE = "ACTIVE"
+    PAUSED = "PAUSED"
+    DISABLED = "DISABLED"
+    ARCHIVED = "ARCHIVED"
+
+
+class TriggerType(str, Enum):
+    EVENT = "EVENT"
+    WEBHOOK = "WEBHOOK"
+    SCHEDULE = "SCHEDULE"
+    MANUAL = "MANUAL"
+    INTELLIGENCE_SIGNAL = "INTELLIGENCE_SIGNAL"
+
+
+class NodeType(str, Enum):
+    TRIGGER = "TRIGGER"
+    SECURITY_SCAN = "SECURITY_SCAN"
+    HIRING_SCREEN = "HIRING_SCREEN"
+    RAG_RETRIEVE = "RAG_RETRIEVE"
+    CONDITION = "CONDITION"
+    APPROVAL = "APPROVAL"
+    ACTION = "ACTION"
+    VERIFICATION = "VERIFICATION"
+
+
+class WorkflowRiskClass(str, Enum):
+    LOW = "LOW"
+    MODERATE = "MODERATE"
+    HIGH = "HIGH"
+    CRITICAL = "CRITICAL"
+
+
+class RunStatus(str, Enum):
+    READY = "READY"
+    RUNNING = "RUNNING"
+    WAITING_FOR_APPROVAL = "WAITING_FOR_APPROVAL"
+    COMPLETED = "COMPLETED"
+    FAILED = "FAILED"
+    PAUSED = "PAUSED"
+    CANCELLED = "CANCELLED"
