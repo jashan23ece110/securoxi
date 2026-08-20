@@ -714,3 +714,15 @@ Stage 55 introduces declarative visual workflow composition and automation:
 - **Deterministic Execution & Security Priority**: `HIGH_RISK` resources halt execution, and high-impact actions require Stage 23 approval.
 
 See [`docs/INTELLIGENCE_2_PHASE_9_STAGE_55_WORKFLOW_COMPOSER_AUTOMATION.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_9_STAGE_55_WORKFLOW_COMPOSER_AUTOMATION.md) for full documentation.
+
+---
+
+## 60. Intelligence 2.0 Phase 9 Stage 56: Custom Agent / Skill / Tool Development Platform
+
+Stage 56 delivers a secure extensibility platform for custom capabilities:
+- **Lifecycle Gates**: Capabilities progress through `DRAFT` $\rightarrow$ `SECURITY_REVIEW` $\rightarrow$ `EVALUATION` $\rightarrow$ `APPROVED` $\rightarrow$ `ENABLED`.
+- **SSRF & Network Controls**: Enforces explicit allowlists and blocks loopback, private IP ranges, and cloud metadata endpoints.
+- **Evaluation Gate Enforcement**: Capabilities failing Stage 33 regression evaluations are deterministically forced to `DISABLED`.
+- **Tenant Scoping & Kill Switches**: Full organization isolation prevents cross-tenant access, backed by instant global kill switches.
+
+See [`docs/INTELLIGENCE_2_PHASE_9_STAGE_56_CUSTOM_AGENT_SKILL_TOOL_PLATFORM.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_9_STAGE_56_CUSTOM_AGENT_SKILL_TOOL_PLATFORM.md) for full documentation.
