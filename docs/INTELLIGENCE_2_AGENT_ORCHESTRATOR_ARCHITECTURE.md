@@ -738,3 +738,15 @@ Stage 57 delivers a governed enterprise marketplace for sharing and reusing veri
 - **Governed Installation & Supply-Chain Revocation**: High-risk assets require Stage 23 Human Approval, backed by instant supply-chain revocation across all active installations.
 
 See [`docs/INTELLIGENCE_2_PHASE_9_STAGE_57_INTELLIGENCE_MARKETPLACE.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_9_STAGE_57_INTELLIGENCE_MARKETPLACE.md) for full documentation.
+
+---
+
+## 62. Intelligence 2.0 Phase 9 Stage 58: Cross-Organization Benchmarking & Intelligence Optimization
+
+Stage 58 delivers privacy-preserving aggregate benchmarking:
+- **Small-Sample Protection (k-Anonymity)**: Cohorts with $N < 5$ participants are automatically suppressed, returning `BENCHMARK_UNAVAILABLE`.
+- **Zero Peer Identity Leakage**: Exposes only aggregated distribution quartiles and normalized percentile buckets.
+- **Opt-Out Governance**: Opted-out tenants are excluded from peer queries and metric contributions.
+- **Actionable Optimization Recommendations**: Derives evidence-backed guidance for lagging operational metrics.
+
+See [`docs/INTELLIGENCE_2_PHASE_9_STAGE_58_BENCHMARKING_OPTIMIZATION.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_9_STAGE_58_BENCHMARKING_OPTIMIZATION.md) for full documentation.
