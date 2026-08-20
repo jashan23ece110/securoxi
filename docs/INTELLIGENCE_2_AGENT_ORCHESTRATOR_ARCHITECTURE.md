@@ -726,3 +726,15 @@ Stage 56 delivers a secure extensibility platform for custom capabilities:
 - **Tenant Scoping & Kill Switches**: Full organization isolation prevents cross-tenant access, backed by instant global kill switches.
 
 See [`docs/INTELLIGENCE_2_PHASE_9_STAGE_56_CUSTOM_AGENT_SKILL_TOOL_PLATFORM.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_9_STAGE_56_CUSTOM_AGENT_SKILL_TOOL_PLATFORM.md) for full documentation.
+
+---
+
+## 61. Intelligence 2.0 Phase 9 Stage 57: Enterprise Knowledge & Intelligence Marketplace
+
+Stage 57 delivers a governed enterprise marketplace for sharing and reusing verified capabilities:
+- **Publishing & Cryptographic Verification**: Packages require valid signatures and pass static security and SSRF scanning.
+- **Evaluation Gate Admission**: Packages failing Stage 33 regression evaluations are marked `REJECTED` and barred from publication.
+- **Tenant-Scoped Discovery**: Private/Organization packages are isolated to the publishing tenant; public assets are safely discoverable.
+- **Governed Installation & Supply-Chain Revocation**: High-risk assets require Stage 23 Human Approval, backed by instant supply-chain revocation across all active installations.
+
+See [`docs/INTELLIGENCE_2_PHASE_9_STAGE_57_INTELLIGENCE_MARKETPLACE.md`](file:///Users/jashanpreetsingh/Downloads/SECUROXI/docs/INTELLIGENCE_2_PHASE_9_STAGE_57_INTELLIGENCE_MARKETPLACE.md) for full documentation.
